@@ -1,0 +1,32 @@
+import = ["/home/espritmakomako/.config/alacritty/themes/schemes/tokyo-night-folke.toml"]
+colors.transparent_background_colors = true
+colors.draw_bold_text_with_bright_colors = true
+
+[cursor]
+style = { shape = "Block", blinking = "On" }
+blink_interval = 750
+unfocused_hollow = true
+
+[font]
+size = 13.0
+normal = { family = "JetBrainsMono NF SemiBold", style = "SemiBold,Regular" }
+bold = { family = "JetBrainsMono NF ExtraBold", style = "ExtraBold,Regular" }
+italic = { family = "JetBrainsMono NF Medium", style = "SemiBold Italic,Italic" }
+bold_italic = { family = "JetBrainsMono NF", style = "ExtraBold Italic,Italic" }
+
+[[keyboard.bindings]]
+action = "SpawnNewInstance"
+key = "Return"
+mods = "Super|Shift"
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[window]
+dynamic_padding = false
+opacity = 1
+
+[window.padding]
+x = 16
+y = 8
