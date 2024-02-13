@@ -1,3 +1,5 @@
+# vim:ft=conf
+
 set shellopts '-eu'
 set ifs "\n"
 
@@ -7,6 +9,7 @@ set cleaner ~/.config/lf/cleaner
 
 set scrolloff 10
 set icons true
+set period 1
 
 set cursorpreviewfmt "\033[7;90m"
 set cursoractivefmt "\033[7m"
@@ -18,7 +21,7 @@ set infotimefmtold "_2 Jan 2006"
 
 set number true
 set relativenumber true
-set numberfmt "\33[1;90m"
+set numberfmt "\33[90m"
 
 set promptfmt "\033[35;1m%u\033[0m in \033[34;1m%d\033[0m\033[1m%f\033[0m"
 set statfmt "\033[32m%p\033[0m| %c| %u| %g| %S| %t| -> %l"
@@ -87,12 +90,30 @@ cmd background %{{
     esac
 }}
 
+cmd lockscreen ${{
+    set -f
+    case $(file --mime-type -Lb $f) in
+        image/*) betterlockscreen -u $f ;;
+	*) lf -remote "send echoerr File is not a image" ;;
+    esac
+}}
+
 cmd size-geometry %{{
     set -f
     case $(file --mime-type -Lb $f) in
 	image/*) identify $f | awk '{ print $3 }' ;;
 	*) lf -remote "send echoerr File is not a image" ;;
     esac
+}}
+
+cmd size %{{
+    set -f
+    du -sh $f | sed -En 's/(^[0-9]+[A-Z]).*/\1B/p'
+}}
+
+cmd nvim-open ${{
+    set -f
+    nvim -p $fx $@
 }}
 
 cmd quit-and-cd &{{
@@ -107,16 +128,20 @@ cmd open-cli $$@ $fx
 map <enter> shell
 map <delete> trash; map D trash
 map bg background
+map bl lockscreen
 map Ct tar
 map Cz zip
 map Cs 7zip
+map d; map dd cut
+map du size
 map x extract
 map m; map ms mark-save
 map mark-load; map ml mark-load
 map mark-remove; map mr mark-remove
-map Md push %mkdir<space>
-map Mf push %touch<space>
-map Me push %nvim<space> # I intend to write something smarter soon
+map md push %mkdir<space>
+map mf push %touch<space>
+map me push :nvim-open<space>
+map mt %file --mime-type -Lb $f
 map O push :open-gui<space>
 map o push :open-cli<space>
 map r; map rn rename
@@ -126,7 +151,6 @@ map rc :rename; cmd-delete-home
 map rC :rename; cmd-end; cmd-delete-home
 map sg size-geometry
 map Q quit-and-cd
-map mt %file --mime-type -Lb $f
 
 # movement
 map gD cd ~/Downloads
@@ -141,5 +165,3 @@ map gt cd ~/Pictures/arts/touhou
 map gc cd ~/.config
 map gv cd ~/Videos
 map ga cd ~/Videos/anime
-
-# vim:ft=conf

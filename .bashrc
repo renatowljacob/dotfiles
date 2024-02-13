@@ -24,7 +24,7 @@ SUCKLESS=/home/espritmakomako/Software/git/suckless
 DWM=/home/espritmakomako/Software/git/suckless/dwm/dwm_raw
 DMENU=/home/espritmakomako/Software/git/suckless/dmenu
 SLSTATUS=/home/espritmakomako/Software/git/suckless/slstatus
-ACADEMICO=/home/espritmakomako/Documents/academico/fatec
+ACADEMICO=/home/espritmakomako/Documents/academico
 LFCD=/home/espritmakomako/.config/lf/lf.bash
 if [ -f "$LFCD" ]; then
 	source "$LFCD"

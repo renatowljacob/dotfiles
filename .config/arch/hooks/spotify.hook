@@ -1,0 +1,13 @@
+[Trigger]
+Operation=Install
+Operation=Upgrade
+Type=Package
+Target=spotify
+Target=spotx-git
+
+[Action]
+Description=Running Spotx script after Spotify/Spotx update while maintaning lastfm connections
+Depends=spotx-git
+When=PostTransaction
+NeedsTargets
+Exec=/bin/bash -c "kill $(pidof spotify); sed -Ei 's/^[[:blank:]]*[\(]+.*connect[[:alnum:]]+/# &/ ; s/^connect[[:alnum:]]+/# &/' usr/bin/spotx; spotx -f >/dev/null"
