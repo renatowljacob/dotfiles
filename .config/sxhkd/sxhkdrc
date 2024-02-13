@@ -1,0 +1,24 @@
+# fullscreen
+@Print
+	scrot -F ~/Pictures/screenshots/'%m-%d-%Y.png' -e 'xclip -selection clipboard -t image/png -i $f'
+
+# selection
+super + @Print
+	scrot -s ~/Pictures/screenshots/'%m-%d-%Y.png' --line mode=edge,width=2 -e 'xclip -selection clipboard -t image/png -i $f'
+
+# focused window
+super + shift + @Print
+	scrot -ub ~/Pictures/screenshots/'%m-%d-%Y.png' -e 'xclip -selection clipboard -t image/png -i $f'
+
+# lock screen
+super + control + s
+	betterlockscreen --lock
+
+@XF86AudioRaiseVolume
+	amixer set Master 5%+
+
+@XF86AudioLowerVolume
+	amixer set Master 5%-
+
+super + XF86AudioLowerVolume
+	amixer set Master toggle

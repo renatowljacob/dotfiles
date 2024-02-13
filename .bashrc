@@ -17,15 +17,18 @@ alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 
 PS1='[\u@\h \W]\$ '
 
-TOUHOU=/home/espritmakomako/Pictures/arts/touhou
-AUR=/home/espritmakomako/Software/AUR
-GIT=/home/espritmakomako/Software/git
-SUCKLESS=/home/espritmakomako/Software/git/suckless
-DWM=/home/espritmakomako/Software/git/suckless/dwm/dwm_raw
-DMENU=/home/espritmakomako/Software/git/suckless/dmenu
-SLSTATUS=/home/espritmakomako/Software/git/suckless/slstatus
-ACADEMICO=/home/espritmakomako/Documents/academico
-LFCD=/home/espritmakomako/.config/lf/lf.bash
+PATH=$HOME/.local/bin:$PATH
+
+ACADEMICO=$HOME/Documents/academico
+TOUHOU=$HOME/Pictures/arts/touhou
+AUR=$HOME/Software/AUR
+GIT=$HOME/Software/git
+SCRIPT=$HOME/.local/bin
+SUCKLESS=$HOME/Software/git/suckless
+DMENU=$HOME/Software/git/suckless/dmenu
+DWM=$HOME/Software/git/suckless/dwm/dwm_raw
+SLSTATUS=$HOME/Software/git/suckless/slstatus
+LFCD=$HOME/.config/lf/lf.bash
 if [ -f "$LFCD" ]; then
 	source "$LFCD"
 fi
