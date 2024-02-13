@@ -86,7 +86,7 @@ cmd background %{{
     set -f
     case $(file --mime-type -Lb $f) in
 	image/*) feh --bg-fill $f && printf "Image set as wallpaper" ;;
-	*) lf -remote "send echoerr File is not a image" ;;
+	*) lf -remote "send $id echoerr $(basename $f) is not a image" ;;
     esac
 }}
 
@@ -94,7 +94,7 @@ cmd lockscreen ${{
     set -f
     case $(file --mime-type -Lb $f) in
         image/*) betterlockscreen -u $f ;;
-	*) lf -remote "send echoerr File is not a image" ;;
+	*) lf -remote "send $id echoerr $(basename $f) is not a image" ;;
     esac
 }}
 
@@ -102,13 +102,13 @@ cmd size-geometry %{{
     set -f
     case $(file --mime-type -Lb $f) in
 	image/*) identify $f | awk '{ print $3 }' ;;
-	*) lf -remote "send echoerr File is not a image" ;;
+	*) lf -remote "send $id echoerr $(basename $f) is not a image" ;;
     esac
 }}
 
 cmd size %{{
     set -f
-    du -sh $f | sed -En 's/(^[0-9]+[A-Z]).*/\1B/p'
+    du -sh $f | sed -En 's/(^[[:digit:]]+.?[[:alnum:]]+).*/\1B/p'
 }}
 
 cmd nvim-open ${{
