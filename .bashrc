@@ -17,8 +17,6 @@ alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 
 PS1='[\u@\h \W]\$ '
 
-PATH=$HOME/.local/bin:$PATH
-
 ACADEMICO=$HOME/Documents/academico
 TOUHOU=$HOME/Pictures/arts/touhou
 AUR=$HOME/Software/AUR
@@ -32,8 +30,5 @@ LFCD=$HOME/.config/lf/lf.bash
 if [ -f "$LFCD" ]; then
 	source "$LFCD"
 fi
-
-EDITOR=nvim
-export EDITOR
 
 eval "$(starship init bash)"
