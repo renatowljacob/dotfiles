@@ -14,11 +14,25 @@ super + shift + @Print
 super + control + s
 	betterlockscreen --lock
 
+# volume control
 @XF86AudioRaiseVolume
-	amixer set Master 5%+
+	volume up
 
 @XF86AudioLowerVolume
-	amixer set Master 5%-
+	volume down
 
 super + XF86AudioLowerVolume
-	amixer set Master toggle
+	volume mute
+
+super + XF86AudioRaiseVolume
+	volume mute
+
+# dunst notifications
+super + bracketright
+	dunstctl close
+
+super + shift + bracketright
+	dunstctl close-all
+
+super + bracketleft
+	dunstctl history-pop

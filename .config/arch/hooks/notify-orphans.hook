@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = Looking for orphaned dependencies...
+When = PostTransaction
+Exec = /usr/local/bin/notify-orphans

@@ -1,0 +1,111 @@
+[global]
+    monitor = 0
+    follow = none
+
+    width = 350
+    height = 400
+    origin = top-right
+    offset = 6x38
+    scale = 0
+
+    notification_limit = 6
+
+    progress_bar = true
+    progress_bar_height = 10
+    progress_bar_frame_width = 1
+    progress_bar_min_width = 150
+    progress_bar_max_width = 300
+    progress_bar_corner_radius = 3
+    highlight = "#ff9e64"
+
+    icon_corner_radius = 0
+
+    indicate_hidden = yes
+
+    transparency = 0
+    separator_height = 6
+    padding = 16
+    horizontal_padding = 16
+    text_icon_padding = 14
+    frame_width = 0
+    # frame_color = "#8289a8"
+    gap_size = 6
+    separator_color = frame
+    corner_radius = 3
+
+    sort = yes
+
+    font = JetBrainsMono NF 13
+    line_height = 2
+    markup = full
+    format = "<b>%a</b>\n%s\n<i>%b</i>"
+    alignment = left
+    vertical_alignment = center
+    show_age_threshold = 60
+    word_wrap = yes
+    ellipsize = middle
+    ignore_newline = no
+
+    stack_duplicates = true
+    hide_duplicate_count = false
+    show_indicators = yes
+
+    enable_recursive_icon_lookup = false
+    icon_position = left
+    min_icon_size = 40
+    max_icon_size = 40
+    icon_path = /home/espritmakomako/.local/share/icons/dunst
+    default_icon = bell
+
+    sticky_history = yes
+    history_length = 20
+
+    dmenu = /usr/bin/dmenu -p dunst:
+    browser = /usr/bin/vivaldi
+
+    always_run_script = true
+
+    title = Dunst
+    class = Dunst
+
+    ignore_dbusclose = false
+    force_xwayland = false
+    force_xinerama = false
+
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = close_all
+    mouse_right_click = close_current
+
+[experimental]
+    per_monitor_dpi = false
+
+[urgency_low]
+    background = "#1a1b26"
+    foreground = "#c0caf5"
+    timeout = 8
+
+[urgency_normal]
+    background = "#1a1b26"
+    foreground = "#c0caf5"
+    timeout = 10
+
+[urgency_critical]
+    background = "#283457"
+    foreground = "#c0caf5"
+    timeout = 0
+    new_icon = circle-exclamation-solid-critical
+
+[Spotify]
+    appname = Spotify
+    new_icon = spotify
+    timeout = 4
+
+[Vivaldi]
+    appname = Vivaldi
+    new_icon = vivaldi
+
+[Firefox]
+    appname = Firefox
+    new_icon = firefox
+
+# vim: ft=cfg

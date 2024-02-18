@@ -1,0 +1,12 @@
+#!/bin/sh
+
+pkgs=$(pacman -Qdtq) 
+if [ $? -eq 0 ]; then
+	printf "==> orphaned packages found\n"
+	for item in $pkgs
+	do
+		printf "  -> $item\n"
+	done
+else
+	printf "==> no orphaned packages found\n"
+fi

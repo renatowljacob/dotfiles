@@ -113,7 +113,7 @@ cmd size %{{
 
 cmd nvim-open ${{
     set -f
-    nvim -p $fx $@
+    nvim -p $fs $@
 }}
 
 cmd quit-and-cd &{{
@@ -144,7 +144,7 @@ map me push :nvim-open<space>
 map mt %file --mime-type -Lb $f
 map O push :open-gui<space>
 map o push :open-cli<space>
-map r; map rn rename
+map r; map ra rename
 map rI :rename; cmd-home
 map rA :rename; cmd-end
 map rc :rename; cmd-delete-home
@@ -153,15 +153,16 @@ map sg size-geometry
 map Q quit-and-cd
 
 # movement
+map gc cd ~/.config
+map gb cd ~/.local/bin
 map gD cd ~/Downloads
 map gd cd ~/Documents
 map gf cd ~/Documents/academico/fatec
 map gp cd ~/Pictures
 map gs cd ~/Pictures/shitpost
+map gt cd ~/Pictures/arts/touhou
 map gS cd ~/Software
 map gA cd ~/Software/AUR
 map gG cd ~/Software/git
-map gt cd ~/Pictures/arts/touhou
-map gc cd ~/.config
 map gv cd ~/Videos
 map ga cd ~/Videos/anime
