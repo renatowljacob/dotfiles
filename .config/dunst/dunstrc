@@ -2,10 +2,10 @@
     monitor = 0
     follow = none
 
-    width = 350
+    width = 400
     height = 400
     origin = top-right
-    offset = 6x38
+    offset = 6x42
     scale = 0
 
     notification_limit = 6
@@ -14,11 +14,11 @@
     progress_bar_height = 10
     progress_bar_frame_width = 1
     progress_bar_min_width = 150
-    progress_bar_max_width = 300
+    progress_bar_max_width = 350
     progress_bar_corner_radius = 3
     highlight = "#ff9e64"
 
-    icon_corner_radius = 0
+    icon_corner_radius = 3
 
     indicate_hidden = yes
 
@@ -28,7 +28,6 @@
     horizontal_padding = 16
     text_icon_padding = 14
     frame_width = 0
-    # frame_color = "#8289a8"
     gap_size = 6
     separator_color = frame
     corner_radius = 3
@@ -45,6 +44,7 @@
     word_wrap = yes
     ellipsize = middle
     ignore_newline = no
+    enable_posix_regex = true
 
     stack_duplicates = true
     hide_duplicate_count = false
@@ -53,7 +53,7 @@
     enable_recursive_icon_lookup = false
     icon_position = left
     min_icon_size = 40
-    max_icon_size = 40
+    max_icon_size = 80
     icon_path = /home/espritmakomako/.local/share/icons/dunst
     default_icon = bell
 
@@ -68,7 +68,7 @@
     title = Dunst
     class = Dunst
 
-    ignore_dbusclose = false
+    ignore_dbusclose = true
     force_xwayland = false
     force_xinerama = false
 
@@ -82,23 +82,23 @@
 [urgency_low]
     background = "#1a1b26"
     foreground = "#c0caf5"
-    timeout = 8
+    override_dbus_timeout = 6
 
 [urgency_normal]
     background = "#1a1b26"
     foreground = "#c0caf5"
-    timeout = 10
+    override_dbus_timeout = 6
 
 [urgency_critical]
     background = "#283457"
     foreground = "#c0caf5"
-    timeout = 0
-    new_icon = circle-exclamation-solid-critical
+    override_dbus_timeout = 0
+    new_icon = circle-exclamation-critical
 
 [Spotify]
     appname = Spotify
-    new_icon = spotify
-    timeout = 4
+    max_icon_size = 100
+    override_dbus_timeout = 4
 
 [Vivaldi]
     appname = Vivaldi
@@ -107,5 +107,15 @@
 [Firefox]
     appname = Firefox
     new_icon = firefox
+
+[Volume]
+    appname = Volume
+    override_dbus_timeout = 2
+
+[Calendar]
+    appname = Calendar
+    format = "%s\n<i>%b</i>"
+    icon_position = off
+    alignment = center
 
 # vim: ft=cfg

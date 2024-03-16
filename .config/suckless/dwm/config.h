@@ -15,7 +15,7 @@ static const int horizpadbar	    = 6;	/* vertical padding for statusbar */
 static const int vertpad	    = 6;	/* vertical padding of bar */
 static const int sidepad	    = 6;	/* horizontal padding of bar */
 static const char *fonts[]          = {
-	"JetBrainsMono NF:style=Medium:pixelsize=14:antialias=true:autohint=true",
+	"JetBrainsMono NF:style=Medium:pixelsize=14:antialias=true:autohint=true"
 };
 static const char dmenufont[]       = { 
 	"JetBrainsMono NF:style=Medium:pixelsize=14:antialias=true:autohint=true" 
@@ -33,7 +33,7 @@ static const char *colors[][3]       = {
 };
 
 /* tagging */
-static const char *tags[] = { "", "", "", "", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -42,10 +42,6 @@ static const Rule rules[] = {
 	 */
 	/* class      	     instance    title    tags mask     isfloating   monitor */
 	{ "Gimp",            NULL,       NULL,    0,            1,           -1 },
-	{ "Vivaldi-stable",  NULL,	 NULL,	  1,	        0,	     -1 },
-	{ "vesktop",         NULL,	 NULL,	  1 << 1,	0,	     -1 },
-	{ "steam",	     NULL,	 NULL,	  1 << 2,	0,	     -1 },
-	{ "Spotify",	     NULL,	 NULL,	  1 << 3,	0,	     -1 },
 	{ "qBittorrent",     NULL,	 NULL,	  1 << 8,	0,	     -1 },
 };
 

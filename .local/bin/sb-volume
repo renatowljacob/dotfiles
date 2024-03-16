@@ -1,0 +1,15 @@
+#!/bin/sh
+# TODO make the script detect if audio device is muted
+
+volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | tr -dc '0-9' | sed 's/^0\{1,2\}//')
+bgcolor='#1A1B26'
+accentcolor='#7DCFFF'
+
+case 1 in 
+	$(( $volume >= 66 )) ) icon="^c$accentcolor^^r00,00,12,h^^f12^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,8,h^^d^^f26^^c$accentcolor^" ;;
+	$(( $volume >= 33 )) ) icon="^c$accentcolor^^r00,00,12,h^^f12^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,8,h^^d^^f26^^c$accentcolor^" ;;
+	$(( $volume >= 1 )) ) icon="^c$accentcolor^^r00,00,12,h^^f12^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,8,h^^d^^f26^^c$accentcolor^" ;;
+	*) icon="^c$accentcolor^^r00,00,12,h^^f12^^b$accentcolor^^c$bgcolor^🔇^c$accentcolor^^r00,00,8,h^^d^^f26^^c$accentcolor^" ;;
+esac
+
+printf "$icon$volume%%"

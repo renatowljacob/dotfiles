@@ -14,5 +14,5 @@ local set_indent = function(pattern, indent)
 	})
 end
 
-set_indent({ "html", "css", "lua", "yaml", "sql" }, 2)
-set_indent({ "python", "javascript" }, 4)
+set_indent({ "html", "css", "yaml", "sql" }, 2)
+set_indent({ "python", "javascript", "lua", "java" }, 4)

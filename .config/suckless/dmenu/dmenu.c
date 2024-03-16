@@ -724,7 +724,7 @@ setup(void)
 
 	/* calculate menu geometry */
 	// bh = ... + 2;
-	bh = drw->fonts->h + vertpadbar;
+	bh = drw->fonts->h + vertpadbar + 4;
 	lines = MAX(lines, 0);
 	mh = (lines + 1) * bh;
 #ifdef XINERAMA

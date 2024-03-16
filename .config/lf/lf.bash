@@ -1,3 +1,5 @@
+#!/bin/bash
+
 lf() {
     export LF_CD_FILE=/var/tmp/.lfcd-$$
     command lfrun $@

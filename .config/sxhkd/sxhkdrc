@@ -11,28 +11,22 @@ super + shift + @Print
 	scrot -ub ~/Pictures/screenshots/'%m-%d-%Y.png' -e 'xclip -selection clipboard -t image/png -i $f'
 
 # lock screen
-super + control + s
+super + ctrl + s
 	betterlockscreen --lock
 
 # volume control
-@XF86AudioRaiseVolume
-	volume up
+@XF86Audio{Raise,Lower}Volume
+	volume {up, down}
 
-@XF86AudioLowerVolume
-	volume down
-
-super + XF86AudioLowerVolume
-	volume mute
-
-super + XF86AudioRaiseVolume
+super + {XF86AudioLowerVolume, XF86AudioRaiseVolume}
 	volume mute
 
 # dunst notifications
-super + bracketright
+super + c
 	dunstctl close
 
-super + shift + bracketright
+super + alt + c
 	dunstctl close-all
 
-super + bracketleft
+super + x
 	dunstctl history-pop

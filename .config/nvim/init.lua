@@ -363,6 +363,7 @@ require('mason').setup()
 require('mason-lspconfig').setup()
 
 local servers = {
+  jdtls = {},
   clangd = {},
   bashls = {},
   -- gopls = {},
@@ -378,7 +379,6 @@ local servers = {
       telemetry = { enable = false },
     },
   },
-
 }
 
 -- Setup neovim lua configuration

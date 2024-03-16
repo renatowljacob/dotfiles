@@ -1,0 +1,10 @@
+#!/bin/sh
+
+bgcolor='#1A1B26'
+accentcolor='#9ECE6A'
+style="^c$accentcolor^^r00,00,12,h^^f12^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,8,h^^d^^f26^^c$accentcolor^"
+updates=$(( $(checkupdates | wc -l) + $(paru -Qu | wc -l) ))
+
+if [ $updates -ge 10 ]; then
+	printf "$style$updates^f10^"
+fi

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+languages=$XDG_DATA_HOME/scripts/languages
+utils=$XDG_DATA_HOME/scripts/utils
+
+[ -z $1 ] && topic=$(cat $languages $utils | fzf) || topic=$1
+[ -z "$2" ] && read -p "Query: " query || { shift && query=$@; }
+query=$(printf "$query" | tr ' ' '+')
+
+[ -z "$topic" ] || [ -z "$query" ] && printf "No arguments given" && exit 1
+
+tmux split-window -h "curl -s cht.sh/$topic/$query | ${PAGER-bat --paging=always}"

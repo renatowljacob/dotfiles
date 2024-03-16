@@ -27,7 +27,6 @@ set promptfmt "\033[35;1m%u\033[0m in \033[34;1m%d\033[0m\033[1m%f\033[0m"
 set statfmt "\033[32m%p\033[0m| %c| %u| %g| %S| %t| -> %l"
 
 set hidden true
-setlocal ~/Touhou hidden false; setlocal ~/Pictures/arts/touhou hidden false
 
 cmd open &{{
     case $(file --mime-type -Lb $f) in
@@ -83,15 +82,13 @@ cmd 7zip %{{
 }}
 
 cmd background %{{
-    set -f
     case $(file --mime-type -Lb $f) in
 	image/*) feh --bg-fill $f && printf "Image set as wallpaper" ;;
 	*) lf -remote "send $id echoerr $(basename $f) is not a image" ;;
     esac
 }}
 
-cmd lockscreen ${{
-    set -f
+cmd lockscreen %{{
     case $(file --mime-type -Lb $f) in
         image/*) betterlockscreen -u $f ;;
 	*) lf -remote "send $id echoerr $(basename $f) is not a image" ;;
@@ -99,7 +96,6 @@ cmd lockscreen ${{
 }}
 
 cmd size-geometry %{{
-    set -f
     case $(file --mime-type -Lb $f) in
 	image/*) identify $f | awk '{ print $3 }' ;;
 	*) lf -remote "send $id echoerr $(basename $f) is not a image" ;;
@@ -107,13 +103,14 @@ cmd size-geometry %{{
 }}
 
 cmd size %{{
-    set -f
     du -sh $f | sed -En 's/(^[[:digit:]]+.?[[:alnum:]]+).*/\1B/p'
 }}
 
-cmd nvim-open ${{
-    set -f
-    nvim -p $fs $@
+cmd tmux-session ${{
+    case $(file --mime-type -Lb $f) in
+        inode/directory) tmux-session $f ;;
+        *) tmux-session $(dirname $(realpath $f)) ;;
+    esac
 }}
 
 cmd quit-and-cd &{{
@@ -121,10 +118,13 @@ cmd quit-and-cd &{{
     lf -remote "send $id quit"
 }}
 
+cmd nvim-open $nvim -p $fs $@
+
 cmd open-gui &$@ $fx
 cmd open-cli $$@ $fx
 
 # commands
+map me nvim -p $fs $@
 map <enter> shell
 map <delete> trash; map D trash
 map bg background
@@ -150,19 +150,15 @@ map rA :rename; cmd-end
 map rc :rename; cmd-delete-home
 map rC :rename; cmd-end; cmd-delete-home
 map sg size-geometry
+map t; map tm tmux-session
+map tg tag-toggle
 map Q quit-and-cd
 
 # movement
 map gc cd ~/.config
 map gb cd ~/.local/bin
-map gD cd ~/Downloads
-map gd cd ~/Documents
 map gf cd ~/Documents/academico/fatec
-map gp cd ~/Pictures
 map gs cd ~/Pictures/shitpost
-map gt cd ~/Pictures/arts/touhou
-map gS cd ~/Software
 map gA cd ~/Software/AUR
 map gG cd ~/Software/git
-map gv cd ~/Videos
 map ga cd ~/Videos/anime

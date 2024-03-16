@@ -1,0 +1,7 @@
+#!/bin/sh
+
+bgcolor='#1A1B26'
+accentcolor='#7AA2F7'
+icon="^c$accentcolor^^r00,00,13,h^^f13^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,8,h^^d^^f26^^c$accentcolor^"
+
+printf "$icon$(free -h | awk '/^Mem/ { print $3 }' | sed s/i/B/g)"

@@ -17,15 +17,6 @@ alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 
 PS1='[\u@\h \W]\$ '
 
-ACADEMICO=$HOME/Documents/academico
-TOUHOU=$HOME/Pictures/arts/touhou
-AUR=$HOME/Software/AUR
-GIT=$HOME/Software/git
-SCRIPT=$HOME/.local/bin
-SUCKLESS=$HOME/Software/git/suckless
-DMENU=$HOME/Software/git/suckless/dmenu
-DWM=$HOME/Software/git/suckless/dwm/dwm_raw
-SLSTATUS=$HOME/Software/git/suckless/slstatus
 LFCD=$HOME/.config/lf/lf.bash
 if [ -f "$LFCD" ]; then
 	source "$LFCD"

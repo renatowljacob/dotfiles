@@ -4,18 +4,29 @@
 
 # Increment, decrement, or mute the volume using Pipewire and send a notification
 
+update() {
+	if ps -C dusk > /dev/null; then
+		duskc --ignore-reply run_command setstatus 3 "$(sb-volume)"
+	else
+		kill -37 $(pidof dwmblocks) >/dev/null 2>&1
+	fi
+}
+
 case $1 in
 	up)
 		# Set the volume on (if it was muted)
 		wpctl set-mute @DEFAULT_AUDIO_SINK@ 0
 		wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+
+		update
 		;;
 	down)
 		wpctl set-mute @DEFAULT_AUDIO_SINK@ 0
 		wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%-
+		update
 		;;
 	mute)
 		wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+		update
 		;;
 esac
 

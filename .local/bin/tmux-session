@@ -1,0 +1,22 @@
+#!/bin/sh
+
+ppath=$HOME/Projects/personal
+fpath=$HOME/Projects/fatec
+
+if [ -z $1 ]; then
+	select=$(fd --min-depth 2 --max-depth 3 -t d --base-directory $HOME --search-path Projects | fzf)
+else
+	select=$1
+fi
+
+[ -z $select ] && printf "No directory given" && exit 1
+
+select_name=$(basename "$select")
+
+if [ -z $TMUX ] && ! pgrep tmux >/dev/null 2&>1; then
+	tmux new-session -s $select_name -c $select
+	exit 0
+fi
+
+tmux new-session -Ads $select_name -c $select &&
+tmux switch-client -t $select_name

@@ -1,5 +1,5 @@
-killall picom 
+killall -q -s 15 picom 
 
 "$@"
 
-picom -b
+picom -b --corner-radius-rules "3:class_g = 'dmenu'"
