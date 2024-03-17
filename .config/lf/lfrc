@@ -118,13 +118,12 @@ cmd quit-and-cd &{{
     lf -remote "send $id quit"
 }}
 
-cmd nvim-open $nvim -p $fs $@
+cmd nvim-open $nvim $fs $@
 
 cmd open-gui &$@ $fx
 cmd open-cli $$@ $fx
 
 # commands
-map me nvim -p $fs $@
 map <enter> shell
 map <delete> trash; map D trash
 map bg background

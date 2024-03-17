@@ -57,6 +57,7 @@ alias ls='lsd '
 alias siv='nsxiv -a '
 alias sivdir='nsxiv-rifle '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
+alias showoff='printf "\n\n\n\n\n"; neofetch; printf "\n\n\n\n\n"'
 alias chdir='source chdir'
 
 LFCD=$HOME/.config/lf/lf.bash
@@ -67,9 +68,9 @@ fi
 # fzf theming
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
 --color=fg:#c0caf5,bg:#1a1b26,hl:#ff9e64 \
---color=fg+:#c0caf5,bg+:#292e42,hl+:#ff9e64 \
---color=info:#7aa2f7,prompt:#bb9af7,pointer:#bb9af7 \
---color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a"
+--color=fg+:#c0caf5:,bg+:#292e42,hl+:#ff9e64 \
+--color=info:#c0caf5:bold,prompt:#9ece6a:bold,pointer:#f7768e:bold \
+--color=marker:#7aa2f7,spinner:#7aa2f7,header:#7aa2f7"
 
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(starship init zsh)"
