@@ -1,0 +1,39 @@
+#!/bin/sh
+
+kbdconf=/etc/X11/xorg.conf.d/00-keyboard.conf
+
+case $1 in
+desktop)
+cat << EOF > $kbdconf
+# Written by systemd-localed(8), read by systemd-localed and Xorg. It's
+# probably wise not to edit this file manually. Use localectl(1) to
+# instruct systemd-localed to update it.
+Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "br"
+        Option "XkbModel" "abnt2"
+        Option "XkbOptions" "terminate:ctrl_alt_bksp,compose:rwin,caps:escape_shifted_capslock"
+        Option "AutoRepeat" "250 20"
+EndSection
+EOF
+;;
+thinkpad)
+cat << EOF > $kbdconf
+# Written by systemd-localed(8), read by systemd-localed and Xorg. It's
+# probably wise not to edit this file manually. Use localectl(1) to
+# instruct systemd-localed to update it.
+Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "br"
+        Option "XkbModel" "thinkpad60"
+        Option "XkbOptions" "terminate:ctrl_alt_bksp,compose:rwin,caps:escape_shifted_capslock"
+        Option "AutoRepeat" "250 20"
+EndSection
+EOF
+;;
+*)
+printf "No layout selected" ;;
+esac
+

@@ -72,5 +72,8 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
 --color=info:#c0caf5:bold,prompt:#9ece6a:bold,pointer:#f7768e:bold \
 --color=marker:#7aa2f7,spinner:#7aa2f7,header:#7aa2f7"
 
+export GTK_THEME="Adwaita:dark"
+export GTK2_RC_FILES="/usr/share/themes/Adwaita-dark/gtk-2.0/gtkrc"
+
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(starship init zsh)"
