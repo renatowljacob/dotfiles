@@ -18,4 +18,4 @@ query=$(printf "$query" | tr ' ' '+')
 
 [ -z "$topic" ] || [ -z "$query" ] && printf "No arguments given" && exit 1
 
-tmux split-window -h "curl -s cht.sh/$topic/$query | ${PAGER-bat --paging=always}"
+tmux split-window -h "curl -s cht.sh/$topic/$query | ${PAGER:-bat --paging=always}"
