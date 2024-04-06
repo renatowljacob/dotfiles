@@ -2,7 +2,12 @@
 
 bgcolor='#1A1B26'
 accentcolor='#9ECE6A'
-style="^c$accentcolor^^r00,00,12,h^^f12^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,8,h^^d^^f26^^c$accentcolor^"
+
+# Nerd Fonts
+# style="^c$accentcolor^^r00,00,12,h^^f12^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,8,h^^d^^f26^^c$accentcolor^"
+
+# Font Awesome
+style="^c$accentcolor^^r00,00,14,h^^f14^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,6,h^^d^^f26^^c$accentcolor^"
 updates=$(( $(checkupdates | wc -l) + $(paru -Qu | wc -l) ))
 
 if [ $updates -ge 10 ]; then

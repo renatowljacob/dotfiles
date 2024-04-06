@@ -10,6 +10,7 @@ set cleaner ~/.config/lf/cleaner
 set scrolloff 10
 set icons true
 set period 1
+set incsearch true
 
 set cursorpreviewfmt "\033[7;90m"
 set cursoractivefmt "\033[7m"

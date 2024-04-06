@@ -2,6 +2,6 @@
 
 case $BLOCK_BUTTON in
 	1) calendar curr ;;
-	3) calendar next ;;
-	12) calendar prev ;;
+	12) calendar next ;;
+	10) calendar prev ;;
 esac

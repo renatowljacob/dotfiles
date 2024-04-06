@@ -2,6 +2,11 @@
 
 bgcolor='#1A1B26'
 accentcolor='#F7768E'
-icon="^c$accentcolor^^r00,00,12,h^^f12^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,9,h^^d^^f26^^c$accentcolor^"
+
+# Nerd Fonts
+# icon="^c$accentcolor^^r00,00,12,h^^f12^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,9,h^^d^^f26^^c$accentcolor^"
+
+# Font Awesome
+icon="^c$accentcolor^^r00,00,15,h^^f15^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,7,h^^d^^f26^^c$accentcolor^"
 
 printf "$icon$(date '+%a %d %B %Y')"

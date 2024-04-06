@@ -1,0 +1,5 @@
+# vim:ft=sh
+
+zhis=$HOME/.zhistory
+
+$(cat $zhis | fzf +s --tac)

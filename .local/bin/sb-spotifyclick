@@ -10,8 +10,8 @@
 case $BLOCK_BUTTON in
 	1) playerctl -p spotify play-pause & ;;
 	2) xdotool search --class spotify set_desktop_for_window $(xdotool get_desktop) & ;;
-	3) playerctl -p spotify next & ;;
-	12) playerctl -p spotify previous & ;;
+	12) playerctl -p spotify next & ;;
+	10) playerctl -p spotify previous & ;;
 	4) playerctl -p spotify volume 0.05+ & ;;
 	5) playerctl -p spotify volume 0.05- & ;;
 esac

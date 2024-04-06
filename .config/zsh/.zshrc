@@ -57,8 +57,12 @@ alias ls='lsd '
 alias siv='nsxiv -a '
 alias sivdir='nsxiv-rifle '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
-alias showoff='printf "\n\n\n\n\n"; neofetch; printf "\n\n\n\n\n"'
+alias rm='trash '
 alias chdir='source chdir'
+alias hist='source hist'
+
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
 
 LFCD=$HOME/.config/lf/lf.bash
 if [ -f "$LFCD" ]; then
