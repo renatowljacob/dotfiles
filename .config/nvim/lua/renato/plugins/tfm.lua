@@ -2,24 +2,29 @@ return {
 	"rolv-apneseth/tfm.nvim",
 	opts = {
 		file_manager = "lf",
-		replace_netrw = true,
+		replace_netrw = false,
 		enable_cmds = true,
 	},
 	keys = {
 		{
 			"<leader>lf",
-			":Tfm<CR>",
+			"<cmd>Tfm<CR>",
 			desc = "LF",
 		},
 		{
 			"<leader>ls",
-			":TfmSplit<CR>",
+			"<cmd>TfmSplit<CR>",
 			desc = "LF - horizonal split",
 		},
 		{
 			"<leader>lv",
-			":TfmVsplit<CR>",
+			"<cmd>TfmVsplit<CR>",
 			desc = "LF - vertical split",
+		},
+		{
+			"<leader>lS",
+			"<cmd>new<CR><cmd>Tfm<CR>",
+			desc = "LF - test",
 		},
 	},
 }
