@@ -39,7 +39,9 @@ return {
 		-- See `:help cmp`
 		local cmp = require("cmp")
 		local luasnip = require("luasnip")
-		luasnip.config.setup({})
+		luasnip.config.setup({
+			update_events = { "TextChanged", "TextChangedI" },
+		})
 
 		cmp.setup({
 			snippet = {
@@ -81,12 +83,12 @@ return {
 				--
 				-- <c-l> will move you to the right of each of the expansion locations.
 				-- <c-h> is similar, except moving you backwards.
-				["<C-M-l>"] = cmp.mapping(function()
+				["<C-l>"] = cmp.mapping(function()
 					if luasnip.expand_or_locally_jumpable() then
 						luasnip.expand_or_jump()
 					end
 				end, { "i", "s" }),
-				["<C-M-h>"] = cmp.mapping(function()
+				["<C-s>"] = cmp.mapping(function()
 					if luasnip.locally_jumpable(-1) then
 						luasnip.jump(-1)
 					end
@@ -99,7 +101,12 @@ return {
 				{ name = "nvim_lsp" },
 				{ name = "luasnip" },
 				{ name = "path" },
+				{ name = "buffer" },
 			},
 		})
+
+		for _, ft_path in ipairs(vim.api.nvim_get_runtime_file("lua/renato/snippets/*.lua", true)) do
+			loadfile(ft_path)()
+		end
 	end,
 }

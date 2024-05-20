@@ -24,6 +24,7 @@ return {
 		-- Add your own debuggers here
 		"leoluz/nvim-dap-go",
 	},
+	keys = { "<F5>", "<F1>", "<F2>", "<F3>", "<leader>Db", "<leader>DB", "<F7>" },
 	config = function()
 		local dap = require("dap")
 		local dapui = require("dapui")

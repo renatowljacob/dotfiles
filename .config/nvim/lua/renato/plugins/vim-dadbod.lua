@@ -1,1 +1,3 @@
-return { "tpope/vim-dadbod", event = "BufEnter *.sql" }
+return {
+	"tpope/vim-dadbod",
+}

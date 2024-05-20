@@ -14,17 +14,12 @@ return {
 		{
 			"<leader>ls",
 			"<cmd>TfmSplit<CR>",
-			desc = "LF - horizonal split",
+			desc = "LF: horizonal split",
 		},
 		{
 			"<leader>lv",
 			"<cmd>TfmVsplit<CR>",
-			desc = "LF - vertical split",
-		},
-		{
-			"<leader>lS",
-			"<cmd>new<CR><cmd>Tfm<CR>",
-			desc = "LF - test",
+			desc = "LF: vertical split",
 		},
 	},
 }

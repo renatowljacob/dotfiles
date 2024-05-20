@@ -17,6 +17,7 @@ return {
 			"jsonc",
 			"lua",
 			"markdown",
+			"sql",
 			"vim",
 			"vimdoc",
 		},
@@ -70,10 +71,10 @@ return {
 			swap = {
 				enable = true,
 				swap_next = {
-					["<leader>da"] = "@parameter.inner",
+					["<leader>dp"] = "@parameter.inner",
 				},
 				swap_previous = {
-					["<leader>dA"] = "@parameter.inner",
+					["<leader>dP"] = "@parameter.inner",
 				},
 			},
 		},

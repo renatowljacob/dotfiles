@@ -42,11 +42,15 @@ setopt auto_param_slash
 setopt auto_menu
 setopt hash_list_all
 setopt append_history
+setopt share_history
+setopt hist_ignore_space
 setopt hist_expire_dups_first
 setopt inc_append_history
 setopt correct
 
 zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 alias cat='bat '
 alias du='gdu '
@@ -58,8 +62,7 @@ alias siv='nsxiv -a '
 alias sivdir='nsxiv-rifle '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 alias rm='trash '
-alias chdir='source chdir'
-alias hist='source hist'
+alias devpod-start='/opt/devpod/devpod.AppImage'
 
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
@@ -69,15 +72,6 @@ if [ -f "$LFCD" ]; then
 	emulate ksh -c 'source $LFCD'
 fi
 
-# fzf theming
-export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
---color=fg:#c0caf5,bg:#1a1b26,hl:#ff9e64 \
---color=fg+:#c0caf5:,bg+:#292e42,hl+:#ff9e64 \
---color=info:#c0caf5:bold,prompt:#9ece6a:bold,pointer:#f7768e:bold \
---color=marker:#7aa2f7,spinner:#7aa2f7,header:#7aa2f7"
-
-export GTK_THEME="Adwaita:dark"
-export GTK2_RC_FILES="/usr/share/themes/Adwaita-dark/gtk-2.0/gtkrc"
-
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(starship init zsh)"
+eval "$(fzf --zsh)"

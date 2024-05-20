@@ -50,7 +50,7 @@ elseif font == fonts[2] then
 	config.font_size = 14
 end
 
-config.color_scheme = "tokyonight"
+config.color_scheme = "Tokyo Night"
 config.enable_tab_bar = false
 config.window_background_opacity = 0.97
 
