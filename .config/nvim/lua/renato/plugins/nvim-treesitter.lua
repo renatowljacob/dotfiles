@@ -16,6 +16,7 @@ return {
 			"javascript",
 			"jsonc",
 			"lua",
+			"luadoc",
 			"markdown",
 			"sql",
 			"vim",
@@ -33,7 +34,7 @@ return {
 		},
 		indent = {
 			enable = true,
-			-- disable = { 'ruby' },
+			disable = { "ruby" },
 		},
 		textobjects = {
 			select = {
@@ -90,6 +91,9 @@ return {
 	},
 	config = function(_, opts)
 		-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+
+		-- Prefer git instead of curl in order to improve connectivity in some environments
+		require("nvim-treesitter.install").prefer_git = true
 
 		---@diagnostic disable-next-line: missing-fields
 		require("nvim-treesitter.configs").setup(opts)
