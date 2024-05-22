@@ -7,8 +7,8 @@ CEO of LARPing
 ## Things I Use
 
 - **Operating System:** [Arch Linux](https://archlinux.org/)
-- **Interactive Shell:** [ZSH](https://zsh.sourceforge.io/)
-- **Window Manager:** [Dusk](https://github.com/bakkeby/dusk)
+- **Interactive Shell:** [Zsh](https://zsh.sourceforge.io/)
+- **Window Manager:** [dusk](https://github.com/bakkeby/dusk)
 - **X Compositor:** [picom](https://github.com/yshui/picom)
 - **Terminal:** [WezTerm](https://wezfurlong.org/wezterm/index.html)
 - **Text Editor:** [Neovim](https://neovim.io/)
