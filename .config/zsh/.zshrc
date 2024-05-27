@@ -62,7 +62,7 @@ alias siv='nsxiv -a '
 alias sivdir='nsxiv-rifle '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 alias rm='trash '
-alias devpod-start='/opt/devpod/devpod.AppImage'
+alias devpod-start='/opt/devpod/DevPod_linux_amd64.AppImage'
 
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down

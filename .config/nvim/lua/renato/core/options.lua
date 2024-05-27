@@ -68,13 +68,16 @@ vim.opt.listchars = {
 	eol = "↴",
 	leadmultispace = "• ",
 }
+vim.opt.showbreak = "↳"
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = "split"
 
--- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 10
-
 -- Set highlight on search
 vim.opt.hlsearch = true
 
+vim.opt.scrolloff = 10
+
+-- Indentation
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4

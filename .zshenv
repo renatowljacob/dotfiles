@@ -29,6 +29,15 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
 --color=info:#c0caf5:bold,prompt:#9ece6a:bold,pointer:#f7768e:bold \
 --color=marker:#7aa2f7,spinner:#7aa2f7,header:#7aa2f7"
 
+# Print tree structure in the preview window
+export FZF_ALT_C_OPTS=" --walker-skip .git,node_modules,target --preview 'tree -C {}'"
+
+# Preview file content using bat (https://github.com/sharkdp/bat)
+export FZF_CTRL_T_OPTS="
+  --walker-skip .git,node_modules,target
+  --preview 'bat -n --color=always {}'
+  --bind 'ctrl-/:change-preview-window(down|hidden|)'"
+
 export GTK_THEME="Adwaita:dark"
 export GTK2_RC_FILES="/usr/share/themes/Adwaita-dark/gtk-2.0/gtkrc"
 

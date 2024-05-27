@@ -1,6 +1,6 @@
-require("renato.configs.keymaps")
-require("renato.configs.options")
-require("renato.configs.autocmds")
+require("renato.core.keymaps")
+require("renato.core.options")
+require("renato.core.autocmds")
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info

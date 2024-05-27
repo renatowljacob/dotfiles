@@ -72,7 +72,7 @@ return {
 				-- Jump to the type of the word under your cursor.
 				--  Useful when you're not sure what type a variable is and you want to see
 				--  the definition of its *type*, not where it was *defined*.
-				map("<leader>dd", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
+				map("<leader>dt", require("telescope.builtin").lsp_type_definitions, "[T]ype Definition")
 
 				-- Fuzzy find all the symbols in your current document.
 				--  Symbols are things like variables, functions, types, etc.
@@ -84,11 +84,11 @@ return {
 
 				-- Rename the variable under your cursor.
 				--  Most Language Servers support renaming across files, etc.
-				map("<leader>dr", vim.lsp.buf.rename, "[R]ename")
+				map("<leader>cr", vim.lsp.buf.rename, "[R]ename")
 
 				-- Execute a code action, usually your cursor needs to be on top of an error
 				-- or a suggestion from your LSP for this to activate.
-				map("<leader>da", vim.lsp.buf.code_action, "Code [A]ction")
+				map("<leader>ca", vim.lsp.buf.code_action, "Code [A]ction")
 
 				-- Opens a popup that displays documentation about the word under your cursor
 				--  See `:help K` for why this keymap.
@@ -133,7 +133,7 @@ return {
 				--
 				-- This may be unwanted, since they displace some of your code
 				if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-					map("<leader>di", function()
+					map("<leader>ci", function()
 						vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 					end, "[I]nlay Hints")
 				end
@@ -223,12 +223,14 @@ return {
 		require("mason-lspconfig").setup({
 			handlers = {
 				function(server_name)
-					local server = servers[server_name] or {}
-					-- This handles overriding only values explicitly passed
-					-- by the server configuration above. Useful when disabling
-					-- certain features of an LSP (for example, turning off formatting for tsserver)
-					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-					require("lspconfig")[server_name].setup(server)
+					if server_name ~= "jdtls" then
+						local server = servers[server_name] or {}
+						-- This handles overriding only values explicitly passed
+						-- by the server configuration above. Useful when disabling
+						-- certain features of an LSP (for example, turning off formatting for tsserver)
+						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+						require("lspconfig")[server_name].setup(server)
+					end
 				end,
 			},
 		})

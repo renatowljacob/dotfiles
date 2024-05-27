@@ -1,5 +1,3 @@
--- %{%v:lua.MiniStatusline.active()%}
--- %{%v:lua.MiniStatusline.active()%}%{%v:lua.MiniStatusline.inactive()%}
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -10,12 +8,10 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- Diagnostic keymaps
--- vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic message" })
--- vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic message" })
 vim.keymap.set("n", "<leader>de", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
-vim.keymap.set("n", "<leader>dH", vim.diagnostic.hide, { desc = "[H]ide diagnostics" })
-vim.keymap.set("n", "<leader>dD", vim.diagnostic.show, { desc = "Show [D]iagnostics" })
+vim.keymap.set("n", "<leader>dh", vim.diagnostic.hide, { desc = "[H]ide diagnostics" })
+vim.keymap.set("n", "<leader>dd", vim.diagnostic.show, { desc = "Show [D]iagnostics" })
 
 -- Open Netrw (overriden by tfm keymap, fallback)
 vim.keymap.set("n", "<leader>lf", vim.cmd.Explore, { desc = "Netrw" })

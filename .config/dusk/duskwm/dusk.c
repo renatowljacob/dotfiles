@@ -297,10 +297,20 @@ struct Client {
 typedef struct {
 	int type;
 	unsigned int mod;
+	#if USE_KEYCODES
+	KeyCode keycode;
+	#else
 	KeySym keysym;
+	#endif // USE_KEYCODES
 	void (*func)(const Arg *);
 	const Arg arg;
 } Key;
+
+typedef struct {
+	char *icon;
+	Arg arg;
+	int pos; /* indicates that the icon is to be added as a prefix (0) or suffix (1) */
+} StackerIcon;
 
 typedef struct {
 	int nmaster;
@@ -519,6 +529,8 @@ static void zoom(const Arg *arg);
 /* variables */
 static const char broken[] = "fubar";
 static char rawstatustext[NUM_STATUSES][STATUS_BUFFER];
+static const char* env_home;
+static int env_homelen;
 
 static int screen;
 static int sw, sh;             /* X display screen geometry width, height */
@@ -1051,6 +1063,8 @@ cleanup(void)
 		drw_cur_free(drw, cursor[i]);
 	for (i = 0; i < LENGTH(colors) + 1; i++)
 		free(scheme[i]);
+
+	cleanup2dimagebuffer();
 	free(scheme);
 	XDestroyWindow(dpy, wmcheckwin);
 	drw_free(drw);
@@ -2073,6 +2087,17 @@ grabkeys(void)
 {
 	updatenumlockmask();
 	{
+		#if USE_KEYCODES
+		unsigned int i, j;
+		unsigned int modifiers[] = { 0, LockMask, numlockmask, numlockmask|LockMask };
+
+		XUngrabKey(dpy, AnyKey, AnyModifier, root);
+
+		for (i = 0; i < LENGTH(keys); i++) for (j = 0; j < LENGTH(modifiers); j++) 
+			XGrabKey(dpy, keys[i].keycode,
+				 keys[i].mod | modifiers[j], root, True,
+				 GrabModeAsync, GrabModeAsync);
+		#else // keysyms
 		unsigned int i, j, k;
 		unsigned int modifiers[] = { 0, LockMask, numlockmask, numlockmask|LockMask };
 		int start, end, skip;
@@ -2095,6 +2120,7 @@ grabkeys(void)
 			}
 		}
 		XFree(syms);
+		#endif // USE_KEYCODES
 	}
 }
 
@@ -2137,23 +2163,36 @@ void
 keypress(XEvent *e)
 {
 	unsigned int i;
+	#if !USE_KEYCODES
 	int keysyms_return;
 	KeySym* keysym;
+	#endif
 	XKeyEvent *ev;
 
 	getrootptr(&prev_ptr_x, &prev_ptr_y);
 
 	ev = &e->xkey;
 	ignore_marked = 0;
+	#if !USE_KEYCODES
 	keysym = XGetKeyboardMapping(dpy, (KeyCode)ev->keycode, 1, &keysyms_return);
+	#endif
 	for (i = 0; i < LENGTH(keys); i++) {
-		if (*keysym == keys[i].keysym
-				&& ev->type == keys[i].type
-				&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state)
-				&& keys[i].func)
+		if (
+		#if USE_KEYCODES
+		ev->keycode == keys[i].keycode
+			#else
+			*keysym == keys[i].keysym
+			#endif // USE_KEYCODES
+			&& ev->type == keys[i].type
+			&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state)
+			&& keys[i].func
+			) {
 			keys[i].func(&(keys[i].arg));
+		}
 	}
+	#if !USE_KEYCODES
 	XFree(keysym);
+	#endif // USE_KEYCODES
 	ignore_marked = 1;
 
 	if (ev->type == KeyRelease)
@@ -3183,6 +3222,11 @@ setup(void)
 	Atom utf8string;
 	struct sigaction chld, hup, term;
 
+	/* Record the HOME environment variable (for ~ substitution) */
+	env_home = getenv("HOME");
+	assert(env_home && strchr(env_home, '/'));
+	env_homelen = strlen(env_home);
+
 	/* Handle children when they terminate. */
 	sigemptyset(&chld.sa_mask);
 	chld.sa_flags = SA_NOCLDSTOP | SA_RESTART;
@@ -3362,6 +3406,10 @@ spawncmd(const Arg *arg, int buttonclick, int orphan)
 {
 	struct sigaction sa;
 	pid_t pid = fork();
+	int i;
+	char **argv = ((char **)arg->v);
+	if (!argv[0] || strlen(argv[0]) == 1)
+		argv++;
 
 	if (pid == 0) {
 
@@ -3370,10 +3418,8 @@ spawncmd(const Arg *arg, int buttonclick, int orphan)
 
 		if (dpy)
 			close(ConnectionNumber(dpy));
+
 		if (enabled(SpawnCwd) && selws->sel) {
-			const char* const home = getenv("HOME");
-			assert(home && strchr(home, '/'));
-			const size_t homelen = strlen(home);
 			char *cwd, *pathbuf = NULL;
 			struct stat statbuf;
 
@@ -3382,10 +3428,10 @@ spawncmd(const Arg *arg, int buttonclick, int orphan)
 			 * but that does not matter because we are going to
 			 * exec() below anyway; nothing else will use it */
 			while (cwd) {
-				if (*cwd == '~') { /* replace ~ with $HOME */
-					if (!(pathbuf = malloc(homelen + strlen(cwd)))) /* ~ counts for NULL term */
-						die("fatal: could not malloc() %u bytes\n", homelen + strlen(cwd));
-					strcpy(strcpy(pathbuf, home) + homelen, cwd + 1);
+				if (*cwd == '~') {
+					/* Replace ~ with HOME environment variable */
+					pathbuf = ecalloc(1, env_homelen + strlen(cwd));
+					sprintf(pathbuf, "%s%s", env_home, cwd + 1);
 					cwd = pathbuf;
 				}
 
@@ -3424,10 +3470,17 @@ spawncmd(const Arg *arg, int buttonclick, int orphan)
 		sa.sa_handler = SIG_DFL;
 		sigaction(SIGCHLD, &sa, NULL);
 
-		execvp(((char **)arg->v)[1], ((char **)arg->v)+1);
-		fprintf(stderr, "dusk: execvp %s", ((char **)arg->v)[1]);
-		perror(" failed");
-		exit(EXIT_SUCCESS);
+		/* Replace occurrences of "~/" with the value of HOME environment variable */
+		for (i = 0; argv[i] != NULL; i++) {
+			if (strncmp(argv[i], "~/", 2) == 0) {
+				char *buffer = ecalloc(1, env_homelen + strlen(argv[i]));
+				sprintf(buffer, "%s%s", env_home, argv[i] + 1);
+				argv[i] = buffer;
+			}
+		}
+
+		execvp(argv[0], argv);
+		die("dusk: execvp %s failed:", argv[0]);
 	}
 	return pid;
 }
