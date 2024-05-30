@@ -9,7 +9,6 @@ return {
 	opts = {
 		style = "night",
 		transparent = true,
-		-- sidebars = "transparent",
 		floats = "transparent",
 	},
 	init = function()

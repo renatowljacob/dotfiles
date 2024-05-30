@@ -6,9 +6,9 @@ return {
 		{
 			"<leader>ha",
 			function()
-				require("harpoon"):list():append()
+				require("harpoon"):list():add()
 			end,
-			desc = "[H]arpoon - [A]ppend Buffer",
+			desc = "[H]arpoon - [A]dd Buffer",
 		},
 		{
 			"<leader>hm",

@@ -1,6 +1,5 @@
 return {
 	"HiPhish/rainbow-delimiters.nvim",
-	-- ft = "!java",
 	config = function()
 		local rainbow_delimiters = require("rainbow-delimiters")
 
