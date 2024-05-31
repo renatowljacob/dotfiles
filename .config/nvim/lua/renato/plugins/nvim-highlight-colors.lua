@@ -1,12 +1,13 @@
 return {
 	"brenoprata10/nvim-highlight-colors",
-	ft = { "css", "html", "javascript" },
-	cmd = "HighlightColors",
 	opts = {
 		---@usage 'background'|'foreground'|'virtual'
 		render = "background",
 		virtual_symbol = "■",
-		enable_named_colors = true,
-		enable_tailwind = true,
+		enable_named_colors = vim.bo.filetype == "css",
+		enable_hsl_colors = vim.bo.filetype == "css",
+		enable_rgb_colors = vim.bo.filetype == "css",
+		enable_tailwind = vim.bo.filetype == "css",
+		exclude_buftypes = { "nofile" },
 	},
 }

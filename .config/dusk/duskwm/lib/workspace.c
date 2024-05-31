@@ -932,7 +932,7 @@ Workspace *
 nextoccmonws(Monitor *mon, Workspace *ws)
 {
 	Workspace *w;
-	for (w = ws; w && (w->mon != mon || ws == stickyws || w->stack == NULL); w = w->next);
+	for (w = ws; w && (w->mon != mon || w == stickyws || w->stack == NULL); w = w->next);
 	return w;
 }
 
@@ -952,7 +952,7 @@ selectmonws(Monitor *mon)
 	/* Prioritise the first visible workspace on the given monitor */
 	ws = nextvismonws(mon, workspaces);
 
-	/* Fall back to the first occupied workspace on the given monitor */
+	/* Fall back to the first occcupied workspace on the given monitor */
 	if (!ws)
 		ws = nextoccmonws(mon, workspaces);
 
@@ -1063,14 +1063,14 @@ reviewworkspaces(void)
 		if (sel) {
 			m->selws = sel;
 			sel->visible = 1;
-		}
 
-		/* Hide the rest, if any */
-		for (ws = nextvismonws(m, workspaces); ws; ws = nextvismonws(m, ws->next)) {
-			if (ws == sel)
-			continue;
-			ws->visible = 0;
-			hidewsclients(ws->stack);
+			/* Hide the rest, if any */
+			for (ws = nextvismonws(m, workspaces); ws; ws = nextvismonws(m, ws->next)) {
+				if (ws == sel)
+					continue;
+				ws->visible = 0;
+				hidewsclients(ws->stack);
+			}
 		}
 	}
 }

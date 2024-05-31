@@ -2178,15 +2178,15 @@ keypress(XEvent *e)
 	#endif
 	for (i = 0; i < LENGTH(keys); i++) {
 		if (
-		#if USE_KEYCODES
-		ev->keycode == keys[i].keycode
+			#if USE_KEYCODES
+			ev->keycode == keys[i].keycode
 			#else
 			*keysym == keys[i].keysym
 			#endif // USE_KEYCODES
 			&& ev->type == keys[i].type
 			&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state)
 			&& keys[i].func
-			) {
+		) {
 			keys[i].func(&(keys[i].arg));
 		}
 	}
@@ -4048,12 +4048,9 @@ zoom(const Arg *arg)
 	if (!ws->layout->arrange || (c && ISFLOATING(c)) || !c)
 		return;
 
-	if (ismasterclient(c))
-	{
+	if (ismasterclient(c)) {
 		pop(c->next);
-	}
-	else
-	{
+	} else {
 		pop(c);
 	}
 

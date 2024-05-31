@@ -19,8 +19,6 @@ enum {
 	StackerLeftOfWindowIcon,
 	StackerTitlePrefix,
 	StackerTitleSuffix,
-	StackerTitleHead,
-	StackerTitleTail,
 	StackerTitleEllipsis,
 };
 

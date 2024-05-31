@@ -114,6 +114,7 @@ static uint64_t functionality = 0
 //	|RioDrawSpawnAsync // spawn the application alongside rather than after drawing area using slop
 //	|RestrictFocusstackToMonitor // restrict focusstack to only operate within the monitor, otherwise focus can drift between monitors
 //	|WinTitleIcons // adds application icons to window titles in the bar
+//	|StackerIcons // adds a stacker icon hints in window titles
 //	|WorkspaceLabels // adds the class of the master client next to the workspace icon
 //	|WorkspacePreview // adds preview images when hovering workspace icons in the bar
 ;
@@ -431,14 +432,24 @@ static const Layout layouts[] = {
 	{ KeyPress,   MOD, XK_a, ACTION, {.i = 3 } }, \
 	{ KeyPress,   MOD, XK_z, ACTION, {.i = LASTTILED } },
 
+/* This relates to the StackerIcons functionality and should mirror the STACKKEYS list above. */
+static const StackerIcon stackericons[] = {
+	{ "[j]", {.i = INC(+1) } },
+	{ "[k]", {.i = INC(-1) } },
+	{ "[s]", {.i = PREVSEL } },
+	{ "[w]", {.i = 1 } },
+	{ "[e]", {.i = 2 } },
+	{ "[a]", {.i = 3 } },
+	{ "[z]", {.i = LASTTILED } },
+};
+
 /* Helper macros for spawning commands */
 #define SHCMD(cmd) { .v = (const char*[]){ NULL, "/bin/sh", "-c", cmd, NULL } }
 #define CMD(...)   { .v = (const char*[]){ NULL, __VA_ARGS__, NULL } }
 
 /* Scratch/Spawn commands:        NULL (scratchkey), command, argument, argument, ..., NULL */
-static const char *termcmd[]  = { NULL, "st", NULL };
+static const char *termcmd[]  = { "st", NULL };
 static const char *dmenucmd[] = {
-	NULL,
 	"dmenu_run",
 	"-fn", dmenufont,
 	"-nb", dmenunormbgcolor,
@@ -451,7 +462,7 @@ static const char *dmenucmd[] = {
 static const char *spcmd_w[] = {"w", "st", "-n", "spterm (w)", "-g", "120x34", NULL };
 static const char *spcmd_e[] = {"e", "st", "-n", "spterm (e)", "-g", "120x34", NULL };
 static const char *spcmd_r[] = {"r", "st", "-n", "spfm (r)", "-g", "144x41", "-e", "ranger", NULL };
-static const char *statusclickcmd[] = { NULL, "bin/statusbar/statusclick.sh", NULL };
+static const char *statusclickcmd[] = { "~/bin/statusbar/statusclick.sh", NULL };
 
 static Key keys[] = {
 	/* type       modifier                      key              function                argument */
@@ -728,6 +739,7 @@ static IPCCommand ipccommands[] = {
 	IPCCOMMAND( togglefloating, ARG_TYPE_NONE ),
 	IPCCOMMAND( togglefullscreen, ARG_TYPE_NONE ),
 	IPCCOMMAND( togglegaps, ARG_TYPE_NONE ),
+	IPCCOMMAND( togglekeybindings, ARG_TYPE_NONE ),
 	IPCCOMMAND( togglemark, ARG_TYPE_NONE ),
 	IPCCOMMAND( togglenomodbuttons, ARG_TYPE_NONE ),
 	IPCCOMMAND( togglepinnedws, ARG_TYPE_NONE ),

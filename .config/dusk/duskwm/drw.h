@@ -1,5 +1,4 @@
 /* See LICENSE file for copyright and license details. */
-
 #include <Imlib2.h>
 
 typedef struct {

@@ -6,7 +6,7 @@ local i = ls.insert_node
 local s = ls.snippet
 local fmt = require("luasnip.extras.fmt").fmta
 
--- fmt( ({}), nodes)
+-- fmt( (<>), nodes)
 ls.add_snippets("java", {
 	s(
 		"getter",

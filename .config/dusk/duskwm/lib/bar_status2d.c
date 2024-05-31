@@ -206,8 +206,9 @@ drw_2dtext(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int 
 
 			isCode = 0;
 			len -= i + 1;
-			if (len <= 0)
+			if (len <= 0) {
 				break;
+			}
 
 			text = text + i + 1;
 			i = -1;
@@ -288,8 +289,9 @@ status2dtextlength(char* text2d)
 						use_cache = 0;
 						*(text2d + i) = 'i'; // ensure that the next time this status is used we do it from cache
 					}
+
 					for (j = 0, i++; j < maxlen - 1 && i < len && text[i] != '^'; i++, j++)
-					buf[j] = text[i];
+						buf[j] = text[i];
 					buf[j] = '\0';
 					i--;
 

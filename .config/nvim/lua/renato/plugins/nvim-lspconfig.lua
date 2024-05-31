@@ -1,8 +1,8 @@
 return {
 	-- LSP Configuration & Plugins
 	"neovim/nvim-lspconfig",
-	event = { "BufReadPre", "BufNewFile" },
-	cmd = { "LspInfo", "LspInstall", "LspUninstall", "LspStart", "Mason" },
+	-- event = { "BufReadPre", "BufNewFile" },
+	-- cmd = { "LspInfo", "LspInstall", "LspUninstall", "LspStart", "Mason" },
 	dependencies = {
 		-- Automatically install LSPs and related tools to stdpath for Neovim
 		{ "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
@@ -172,21 +172,6 @@ return {
 			-- tsserver = {},
 			--
 
-			jdtls = {
-				settings = {
-					java = {
-						format = {
-							enabled = false,
-						},
-
-						inlayHints = {
-							parameterNames = {
-								enabled = "all",
-							},
-						},
-					},
-				},
-			},
 			lua_ls = {
 				-- cmd = {...},
 				-- filetypes = { ...},
@@ -204,6 +189,8 @@ return {
 					},
 				},
 			},
+
+			jdtls = {},
 		}
 
 		-- Ensure the servers and tools above are installed

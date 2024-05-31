@@ -139,11 +139,3 @@ load_icon_from_png_image(Client *c, const char *iconpath)
 
 	return 1;
 }
-
-void
-drw_pic(Drw *drw, int x, int y, unsigned int w, unsigned int h, Picture pic)
-{
-	if (!drw)
-		return;
-	XRenderComposite(drw->dpy, PictOpOver, pic, None, drw->picture, 0, 0, 0, 0, x, y, w, h);
-}

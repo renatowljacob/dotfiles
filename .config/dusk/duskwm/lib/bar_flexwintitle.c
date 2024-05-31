@@ -279,6 +279,7 @@ flextitledraw(Workspace *ws, Client *c, int unused, int x, int w, int tabscheme,
 		}
 
 	}
+
 	drawstateindicator(ws, c, 1, x, barg->y, w, barg->h, 0, 0);
 }
 

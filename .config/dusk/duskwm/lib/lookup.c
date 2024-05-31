@@ -40,6 +40,7 @@ getclientindices(
 	int nthc = 0, ntht = 0, nthf = 0, nthm = 0, nths = 0;
 
 	for (s = ws->clients; s; s = s->next) {
+
 		if (!ISVISIBLE(s))
 			continue;
 
@@ -79,7 +80,6 @@ getclientindices(
 	*num_master = nm;
 	*num_stack = ns;
 }
-
 
 int
 ismasterclient(Client *client)
