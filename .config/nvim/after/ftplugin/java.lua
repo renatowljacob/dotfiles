@@ -1,3 +1,5 @@
+-- From https://github.com/bcampolo/nvim-starter-kit/tree/java
+--
 -- JDTLS (Java LSP) configuration
 local jdtls = require("jdtls")
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
