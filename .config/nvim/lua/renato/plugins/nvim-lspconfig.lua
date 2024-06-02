@@ -1,8 +1,8 @@
 return {
 	-- LSP Configuration & Plugins
 	"neovim/nvim-lspconfig",
-	-- event = { "BufReadPre", "BufNewFile" },
-	-- cmd = { "LspInfo", "LspInstall", "LspUninstall", "LspStart", "Mason" },
+	event = { "BufReadPre", "BufNewFile" },
+	cmd = { "LspInfo", "LspStart", "Mason" },
 	dependencies = {
 		-- Automatically install LSPs and related tools to stdpath for Neovim
 		{ "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
@@ -13,9 +13,9 @@ return {
 		-- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
 		{ "j-hui/fidget.nvim", opts = {} },
 
-		-- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
-		-- used for completion, annotations and signatures of Neovim apis
-		{ "folke/neodev.nvim", opts = {} },
+		-- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+		-- used for completion, annotations and signatures of Neovim APIs
+		{ "folke/lazydev.nvim", opts = {} },
 	},
 	config = function()
 		-- Brief aside: **What is LSP?**
@@ -169,9 +169,11 @@ return {
 			--    https://github.com/pmizio/typescript-tools.nvim
 			--
 			-- But for many setups, the LSP (`tsserver`) will work just fine
-			-- tsserver = {},
-			--
-
+			cssls = {},
+			html = {},
+			tsserver = {},
+			emmet_language_server = {},
+			jdtls = {},
 			lua_ls = {
 				-- cmd = {...},
 				-- filetypes = { ...},
@@ -189,8 +191,6 @@ return {
 					},
 				},
 			},
-
-			jdtls = {},
 		}
 
 		-- Ensure the servers and tools above are installed
@@ -206,6 +206,8 @@ return {
 		local ensure_installed = vim.tbl_keys(servers or {})
 		vim.list_extend(ensure_installed, {
 			"stylua", -- Used to format Lua code
+			"java-debug-adapter",
+			"java-test",
 		})
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
