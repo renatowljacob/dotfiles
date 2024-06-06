@@ -136,6 +136,7 @@ return {
 				-- This may be unwanted, since they displace some of your code
 				if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
 					map("<leader>ci", function()
+						---@diagnostic disable-next-line: missing-parameter
 						vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 					end, "[I]nlay Hints")
 				end
@@ -185,6 +186,7 @@ return {
 						},
 						hint = {
 							enable = true,
+							setType = true,
 						},
 						-- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
 						-- diagnostics = { disable = { 'missing-fields' } },

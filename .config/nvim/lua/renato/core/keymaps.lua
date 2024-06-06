@@ -18,8 +18,8 @@ vim.keymap.set("n", "<leader>lf", vim.cmd.Explore, { desc = "Netrw" })
 vim.keymap.set("n", "<leader>lv", vim.cmd.Lexplore, { desc = "Netrw on the left side" })
 
 -- View next/previous buffer in the list
-vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<CR>", { desc = "Buffer: [P]revious buffer" })
-vim.keymap.set("n", "<leader>bn", "<cmd>bnext<CR>", { desc = "Buffer: [N]ext buffer" })
+vim.keymap.set("n", "[b", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
+vim.keymap.set("n", "]b", "<cmd>bnext<CR>", { desc = "Next buffer" })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which

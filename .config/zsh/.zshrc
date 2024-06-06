@@ -62,7 +62,6 @@ alias siv='nsxiv -a '
 alias sivdir='nsxiv-rifle '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 alias rm='trash '
-alias devpod-start='/opt/devpod/DevPod_linux_amd64.AppImage'
 alias nvim-debug='NVIM_APPNAME="nvim-debug" nvim'
 
 bindkey -M vicmd 'k' history-substring-search-up
