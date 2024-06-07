@@ -8,10 +8,11 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- Diagnostic keymaps
+vim.keymap.set("n", "<leader>dd", function()
+	vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = "Toggle [D]iagnostics" })
 vim.keymap.set("n", "<leader>de", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
-vim.keymap.set("n", "<leader>dh", vim.diagnostic.hide, { desc = "[H]ide diagnostics" })
-vim.keymap.set("n", "<leader>dd", vim.diagnostic.show, { desc = "Show [D]iagnostics" })
 
 -- Open Netrw (overriden by tfm keymap, fallback)
 vim.keymap.set("n", "<leader>lf", vim.cmd.Explore, { desc = "Netrw" })

@@ -88,9 +88,37 @@ return {
 		-- Install golang specific config
 		require("dap-go").setup()
 
+		dap.configurations.cpp = {
+			{
+				name = "Launch file",
+				type = "codelldb",
+				request = "launch",
+				program = function()
+					return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+				end,
+				cwd = "${workspaceFolder}",
+				stopOnEntry = false,
+			},
+			{
+				name = "Launch file with arguments",
+				type = "codelldb",
+				request = "launch",
+				program = function()
+					return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+				end,
+				cwd = "${workspaceFolder}",
+				args = function()
+					return vim.fn.split(vim.fn.input("Arguments: "), " ", true)
+				end,
+				stopOnEntry = false,
+			},
+		}
+
+		dap.configurations.c = dap.configurations.cpp
+
 		dap.configurations.java = {
 			{
-				name = "Debug Launch (2GB)",
+				name = "Run Debugger (2GB)",
 				type = "java",
 				request = "launch",
 				vmArgs = "" .. "-Xmx2g ",

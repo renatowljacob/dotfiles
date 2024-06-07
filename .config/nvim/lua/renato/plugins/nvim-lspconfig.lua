@@ -170,11 +170,12 @@ return {
 			--    https://github.com/pmizio/typescript-tools.nvim
 			--
 			-- But for many setups, the LSP (`tsserver`) will work just fine
+			clangd = {},
 			cssls = {},
-			html = {},
-			tsserver = {},
 			emmet_language_server = {},
+			html = {},
 			jdtls = {},
+			tsserver = {},
 			lua_ls = {
 				-- cmd = {...},
 				-- filetypes = { ...},
@@ -208,6 +209,7 @@ return {
 		local ensure_installed = vim.tbl_keys(servers or {})
 		vim.list_extend(ensure_installed, {
 			"stylua", -- Used to format Lua code
+			"codelldb", -- Debugger for C and more
 			"java-debug-adapter",
 			"java-test",
 		})
