@@ -1,4 +1,4 @@
-require("luasnip.session.snippet_collection").clear_snippets("java")
+require("luasnip.session.snippet_collection").clear_snippets("c")
 
 local ls = require("luasnip")
 local i = ls.insert_node
