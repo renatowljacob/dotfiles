@@ -1,0 +1,27 @@
+[manager]
+ratio = [2, 3, 3]
+sort_by = "natural"
+linemode = "size"
+show_hidden = true
+scrolloff = 10
+
+[opener]
+open = [
+	{ run = 'xdg-open "$@"', desc = "Open" },
+]
+open_browser = [
+	{ run = 'chromium "$@"', desc = "Open in browser" },
+]
+edit = [
+	{ run = 'nvim "$@"', block = true, desc = "Edit" },
+]
+
+[open]
+prepend_rules = [
+	{ name = "*.html", use = [ "open_browser", "edit" ] },
+]
+
+[preview]
+tab_size = 4
+image_filter = "lanczos3"
+image_quality = 90

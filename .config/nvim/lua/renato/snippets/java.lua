@@ -6,8 +6,32 @@ local i = ls.insert_node
 local s = ls.snippet
 local fmt = require("luasnip.extras.fmt").fmta
 
--- fmt( (<>), nodes)
 ls.add_snippets("java", {
+	s(
+		{
+			trig = "Main",
+			docstring = {
+				"Main class and method",
+				"public class Main {",
+				"\tpublic static void main(String[] args) {",
+				"\t // Method body",
+				"\t}",
+				"}",
+			},
+		},
+		fmt(
+			[[
+public class Main {
+	public static void main(String[] args) {
+		<>
+	}
+}
+]],
+			{
+				i(1, "// Method body"),
+			}
+		)
+	),
 	s(
 		"getter",
 		fmt(
@@ -48,5 +72,42 @@ void set<>(<> <attribute>) {
 				repeat_duplicates = true,
 			}
 		)
+	),
+	s(
+		{
+			trig = "print",
+			docstring = {
+				"Print to standard out",
+				'System.out.print("");',
+			},
+		},
+		fmt('System.out.print("<>");', {
+			i(1, "string"),
+		})
+	),
+	s(
+		{
+			trig = "print",
+			docstring = {
+				"Print to standard out",
+				"System.out.print();",
+			},
+		},
+		fmt("System.out.print(<>);", {
+			i(1, "object"),
+		})
+	),
+	s(
+		{
+			trig = "printf",
+			docstring = {
+				"Print to standard out",
+				'System.out.printf("format", args);',
+			},
+		},
+		fmt('System.out.printf("<>", <>);', {
+			i(1, "format"),
+			i(2, "args"),
+		})
 	),
 })

@@ -111,11 +111,18 @@
 [Volume]
     appname = Volume
     override_dbus_timeout = 2
+    history_ignore = yes
 
 [Calendar]
     appname = Calendar
     format = "%s\n<i>%b</i>"
     icon_position = off
     alignment = center
+
+[wezterm_ignore]
+    appname = wezterm
+    body = "*No fonts contain*"
+    skip_display = true
+    history_ignore = yes
 
 # vim: ft=cfg

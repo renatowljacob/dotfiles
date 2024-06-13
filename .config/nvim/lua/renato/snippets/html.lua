@@ -5,10 +5,24 @@ local i = ls.insert_node
 local s = ls.snippet
 local fmt = require("luasnip.extras.fmt").fmt
 
--- fmt( ({}), nodes)
 ls.add_snippets("html", {
 	s(
-		"html5",
+		{
+			trig = "html5",
+			docstring = {
+				"<!DOCTYPE html>",
+				"<html lang='en'>",
+				"\t<head>",
+				"\t\t<meta charset='UTF-8'>",
+				"\t\t<meta name='viewport' content='width=device-width, initial-scale=1.0'>",
+				"\t\t<title>Document</title>",
+				"\t</head>",
+				"\t<body>",
+				"\t\tDocument body",
+				"\t</body>",
+				"</html>",
+			},
+		},
 		fmt(
 			[[
 <!DOCTYPE html>
