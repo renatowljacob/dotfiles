@@ -64,6 +64,9 @@ vim.keymap.set("n", "Z", "i<enter><Esc>")
 -- Clear search highlight
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
+-- Transfer diagraph key
+vim.keymap.set("i", "<C-k>", "<C-b>")
+
 -- Funny calculator
 -- https://www.reddit.com/r/neovim/comments/1d8yeb0/simple_calculator_in_neovim/
 vim.keymap.set("i", "<C-.>", function()

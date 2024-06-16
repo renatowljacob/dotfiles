@@ -1,6 +1,7 @@
 require("luasnip.session.snippet_collection").clear_snippets("java")
 
 local ls = require("luasnip")
+local c = ls.choice_node
 local f = ls.function_node
 local i = ls.insert_node
 local s = ls.snippet
@@ -77,37 +78,22 @@ void set<>(<> <attribute>) {
 		{
 			trig = "print",
 			docstring = {
-				"Print to standard out",
 				'System.out.print("");',
-			},
-		},
-		fmt('System.out.print("<>");', {
-			i(1, "string"),
-		})
-	),
-	s(
-		{
-			trig = "print",
-			docstring = {
-				"Print to standard out",
 				"System.out.print();",
-			},
-		},
-		fmt("System.out.print(<>);", {
-			i(1, "object"),
-		})
-	),
-	s(
-		{
-			trig = "printf",
-			docstring = {
-				"Print to standard out",
 				'System.out.printf("format", args);',
 			},
 		},
-		fmt('System.out.printf("<>", <>);', {
-			i(1, "format"),
-			i(2, "args"),
+		c(1, {
+			fmt('System.out.print("<>");', {
+				i(1, "string"),
+			}),
+			fmt("System.out.print(<>);", {
+				i(1, "object"),
+			}),
+			fmt('System.out.printf("<>", <>);', {
+				i(1, "format"),
+				i(2, "args"),
+			}),
 		})
 	),
 })

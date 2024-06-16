@@ -3,6 +3,7 @@ require("luasnip.session.snippet_collection").clear_snippets("c")
 local ls = require("luasnip")
 local i = ls.insert_node
 local s = ls.snippet
+local c = ls.choice_node
 local fmta = require("luasnip.extras.fmt").fmta
 local fmt = require("luasnip.extras.fmt").fmt
 
@@ -11,7 +12,6 @@ ls.add_snippets("c", {
 		{
 			trig = "main",
 			docstring = {
-				"Void main function",
 				"int main(void)",
 				"{",
 				"\t// Function body",
@@ -31,11 +31,11 @@ int main(void)
 			{ i(1, "// Function body") }
 		)
 	),
+
 	s(
 		{
 			trig = "main(argc, argv)",
 			docstring = {
-				"Main function with command-line arguments",
 				"int main(int argc, char **argv)",
 				"{",
 				"\t// Function body",
@@ -55,6 +55,7 @@ int main(int argc, char **argv)
 			{ i(1, "// Function body") }
 		)
 	),
+
 	s(
 		"function",
 		fmta(
@@ -72,34 +73,64 @@ int main(int argc, char **argv)
 			}
 		)
 	),
+
 	s(
 		{
-			trig = "include_sys",
+			trig = "include",
 			docstring = {
-				"System header file",
-				"#include <file.h>",
+				'#include <file.h>/"file.h"',
 			},
 		},
-		fmt(
-			[[
+		c(1, {
+			fmt(
+				[[
 #include <{}>
 ]],
-			{ i(1) }
-		)
-	),
-	s(
-		{
-			trig = "include_loc",
-			docstring = {
-				"Local header/source file",
-				'#include "file.h"',
-			},
-		},
-		fmt(
-			[[
+				{ i(1) }
+			),
+
+			fmt(
+				[[
 #include "{}"
 ]],
-			{ i(1) }
-		)
+				{ i(1) }
+			),
+		})
+	),
+
+	s(
+		{
+			trig = "struct",
+			docstring = {
+				"struct object {",
+				"int data;",
+				"...",
+				"};",
+				"_________________________",
+				"typedef struct object {",
+				"int data;",
+				"...",
+				"} objects;",
+			},
+		},
+		c(1, {
+			fmta(
+				[[
+struct <> {
+	<>
+};
+]],
+				{ i(1, "object"), i(2, "// Struct body") }
+			),
+
+			fmta(
+				[[
+typedef struct <> {
+	<>
+} <>;
+]],
+				{ i(1, "object"), i(2, "// Struct body"), i(3, "objects") }
+			),
+		})
 	),
 })

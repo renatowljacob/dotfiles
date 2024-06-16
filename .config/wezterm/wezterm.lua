@@ -65,4 +65,6 @@ config.keys = {
 	{ key = "v", mods = "CTRL|SHIFT", action = wezterm.action.PasteFrom("Clipboard") },
 }
 
+config.warn_about_missing_glyphs = false
+
 return config

@@ -81,16 +81,26 @@ return {
 				--    $body
 				--  end
 				--
-				-- <c-l> will move you to the right of each of the expansion locations.
-				-- <c-s> is similar, except moving you backwards.
-				["<C-l>"] = cmp.mapping(function()
+				-- <c-k> will move you to the right of each of the expansion locations.
+				-- <c-j> is similar, except moving you backwards.
+				["<C-j>"] = cmp.mapping(function()
 					if luasnip.expand_or_locally_jumpable() then
 						luasnip.expand_or_jump()
 					end
 				end, { "i", "s" }),
-				["<C-s>"] = cmp.mapping(function()
+				["<C-k>"] = cmp.mapping(function()
 					if luasnip.locally_jumpable(-1) then
 						luasnip.jump(-1)
+					end
+				end, { "i", "s" }),
+				["<C-l>"] = cmp.mapping(function()
+					if luasnip.choice_active() then
+						luasnip.change_choice(1)
+					end
+				end, { "i", "s" }),
+				["<C-s>"] = cmp.mapping(function()
+					if luasnip.choice_active() then
+						luasnip.change_choice(-1)
 					end
 				end, { "i", "s" }),
 
