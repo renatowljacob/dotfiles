@@ -8,7 +8,6 @@ keybinds clear-defaults=true {
         bind "i" { SwitchToMode "Normal"; }
         bind "r" { SwitchToMode "Resize"; }
         bind "s" { SwitchToMode "Scroll"; }
-        bind "S" { SwitchToMode "Session"; }
         bind "/" { SwitchToMode "EnterSearch"; SearchInput 0; }
 
         // DWM-like keybindings to move around and stuff
@@ -44,8 +43,8 @@ keybinds clear-defaults=true {
         bind "9" { GoToTab 9; }
 
         // Session setup
-        bind "d" { Detach; }
-        bind "w" {
+        bind "D" { Detach; }
+        bind "S" {
             LaunchOrFocusPlugin "session-manager" {
                 floating true
                 move_to_focused_tab true
