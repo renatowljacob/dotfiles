@@ -112,47 +112,12 @@ keybinds clear-defaults=true {
         bind "Ctrl c" { SwitchToMode "Normal"; }
         bind "Esc" { UndoRenamePane; SwitchToMode "Pane"; }
     }
-    // locked {
-    //     bind "Alt l" { SwitchToMode "Normal"; }
-    // }
-    // move {
-    //     
-    // }
-    // tab {
-    //     
-    // }
-    // session {
-    //
-    // }
     shared_except "normal" {
+        bind "Ctrl Space" { SwitchToMode "Normal"; }
         bind "Ctrl q" { Quit; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
     }
-    // shared_except "locked" {
-    //     bind "Alt l" { SwitchToMode "Locked"; }
-    // }
-    // shared_except "normal" "locked" {
-    //     bind "Esc" { SwitchToMode "Normal"; }
-    // }
-    // shared_except "pane" "locked" {
-    //     bind "Ctrl p" { SwitchToMode "Pane"; }
-    // }
-    // shared_except "resize" "locked" {
-    //     bind "Ctrl n" { SwitchToMode "Resize"; }
-    // }
-    // shared_except "scroll" "locked" {
-    //     bind "Ctrl s" { SwitchToMode "Scroll"; }
-    // }
-    // shared_except "session" "locked" {
-    //     bind "Ctrl o" { SwitchToMode "Session"; }
-    // }
-    // shared_except "tab" "locked" {
-    //     bind "Ctrl t" { SwitchToMode "Tab"; }
-    // }
-    // shared_except "move" "locked" {
-    //     bind "Ctrl h" { SwitchToMode "Move"; }
-    // }
 }
 
 plugins {

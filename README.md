@@ -11,6 +11,7 @@ CEO of LARPing
 - **Window Manager:** [dusk](https://github.com/bakkeby/dusk)
 - **X Compositor:** [picom](https://github.com/yshui/picom)
 - **Terminal:** [WezTerm](https://wezfurlong.org/wezterm/index.html)
+- **Terminal Multiplexer:** [Zellij](https://github.com/zellij-org/zellij)
 - **Text Editor:** [Neovim](https://neovim.io/)
 - **Application Launcher:** [dmenu](https://tools.suckless.org/dmenu/)
 - **File Manager:** [lf](https://github.com/gokcehan/lf)

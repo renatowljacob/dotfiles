@@ -7,6 +7,6 @@ return {
 	end,
 	ft = { "markdown" },
 	config = function()
-		vim.g.mkdp_browser = "sfirefox-developer-edition"
+		vim.g.mkdp_browser = "chromium"
 	end,
 }
