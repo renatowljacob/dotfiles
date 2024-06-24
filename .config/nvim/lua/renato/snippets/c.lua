@@ -13,14 +13,17 @@ ls.add_snippets("c", {
 			trig = "main",
 			docstring = {
 				"int main(void)",
+				"or",
+				"int main(int argc, char *argv[])",
 				"{",
 				"\t// Function body",
 				"\treturn 0;",
 				"}",
 			},
 		},
-		fmta(
-			[[
+		c(1, {
+			fmta(
+				[[
 int main(void)
 {
 	<>
@@ -28,32 +31,20 @@ int main(void)
 	return 0;
 }
 ]],
-			{ i(1, "// Function body") }
-		)
-	),
-
-	s(
-		{
-			trig = "main(argc, argv)",
-			docstring = {
-				"int main(int argc, char **argv)",
-				"{",
-				"\t// Function body",
-				"\treturn 0;",
-				"}",
-			},
-		},
-		fmta(
-			[[
-int main(int argc, char **argv)
+				{ i(1, "// Function body") }
+			),
+			fmta(
+				[[
+int main(int argc, char *argv[])
 {
 	<>
 
 	return 0;
 }
 ]],
-			{ i(1, "// Function body") }
-		)
+				{ i(1, "// Function body") }
+			),
+		})
 	),
 
 	s(

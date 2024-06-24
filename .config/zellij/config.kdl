@@ -2,6 +2,12 @@
 keybinds clear-defaults=true {
     normal {
         bind "Ctrl Space" { SwitchToMode "Pane"; }
+        bind "Alt j" { FocusNextPane; }
+        bind "Alt k" { FocusPreviousPane; }
+        bind "Alt h" { Resize "Increase Left"; }
+        bind "Alt l" { Resize "Increase Right"; }
+        bind "Alt J" { MovePane; }
+        bind "Alt K" { MovePaneBackwards; }
     }
     pane {
         // Vim normal mode analogue. "Normal" is meant to be insert mode.

@@ -520,7 +520,6 @@ static Monitor *wintomon(Window w);
 static int xerror(Display *dpy, XErrorEvent *ee);
 static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
-static void pop(Client *c);
 static void zoom(const Arg *arg);
 
 /* bar functions */
@@ -4024,15 +4023,6 @@ xerrorstart(Display *dpy, XErrorEvent *ee)
 }
 
 void
-pop(Client *c)
-{
-	detach(c);
-	attach(c);
-	focus(c);
-	arrange(c->ws);
-}
-
-void
 zoom(const Arg *arg)
 {
 	Client *c = CLIENT, *master = NULL;
@@ -4049,14 +4039,6 @@ zoom(const Arg *arg)
 		return;
 
 	if (ismasterclient(c)) {
-		pop(c->next);
-	} else {
-		pop(c);
-	}
-
-	// Dusk's zoom behaviour
-
-	/* if (ismasterclient(c)) {
 		master = c;
 		if (ws->prevzoom && ws->prevzoom->ws == ws) {
 			c = ws->prevzoom;
@@ -4068,7 +4050,7 @@ zoom(const Arg *arg)
 	}
 
 	swap(master, c);
-	ws->prevzoom = master; */
+	ws->prevzoom = master;
 	focus(c);
 
 	arrange(c->ws);

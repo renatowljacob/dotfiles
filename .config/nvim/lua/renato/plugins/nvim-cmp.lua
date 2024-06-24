@@ -115,6 +115,14 @@ return {
 			},
 		})
 
+		-- DB completion
+		cmp.setup.filetype({ "sql" }, {
+			sources = {
+				{ name = "vim-dadbod-completion" },
+				{ name = "buffer" },
+			},
+		})
+
 		for _, ft_path in ipairs(vim.api.nvim_get_runtime_file("lua/renato/snippets/*.lua", true)) do
 			loadfile(ft_path)()
 		end
