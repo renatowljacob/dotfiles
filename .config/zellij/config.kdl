@@ -8,6 +8,9 @@ keybinds clear-defaults=true {
         bind "Alt l" { Resize "Increase Right"; }
         bind "Alt J" { MovePane; }
         bind "Alt K" { MovePaneBackwards; }
+        bind "Alt f" { ToggleFocusFullscreen; }
+        bind "Alt n" { GoToNextTab; } // next
+        bind "Alt p" { GoToPreviousTab; } // previous
     }
     pane {
         // Vim normal mode analogue. "Normal" is meant to be insert mode.
@@ -110,12 +113,12 @@ keybinds clear-defaults=true {
         bind "Enter" { SwitchToMode "Search"; }
     }
     renametab {
-        bind "Ctrl c" { SwitchToMode "Normal"; }
-        bind "Esc" { UndoRenameTab; SwitchToMode "Pane"; }
+        bind "Esc" "Enter" { SwitchToMode "Pane"; }
+        bind "Ctrl c" { UndoRenameTab; SwitchToMode "Pane"; }
     }
     renamepane {
-        bind "Ctrl c" { SwitchToMode "Normal"; }
-        bind "Esc" { UndoRenamePane; SwitchToMode "Pane"; }
+        bind "Esc" "Enter" { SwitchToMode "Pane"; }
+        bind "Ctrl c" { UndoRenamePane; SwitchToMode "Pane"; }
     }
     shared_except "normal" {
         bind "Ctrl Space" { SwitchToMode "Normal"; }

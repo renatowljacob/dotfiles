@@ -1,4 +1,4 @@
-# Running Spotx script after Spotify/Spotx update while maintaning external connections like with lastfm
+# Run Spotx after target update while keeping account connections (lasftm)
 
 [Trigger]
 Operation = Install

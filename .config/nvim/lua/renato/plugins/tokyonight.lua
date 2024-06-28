@@ -9,7 +9,10 @@ return {
 	opts = {
 		style = "night",
 		transparent = true,
-		floats = "transparent",
+		styles = {
+			floats = "transparent",
+			sidebars = "transparent",
+		},
 	},
 	init = function()
 		-- Load the colorscheme here.
@@ -18,8 +21,7 @@ return {
 		vim.cmd.colorscheme("tokyonight")
 
 		-- You can configure highlights by doing something like:
-		-- vim.cmd.hi("Normal guibg=none")
-		-- vim.cmd.hi("NormalNC guibg=none")
-		-- vim.cmd.hi("SignColumn guibg=none")
+		vim.cmd.hi("DapStoppedLine guibg=#16161e")
+		vim.cmd.hi("DebugPC guibg=#16161e")
 	end,
 }

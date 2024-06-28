@@ -81,3 +81,12 @@ vim.opt.scrolloff = 10
 -- Indentation
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
+
+-- Floating windows border configuration
+vim.diagnostic.config({
+	float = { border = "rounded" },
+})
+
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+	border = "single",
+})
