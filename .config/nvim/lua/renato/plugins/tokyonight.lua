@@ -23,5 +23,8 @@ return {
 		-- You can configure highlights by doing something like:
 		vim.cmd.hi("DapStoppedLine guibg=#16161e")
 		vim.cmd.hi("DebugPC guibg=#16161e")
+		vim.cmd.hi("@neorg.tags.ranged_verbatim.name.word guifg=#545c7e")
+		vim.cmd.hi("@neorg.tags.ranged_verbatim.begin guifg=#545c7e")
+		vim.cmd.hi("@neorg.tags.ranged_verbatim.end guifg=#545c7e")
 	end,
 }

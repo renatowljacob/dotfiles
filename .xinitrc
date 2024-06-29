@@ -42,5 +42,6 @@ udiskie -s &
 qbittorrent &
 ~/.fehbg &
 picom -b --corner-radius-rules "3:class_g = 'dmenu'" &
+unclutter -b &
 sxhkd -m 1 &
 exec dusk

@@ -59,13 +59,15 @@ vim.keymap.set({ "n", "v" }, "(", "(zz")
 vim.keymap.set({ "n", "v" }, ")", ")zz")
 vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
-vim.keymap.set("n", "Z", "i<enter><Esc>")
 
 -- Clear search highlight
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Change diagraph key
 vim.keymap.set("i", "<C-k>", "<C-b>")
+
+-- Neorg keymaps
+vim.keymap.set("n", "<leader>nx", "<cmd>Neorg index<CR>")
 
 -- Funny calculator
 -- https://www.reddit.com/r/neovim/comments/1d8yeb0/simple_calculator_in_neovim/

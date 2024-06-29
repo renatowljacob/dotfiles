@@ -110,5 +110,9 @@ return {
 		vim.keymap.set("n", "<leader>sn", function()
 			builtin.find_files({ cwd = vim.fn.stdpath("config") })
 		end, { desc = "[S]earch [N]eovim files" })
+
+		vim.keymap.set("n", "<leader>sN", function()
+			builtin.find_files({ cwd = "~/Documents/notes/" })
+		end, { desc = "[S]earch [N]otes" })
 	end,
 }
