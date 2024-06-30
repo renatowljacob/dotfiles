@@ -66,8 +66,11 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 -- Change diagraph key
 vim.keymap.set("i", "<C-k>", "<C-b>")
 
--- Neorg keymaps
-vim.keymap.set("n", "<leader>nx", "<cmd>Neorg index<CR>")
+-- Neorg keymap
+vim.keymap.set("n", "<leader>nx", "<cmd>Neorg index<CR>", { desc = "Go to index file" })
+
+-- Toggle highlight color
+vim.keymap.set("n", "<leader>dh", "<cmd>HighlightColors Toggle<CR>", { desc = "Toggle [H]ighlight Colors" })
 
 -- Funny calculator
 -- https://www.reddit.com/r/neovim/comments/1d8yeb0/simple_calculator_in_neovim/

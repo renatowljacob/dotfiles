@@ -123,6 +123,12 @@ return {
 			},
 		})
 
+		cmp.setup.filetype({ "css" }, {
+			formatting = {
+				format = require("nvim-highlight-colors").format,
+			},
+		})
+
 		for _, ft_path in ipairs(vim.api.nvim_get_runtime_file("lua/renato/snippets/*.lua", true)) do
 			loadfile(ft_path)()
 		end
