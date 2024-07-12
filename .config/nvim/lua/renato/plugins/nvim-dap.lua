@@ -80,20 +80,20 @@ return {
 		-- Install golang specific config
 		require("dap-go").setup()
 
+		-- GDB setup
 		dap.configurations.cpp = {
 			{
 				name = "Launch file",
-				type = "codelldb",
+				type = "cppdbg",
 				request = "launch",
 				program = function()
 					return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
 				end,
 				cwd = "${workspaceFolder}",
-				stopOnEntry = false,
 			},
 			{
 				name = "Launch file with arguments",
-				type = "codelldb",
+				type = "cppdbg",
 				request = "launch",
 				program = function()
 					return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
@@ -102,10 +102,8 @@ return {
 				args = function()
 					return vim.fn.split(vim.fn.input("Arguments: "), " ", true)
 				end,
-				stopOnEntry = false,
 			},
 		}
-
 		dap.configurations.c = dap.configurations.cpp
 
 		dap.configurations.java = {

@@ -57,12 +57,14 @@ alias du='gdu '
 alias grep='grep --color=auto '
 alias lf='lfrun '
 alias locate='plocate '
-alias ls='lsd '
+alias ls='eza --icons=always --hyperlink'
 alias siv='nsxiv -a '
 alias sivdir='nsxiv-rifle '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 alias rm='trash '
 alias nvim-debug='NVIM_APPNAME="nvim-debug" nvim'
+alias pip='~/.python/venv/bin/pip'
+alias pip3='~/.python/venv/bin/pip3'
 
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
@@ -71,6 +73,12 @@ LFCD=$HOME/.config/lf/lf.bash
 if [ -f "$LFCD" ]; then
 	emulate ksh -c 'source $LFCD'
 fi
+
+export CC="clang"
+export CFLAGS="-ferror-limit=1 -gdwarf-4 -ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-gnu-folding-constant -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wshadow"
+export LDLIBS="-lcrypt -lcs50 -lm"
+
+export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
 
 function ya() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"

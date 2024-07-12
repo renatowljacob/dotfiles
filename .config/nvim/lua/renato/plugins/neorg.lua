@@ -1,6 +1,7 @@
 return {
 	"nvim-neorg/neorg",
 	dependencies = { { "nvim-lua/plenary.nvim" }, { "nvim-neorg/neorg-telescope" } },
+	version = "*",
 	ft = "norg",
 	cmd = { "Neorg" },
 	opts = {
@@ -49,7 +50,7 @@ return {
 							"<leader>nc",
 							"<cmd>Neorg keybind all core.looking-glass.magnify-code-block<CR>"
 						)
-						keybinds.map("norg", "n", "<leader>nl", "<cmd>Telescope neorg find_linkable<CR>")
+						keybinds.map("norg", "n", "<leader>nf", "<cmd>Telescope neorg find_linkable<CR>")
 						keybinds.map("norg", "n", "<leader>nh", "<cmd>Telescope neorg search_headings<CR>")
 					end,
 				},

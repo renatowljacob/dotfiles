@@ -56,12 +56,18 @@ return {
 			-- You can put your default mappings / updates / etc. in here
 			--  All the info you're looking for is in `:help telescope.setup()`
 			--
-			-- defaults = {
-			--   mappings = {
-			--     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-			--   },
-			-- },
-			-- pickers = {}
+			defaults = {
+				layout_strategy = "flex",
+				layout_config = {
+					flex = {
+						flip_columns = 180,
+					},
+				},
+				path_display = { "smart" },
+				--   mappings = {
+				--     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+				--   },
+			},
 			extensions = {
 				["ui-select"] = {
 					require("telescope.themes").get_dropdown(),
@@ -75,7 +81,11 @@ return {
 
 		-- See `:help telescope.builtin`
 		local builtin = require("telescope.builtin")
-		vim.keymap.set("n", "<leader>gf", require("telescope.builtin").git_files, { desc = "Search [G]it [F]iles" })
+		vim.keymap.set("n", "<leader>gf", builtin.git_files, { desc = "[S]earch [G]it [F]iles" })
+		vim.keymap.set("n", "<leader>gc", builtin.git_commits, { desc = "[S]earch [G]it [C]ommits" })
+		vim.keymap.set("n", "<leader>gb", builtin.git_bcommits, { desc = "[S]earch [G]it [B]uffer Commits" })
+		vim.keymap.set("n", "<leader>gr", builtin.git_branches, { desc = "[S]earch [G]it Branches" })
+		vim.keymap.set("n", "<leader>gs", builtin.git_status, { desc = "[S]earch [G]it [S]tatus" })
 		vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 		vim.keymap.set("n", "<leader>sH", builtin.highlights, { desc = "[S]earch [H]ighlights" })
 		vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
@@ -92,7 +102,6 @@ return {
 		vim.keymap.set("n", "<leader>/", function()
 			-- You can pass additional configuration to Telescope to change the theme, layout, etc.
 			builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-				winblend = 10,
 				previewer = false,
 			}))
 		end, { desc = "[/] Fuzzily search in current buffer" })
