@@ -8,56 +8,56 @@ return {
 			function()
 				require("harpoon"):list():add()
 			end,
-			desc = "[H]arpoon - [A]dd Buffer",
+			desc = "Harpoon - Add Buffer",
 		},
 		{
 			"<leader>hm",
 			function()
 				require("harpoon").ui:toggle_quick_menu(require("harpoon"):list())
 			end,
-			desc = "[H]arpoon = Toggle [M]enu",
+			desc = "Harpoon = Toggle Menu",
 		},
 		{
 			"<leader>hh",
 			function()
 				require("harpoon"):list():select(1)
 			end,
-			desc = "[H]arpoon - 1st file",
+			desc = "Harpoon - 1st file",
 		},
 		{
 			"<leader>hj",
 			function()
 				require("harpoon"):list():select(2)
 			end,
-			desc = "[H]arpoon - 2nd file",
+			desc = "Harpoon - 2nd file",
 		},
 		{
 			"<leader>hk",
 			function()
 				require("harpoon"):list():select(3)
 			end,
-			desc = "[H]arpoon - 3rd file",
+			desc = "Harpoon - 3rd file",
 		},
 		{
 			"<leader>hl",
 			function()
 				require("harpoon"):list():select(4)
 			end,
-			desc = "[H]arpoon - 4th file",
+			desc = "Harpoon - 4th file",
 		},
 		{
 			"<leader>hp",
 			function()
 				require("harpoon"):list():prev()
 			end,
-			desc = "[H]arpoon - [P]revious File",
+			desc = "Harpoon - Previous File",
 		},
 		{
 			"<leader>hn",
 			function()
 				require("harpoon"):list():next()
 			end,
-			desc = "[H]arpoon - [N]ext File",
+			desc = "Harpoon - Next File",
 		},
 	},
 }

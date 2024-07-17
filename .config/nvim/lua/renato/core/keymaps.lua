@@ -10,9 +10,9 @@ vim.g.maplocalleader = " "
 -- Diagnostic keymaps
 vim.keymap.set("n", "<leader>dd", function()
 	vim.diagnostic.enable(not vim.diagnostic.is_enabled())
-end, { desc = "Toggle [D]iagnostics" })
-vim.keymap.set("n", "<leader>de", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
-vim.keymap.set("n", "<leader>dq", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+end, { desc = "Toggle Diagnostics" })
+vim.keymap.set("n", "<leader>de", vim.diagnostic.open_float, { desc = "Show diagnostic Error messages" })
+vim.keymap.set("n", "<leader>dq", vim.diagnostic.setloclist, { desc = "Open diagnostic Quickfix list" })
 
 -- Open Netrw (overriden by tfm keymap, fallback)
 vim.keymap.set("n", "<leader>lf", vim.cmd.Explore, { desc = "Netrw" })
@@ -70,7 +70,7 @@ vim.keymap.set("i", "<C-k>", "<C-b>")
 vim.keymap.set("n", "<leader>nx", "<cmd>Neorg index<CR>", { desc = "Go to index file" })
 
 -- Toggle highlight color
-vim.keymap.set("n", "<leader>dh", "<cmd>HighlightColors Toggle<CR>", { desc = "Toggle [H]ighlight Colors" })
+vim.keymap.set("n", "<leader>dh", "<cmd>HighlightColors Toggle<CR>", { desc = "Toggle Highlight Colors" })
 
 -- Funny calculator
 -- https://www.reddit.com/r/neovim/comments/1d8yeb0/simple_calculator_in_neovim/
