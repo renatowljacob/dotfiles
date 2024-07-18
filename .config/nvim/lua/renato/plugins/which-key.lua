@@ -17,31 +17,27 @@ return {
 	-- Useful plugin to show you pending keybinds.
 	"folke/which-key.nvim",
 	event = "VimEnter", -- Sets the loading event to 'VimEnter'
-	config = function() -- This is the function that runs, AFTER loading
-		require("which-key").setup()
-
-		-- Document existing key chains
-		require("which-key").add({
-			{
-				{ "<leader>b", group = "Buffer" },
-				{ "<leader>b_", hidden = true },
-				{ "<leader>c", group = "Code" },
-				{ "<leader>c_", hidden = true },
-				{ "<leader>D", group = "Debug" },
-				{ "<leader>D_", hidden = true },
-				{ "<leader>d", group = "Document", icon = "󰈔" },
-				{ "<leader>d_", hidden = true },
-				{ "<leader>g", group = "Git" },
-				{ "<leader>g_", hidden = true },
-				{ "<leader>h", group = "Harpoon", icon = "󱡀" },
-				{ "<leader>h_", hidden = true },
-				{ "<leader>l", group = "List Files" },
-				{ "<leader>l_", hidden = true },
-				{ "<leader>n", group = "Neorg", icon = "󰏫" },
-				{ "<leader>n_", hidden = true },
-				{ "<leader>s", group = "Search" },
-				{ "<leader>s_", hidden = true },
-			},
-		})
-	end,
+	opts = {
+		preset = "helix",
+		spec = {
+			{ "<leader>b", group = "Buffer" },
+			{ "<leader>b_", hidden = true },
+			{ "<leader>c", group = "Code" },
+			{ "<leader>c_", hidden = true },
+			{ "<leader>D", group = "Debug" },
+			{ "<leader>D_", hidden = true },
+			{ "<leader>d", group = "Document", icon = "󰈔" },
+			{ "<leader>d_", hidden = true },
+			{ "<leader>g", group = "Git" },
+			{ "<leader>g_", hidden = true },
+			{ "<leader>h", group = "Harpoon", icon = "󱡀" },
+			{ "<leader>h_", hidden = true },
+			{ "<leader>l", group = "List Files" },
+			{ "<leader>l_", hidden = true },
+			{ "<leader>n", group = "Neorg", icon = "󰏫" },
+			{ "<leader>n_", hidden = true },
+			{ "<leader>s", group = "Search" },
+			{ "<leader>s_", hidden = true },
+		},
+	},
 }
