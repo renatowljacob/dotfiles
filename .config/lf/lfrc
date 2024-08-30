@@ -29,6 +29,10 @@ set statfmt "\033[32m%p\033[0m| %c| %u| %g| %S| %t| -> %l"
 
 set hidden true
 
+cmd on-select &{{
+    lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f" | sed 's/\\/\\\\/g;s/"/\\"/g')\""
+}}
+
 cmd open &{{
     case $(file --mime-type -Lb $f) in
         text/*|application/json|application/javascript) lf -remote "send $id \$$EDITOR \$fx";;

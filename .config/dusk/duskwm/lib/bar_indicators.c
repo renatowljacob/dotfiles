@@ -105,12 +105,16 @@ drawindicator(Workspace *ws, Client *c, unsigned int occ, int x, int y, int w, i
 void
 drawstateindicator(Workspace *ws, Client *c, unsigned int occ, int x, int y, int w, int h, int filled, int invert)
 {
-	if (ISFAKEFULLSCREEN(c) && ISFLOATING(c))
-		drawindicator(ws, c, occ, x, y, w, h, filled, invert, floatfakefsindicatortype);
+	int indicator = 0;
+
+	if (ISFULLSCREEN(c) && ISFAKEFULLSCREEN(c))
+		indicator = ISTILED(c) ? IndicatorFakeFullScreenActive : IndicatorFloatFakeFullScreenActive;
 	else if (ISFAKEFULLSCREEN(c))
-		drawindicator(ws, c, occ, x, y, w, h, filled, invert, fakefsindicatortype);
-	else if (ISFLOATING(c))
-		drawindicator(ws, c, occ, x, y, w, h, filled, invert, floatindicatortype);
+		indicator = ISTILED(c) ? IndicatorFakeFullScreen : IndicatorFloatFakeFullScreen;
+	else if (ISTILED(c))
+		indicator = IndicatorTiled;
 	else
-		drawindicator(ws, c, occ, x, y, w, h, filled, invert, tiledindicatortype);
+		indicator = IndicatorFloating;
+
+	drawindicator(ws, c, occ, x, y, w, h, filled, invert, indicators[indicator]);
 }

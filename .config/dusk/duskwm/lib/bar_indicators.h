@@ -1,3 +1,21 @@
+/* Indicator types */
+enum {
+	IndicatorWs = 0, // occupied alias for backwards support, may be removed in the future
+	IndicatorWsOcc = 0,
+	IndicatorWsSel,
+	IndicatorWsVis,
+	IndicatorWsNorm,
+	IndicatorPinnedWs,
+	IndicatorFakeFullScreen,
+	IndicatorFakeFullScreenActive,
+	IndicatorFloatFakeFullScreen,
+	IndicatorFloatFakeFullScreenActive,
+	IndicatorTiled,
+	IndicatorFloating,
+	IndicatorLast,
+};
+
+/* Indicator options */
 enum {
 	INDICATOR_NONE,
 	INDICATOR_TOP_LEFT_SQUARE,

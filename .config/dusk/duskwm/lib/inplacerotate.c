@@ -26,7 +26,7 @@ void
 inplacerotate(const Arg *arg)
 {
 	Workspace *ws = selws;
-	if (!ws->sel || (ISFLOATING(ws->sel) && !arg->f))
+	if (!ws->sel || !ws->layout->arrange)
 		return;
 
 	unsigned int n, selidx = 0, i = 0, tidx, center, dualstack;
@@ -37,10 +37,12 @@ inplacerotate(const Arg *arg)
 
 	for (n = 0, c = nexttiled(ws->clients); c; c = nexttiled(c->next), ++n);
 	tidx = ws->nmaster + (ws->nstack > 0 ? ws->nstack : (n - ws->nmaster) / 2 + ((n - ws->nmaster) % 2 > 0 ? 1 : 0));
+	if (n < 2)
+		return;
 
 	// Shift client
 	for (c = ws->clients; c; c = c->next) {
-		if (ISVISIBLE(c) && !ISFLOATING(c)) {
+		if (ISVISIBLE(c) && ISTILED(c)) {
 			if (ws->sel == c)
 				selidx = i;
 			if (i == ws->nmaster - 1)
@@ -75,7 +77,7 @@ inplacerotate(const Arg *arg)
 	// Restore focus position
 	i = 0;
 	for (c = ws->clients; c; c = c->next) {
-		if (!ISVISIBLE(c) || (ISFLOATING(c)))
+		if (!ISVISIBLE(c) || ISFLOATING(c))
 			continue;
 		if (i == selidx) {
 			focus(c);

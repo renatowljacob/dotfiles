@@ -1,10 +1,12 @@
 void
 moveorplace(const Arg *arg)
 {
-	if (!selws || !selws->sel)
+	Workspace *ws = selws;
+
+	if (!ws || !ws->sel)
 		return;
 
-	if (!selws->layout->arrange || ISFLOATING(selws->sel))
+	if (FREEFLOW(ws->sel))
 		movemouse(arg);
 	else
 		placemouse(arg);
@@ -13,12 +15,14 @@ moveorplace(const Arg *arg)
 void
 togglemoveorplace(const Arg *arg)
 {
-	if (!selws || !selws->sel)
+	Workspace *ws = selws;
+
+	if (!ws || !ws->sel)
 		return;
 
-	if (!selws->layout->arrange || ISFLOATING(selws->sel)) {
+	if (ws->layout->arrange && FLOATING(ws->sel)) {
 		placemouse(arg);
-		restack(selws);
+		restack(ws);
 	} else {
 		movemouse(arg);
 	}
@@ -34,16 +38,22 @@ movemouse(const Arg *arg)
 	XEvent ev;
 	Time lasttime = 0;
 	double prevopacity;
+	int ov = 0, oh = 0;
 
 	if (!(c = selws->sel))
 		return;
-	if (ISFULLSCREEN(c) && !ISFAKEFULLSCREEN(c)) /* no support moving fullscreen windows by mouse */
+	if (ISTRUEFULLSCREEN(c)) /* no support moving fullscreen windows by mouse */
 		return;
 
 	group_after = c->group;
 	if (ISMARKED(c)) {
 		ignore_marked = 0; // movemouse supports marked clients
 		group(NULL);
+	}
+
+	if (enabled(SnapToGaps)) {
+		oh = gappoh;
+		ov = gappov;
 	}
 
 	/* Snap girders */
@@ -75,10 +85,10 @@ movemouse(const Arg *arg)
 		if (!ws->visible)
 			continue;
 
-		lgirder[ngirders] = ws->wx + gappov;
-		rgirder[ngirders] = ws->wx + ws->ww - gappov;
-		tgirder[ngirders] = ws->wy + gappoh;
-		bgirder[ngirders] = ws->wy + ws->wh - gappoh;
+		lgirder[ngirders] = ws->wx + ov;
+		rgirder[ngirders] = ws->wx + ws->ww - ov;
+		tgirder[ngirders] = ws->wy + oh;
+		bgirder[ngirders] = ws->wy + ws->wh - oh;
 		ngirders++;
 
 		if (disabled(SnapToWindows) || arg->i == 11) {
@@ -86,7 +96,7 @@ movemouse(const Arg *arg)
 		}
 
 		for (s = ws->stack; s; s = s->snext) {
-			if ((!ISFLOATING(s) && ws->layout->arrange) || !ISVISIBLE(s) || s == c)
+			if ((ISTILED(s) && ws->layout->arrange) || !ISVISIBLE(s) || s == c)
 				continue;
 			if (c->group && s->group == c->group) {
 				group[ngroup] = s;
@@ -138,7 +148,7 @@ movemouse(const Arg *arg)
 			handler[ev.type](&ev);
 			break;
 		case MotionNotify:
-			if ((ev.xmotion.time - lasttime) <= (1000 / 60))
+			if ((ev.xmotion.time - lasttime) <= (1000 / MOVEMOUSE_HZ))
 				continue;
 			lasttime = ev.xmotion.time;
 
@@ -146,7 +156,7 @@ movemouse(const Arg *arg)
 			sy = ny = ocy[0] + (ev.xmotion.y - y);
 			vsnap = hsnap = snap;
 
-			if (!ISFLOATING(c) && selws->layout->arrange) {
+			if (ISTILED(c) && selws->layout->arrange) {
 				if (abs(nx - c->x) <= snap && abs(ny - c->y) <= snap)
 					continue;
 				togglefloating(NULL);

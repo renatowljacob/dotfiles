@@ -38,6 +38,7 @@ dump_settings(yajl_gen gen)
 			YSTR("CenterSizeHintsClients"); YBOOL(enabled(CenterSizeHintsClients));
 			YSTR("ResizeHints"); YBOOL(enabled(ResizeHints));
 			YSTR("SnapToWindows"); YBOOL(enabled(SnapToWindows));
+			YSTR("SnapToGaps"); YBOOL(enabled(SnapToGaps));
 			YSTR("SortScreens"); YBOOL(enabled(SortScreens));
 			YSTR("ViewOnWs"); YBOOL(enabled(ViewOnWs));
 			YSTR("Xresources"); YBOOL(enabled(Xresources));
@@ -152,6 +153,7 @@ dump_client(yajl_gen gen, Client *c)
 	// clang-format off
 	YMAP(
 		YSTR("name"); YSTR(c->name);
+		YSTR("altname"); YSTR(c->altname);
 		YSTR("window_id"); YINT(c->win);
 		YSTR("workspace"); YSTR(c->ws->name);
 		YSTR("monitor_number"); YINT(c->ws->mon->num);
@@ -203,7 +205,7 @@ dump_client(yajl_gen gen, Client *c)
 			YSTR("AlwaysOnTop"); YBOOL(ALWAYSONTOP(c));
 			YSTR("CfgReqPosRelativeToMonitor"); YBOOL(CFGREQPOSRELATIVETOMONITOR(c));
 			YSTR("Debug"); YBOOL(DEBUGGING(c));
-			YSTR("Floating"); YBOOL(ISFLOATING(c));
+			YSTR("Floating"); YBOOL(FLOATING(c));
 			YSTR("Fixed"); YBOOL(ISFIXED(c));
 			YSTR("Hidden"); YBOOL(HIDDEN(c));
 			YSTR("Locked"); YBOOL(ISLOCKED(c));
@@ -239,6 +241,7 @@ dump_client(yajl_gen gen, Client *c)
 			YSTR("ScratchpadStayOnMon"); YBOOL(SCRATCHPADSTAYONMON(c));
 			YSTR("SkipTaskbar"); YBOOL(SKIPTASKBAR(c));
 			YSTR("SwallowRetainSize"); YBOOL(SWALLOWRETAINSIZE(c));
+			YSTR("SwallowNoInheritFullScreen"); YBOOL(SWALLOWNOINHERITFULLSCREEN(c));
 			YSTR("SwitchWorkspace"); YBOOL(SWITCHWORKSPACE(c));
 			YSTR("EnableWorkspace"); YBOOL(ENABLEWORKSPACE(c));
 			YSTR("RevertWorkspace"); YBOOL(REVERTWORKSPACE(c));

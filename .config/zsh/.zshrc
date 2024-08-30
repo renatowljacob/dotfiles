@@ -57,7 +57,7 @@ alias du='gdu '
 alias grep='grep --color=auto '
 alias lf='lfrun '
 alias locate='plocate '
-alias ls='eza --icons=always --hyperlink'
+alias ls='eza --icons=always --hyperlink --no-quotes'
 alias siv='nsxiv -a '
 alias sivdir='nsxiv-rifle '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
@@ -80,7 +80,7 @@ export LDLIBS="-lcrypt -lcs50 -lm"
 
 export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
 
-function ya() {
+function yy() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
 	yazi "$@" --cwd-file="$tmp"
 	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then

@@ -39,12 +39,16 @@ static const double resizeopacity        = 0;   /* client opacity when being res
 static const double placeopacity         = 0;   /* client opacity when being placed, 0 means don't apply opacity */
 
 /* Indicators: see lib/bar_indicators.h for options */
-static int wsindicatortype               = INDICATOR_NONE;
-static int wspinnedindicatortype         = INDICATOR_NONE;
-static int fakefsindicatortype           = INDICATOR_PLUS;
-static int floatfakefsindicatortype      = INDICATOR_PLUS_AND_LARGER_SQUARE;
-static int floatindicatortype            = INDICATOR_TOP_LEFT_LARGER_SQUARE;
-static int tiledindicatortype            = INDICATOR_NONE;
+static int indicators[IndicatorLast] = {
+	[IndicatorWs] = INDICATOR_NONE,
+	[IndicatorPinnedWs] = INDICATOR_NONE,
+	[IndicatorFakeFullScreen] = INDICATOR_PLUS,
+	[IndicatorFakeFullScreenActive] = INDICATOR_PLUS_AND_LARGER_SQUARE,
+	[IndicatorFloatFakeFullScreen] = INDICATOR_PLUS,
+	[IndicatorFloatFakeFullScreenActive] = INDICATOR_PLUS_AND_LARGER_SQUARE,
+	[IndicatorTiled] = INDICATOR_NONE,
+	[IndicatorFloating] = INDICATOR_TOP_LEFT_LARGER_SQUARE,
+};
 
 /* Custom indicators using status2d markup, e.g. enabled via INDICATOR_CUSTOM_3 */
 static char *custom_2d_indicator_1 = "^c#00A523^^r0,h,w,2^"; // green underline
@@ -93,7 +97,7 @@ static uint64_t functionality = 0
 //	|NoBorders // as per the noborder patch, show no border when only one client in tiled mode
 //	|Warp // warp cursor to currently focused window
 //	|DecorationHints // omit drawing the window border if the applications asks not to
-//	|FocusedOnTop // allows focused window to stay on top of other windows
+	|FocusedOnTop // allows focused window to stay on top of other windows
 //	|FocusedOnTopTiled // additional toggle to allow focused tiled clients to show on top of floating windows
 	|FocusFollowMouse // allow window under the mouse cursor to get focus when changing views or killing clients
 //	|FocusOnClick // only allow focus change when the user clicks on windows (disables sloppy focus)
@@ -102,10 +106,12 @@ static uint64_t functionality = 0
 	|CenterSizeHintsClients // center tiled clients subject to size hints within their tiled area
 //	|ResizeHints // respect size hints also when windows are tiled
 	|SnapToWindows // snap to windows when moving floating clients
+//	|SnapToGaps // snap to outer gaps when moving floating clients
 //	|SortScreens // monitors are numbered from left to right
 	|ViewOnWs // follow a window to the workspace it is being moved to
 //	|Xresources // add support for changing colours via Xresources
 //	|Debug // enables additional debug output
+//	|AltWindowTitles // show alternate window titles, if present
 //	|AltWorkspaceIcons // show the workspace name instead of the icons
 //	|GreedyMonitor // disables swap of workspaces between monitors
 	|SmartLayoutConvertion // automatically adjust layout based on monitor orientation when moving a workspace from one monitor to another
@@ -739,6 +745,9 @@ static IPCCommand ipccommands[] = {
 	IPCCOMMAND( layoutconvert, ARG_TYPE_NONE ),
 	IPCCOMMAND( mark, ARG_TYPE_NONE ),
 	IPCCOMMAND( markall, ARG_TYPE_SINT ), // 0 = mark all, 1 = mark floating, 2 = mark hidden
+	IPCCOMMAND( maximize, ARG_TYPE_NONE ),
+	IPCCOMMAND( maximizevert, ARG_TYPE_NONE ),
+	IPCCOMMAND( maximizehorz, ARG_TYPE_NONE ),
 	IPCCOMMAND( mirrorlayout, ARG_TYPE_NONE ),
 	IPCCOMMAND( movetowsbyindex, ARG_TYPE_SINT ),
 	IPCCOMMAND( movetowsbyname, ARG_TYPE_STR ),
@@ -759,6 +768,7 @@ static IPCCommand ipccommands[] = {
 	IPCCOMMAND( rioresize, ARG_TYPE_NONE ),
 	IPCCOMMAND( setattachdefault, ARG_TYPE_STR),
 	IPCCOMMAND( setborderpx, ARG_TYPE_SINT ),
+	IPCCOMMAND( setclientborderpx, ARG_TYPE_SINT ),
 	IPCCOMMAND( setlayoutaxisex, ARG_TYPE_SINT ),
 	IPCCOMMAND( setlayout, ARG_TYPE_SINT ),
 	IPCCOMMAND( setcfact, ARG_TYPE_FLOAT ),
@@ -766,6 +776,8 @@ static IPCCommand ipccommands[] = {
 	IPCCOMMAND( setwfact, ARG_TYPE_FLOAT ),
 	IPCCOMMAND( setgapsex, ARG_TYPE_SINT ),
 	IPCCOMMANDS( setstatus, 2, ARG_TYPE_UINT, ARG_TYPE_STR ),
+	IPCCOMMAND( settitle, ARG_TYPE_STR ),
+	IPCCOMMANDS( setwintitle, 2, ARG_TYPE_UINT, ARG_TYPE_STR ),
 	IPCCOMMAND( showbar, ARG_TYPE_NONE ),
 	IPCCOMMAND( showhideclient, ARG_TYPE_NONE ),
 	IPCCOMMAND( stackfocus, ARG_TYPE_SINT ),

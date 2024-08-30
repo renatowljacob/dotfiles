@@ -53,6 +53,7 @@
 #include "placemouse.h"
 #include "swallowmouse.h"
 #include "mark.h"
+#include "maximize.h"
 #include "nomodbuttons.h"
 #include "push.h"
 #include "semi_scratchpads.h"
@@ -62,6 +63,7 @@
 #include "rotatestack.h"
 #include "savefloats.h"
 #include "setborderpx.h"
+#include "settitle.h"
 #ifdef XINERAMA
 #include "sortscreens.h"
 #endif // XINERAMA

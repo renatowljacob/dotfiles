@@ -1,3 +1,4 @@
+#include <stdint.h>
 #define mapfunc(N,F) else if (!strcasecmp(name, N)) F(NULL);
 #define map(N,F) else if (!strcasecmp(name, N)) return F;
 
@@ -8,8 +9,8 @@ enable(const Arg *arg)
 	uint64_t f = getfuncbyname(name);
 
 	if (f) {
-		enablefunc(getfuncbyname(arg->v));
-		reload();
+		enablefunc(f);
+		reload(f);
 	}
 }
 
@@ -21,7 +22,7 @@ disable(const Arg *arg)
 
 	if (f) {
 		disablefunc(f);
-		reload();
+		reload(f);
 	}
 }
 
@@ -33,7 +34,7 @@ toggle(const Arg *arg)
 
 	if (f) {
 		togglefunc(f);
-		reload();
+		reload(f);
 	}
 	mapfunc("bar", togglebar)
 	mapfunc("barpadding", togglebarpadding)
@@ -49,8 +50,24 @@ toggle(const Arg *arg)
 }
 
 void
-reload()
+reload(const uint64_t functionality)
 {
+	Workspace *ws;
+	Client *c;
+	int func_enabled = enabled(functionality);
+
+	/* If the NoBorders functionality was disabled, then loop through and force resize all clients
+	 * that previously had the NoBorder flag set in order to restore borders. */
+	if (!func_enabled && functionality == NoBorders) {
+		for (ws = workspaces; ws; ws = ws->next) {
+			for (c = ws->clients; c; c = c->next) {
+				if (WASNOBORDER(c)) {
+					restoreborder(c);
+				}
+			}
+		}
+	}
+
 	arrange(NULL);
 	grabkeys();
 }
@@ -84,7 +101,6 @@ getfuncbyname(const char *name)
 	map("SortScreens", SortScreens)
 	map("ViewOnWs", ViewOnWs)
 	map("Xresources", Xresources)
-	map("FuncPlaceholder0x800000", FuncPlaceholder0x800000)
 	map("AltWorkspaceIcons", AltWorkspaceIcons)
 	map("GreedyMonitor", GreedyMonitor)
 	map("SmartLayoutConvertion", SmartLayoutConvertion)
@@ -99,6 +115,7 @@ getfuncbyname(const char *name)
 	map("SystrayNoAlpha", SystrayNoAlpha)
 	map("WorkspaceLabels", WorkspaceLabels)
 	map("SnapToWindows", SnapToWindows)
+	map("SnapToGaps", SnapToGaps)
 	map("FlexWinBorders", FlexWinBorders)
 	map("FocusOnClick", FocusOnClick)
 	map("FocusedOnTopTiled", FocusedOnTopTiled)
@@ -106,7 +123,7 @@ getfuncbyname(const char *name)
 	map("FocusFollowMouse", FocusFollowMouse)
 	map("BanishMouseCursorToCorner", BanishMouseCursorToCorner)
 	map("StackerIcons", StackerIcons)
-	map("FuncPlaceholder35184372088832", FuncPlaceholder35184372088832)
+	map("AltWindowTitles", AltWindowTitles)
 	map("FuncPlaceholder70368744177664", FuncPlaceholder70368744177664)
 	map("FuncPlaceholder140737488355328", FuncPlaceholder140737488355328)
 	map("FuncPlaceholder281474976710656", FuncPlaceholder281474976710656)

@@ -10,15 +10,17 @@ static void detachws(Workspace *ws);
 
 static void comboviewwsbyindex(const Arg *arg);
 static void comboviewwsbyname(const Arg *arg);
-static void createworkspaces();
+static void createworkspaces(void);
 static Workspace *createworkspace(int num, const WorkspaceRule *r);
 
 static char * wsicon(Workspace *ws);
 static int hasclients(Workspace *ws);
 static int hashidden(Workspace *ws);
 static int hasfloating(Workspace *ws);
+static int hasfullscreen(Workspace *ws);
 static void handleabandoned(Workspace *ws);
 static int noborder(Client *c);
+static void restoreborder(Client *c);
 static void adjustwsformonitor(Workspace *ws, Monitor *m);
 static Workspace * getwsbyindex(const Arg *arg);
 static Workspace * getwsbyname(const Arg *arg);
@@ -76,7 +78,7 @@ static void reorientworkspaces(void);
 static void reorientworkspace(Workspace *ws, int orientation);
 static void reviewworkspaces(void);
 static void setwfact(const Arg *arg);
-static void setworkspaceareas();
+static void setworkspaceareas(void);
 static void setworkspaceareasformon(Monitor *mon);
 static Workspace * nextmonws(Monitor *mon, Workspace *ws);
 static Workspace * nextoccmonws(Monitor *mon, Workspace *ws);

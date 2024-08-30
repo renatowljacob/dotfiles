@@ -13,11 +13,17 @@ resizemouse(const Arg *arg)
 	Workspace *ws;
 	Time lasttime = 0;
 	double prevopacity;
+	int ov = 0, oh = 0;
 
 	if (!(c = selws->sel))
 		return;
-	if (ISFULLSCREEN(c) && !ISFAKEFULLSCREEN(c)) /* no support resizing fullscreen windows by mouse */
+	if (ISTRUEFULLSCREEN(c)) /* no support resizing fullscreen windows by mouse */
 		return;
+
+	if (enabled(SnapToGaps)) {
+		oh = gappoh;
+		ov = gappov;
+	}
 
 	/* Snap girders */
 	int gap = gappfl;
@@ -40,10 +46,10 @@ resizemouse(const Arg *arg)
 		if (!ws->visible)
 			continue;
 
-		lgirder[ngirders] = ws->wx + gappov;
-		rgirder[ngirders] = ws->wx + ws->ww - gappov;
-		tgirder[ngirders] = ws->wy + gappoh;
-		bgirder[ngirders] = ws->wy + ws->wh - gappoh;
+		lgirder[ngirders] = ws->wx + ov;
+		rgirder[ngirders] = ws->wx + ws->ww - ov;
+		tgirder[ngirders] = ws->wy + oh;
+		bgirder[ngirders] = ws->wy + ws->wh - oh;
 		ngirders++;
 
 		if (disabled(SnapToWindows) || arg->i == 11) {
@@ -53,7 +59,7 @@ resizemouse(const Arg *arg)
 		}
 
 		for (s = ws->stack; s; s = s->snext) {
-			if ((!ISFLOATING(s) && ws->layout->arrange) || !ISVISIBLE(s) || s == c)
+			if ((ISTILED(s) && ws->layout->arrange) || !ISVISIBLE(s) || s == c)
 				continue;
 
 			h = HEIGHT(s);
@@ -97,7 +103,7 @@ resizemouse(const Arg *arg)
 			handler[ev.type](&ev);
 			break;
 		case MotionNotify:
-			if ((ev.xmotion.time - lasttime) <= (1000 / 60))
+			if ((ev.xmotion.time - lasttime) <= (1000 / RESIZEMOUSE_HZ))
 				continue;
 			lasttime = ev.xmotion.time;
 
@@ -110,7 +116,7 @@ resizemouse(const Arg *arg)
 			if (c->ws->mon->wx + nw >= selmon->wx && c->ws->mon->wx + nw <= selmon->wx + selmon->ww
 			&& c->ws->mon->wy + nh >= selmon->wy && c->ws->mon->wy + nh <= selmon->wy + selmon->wh)
 			{
-				if (!ISFLOATING(c) && selws->layout->arrange
+				if (ISTILED(c) && selws->layout->arrange
 				&& (abs(nw - c->w) > snap || abs(nh - c->h) > snap))
 					togglefloating(NULL);
 			}
@@ -143,7 +149,7 @@ resizemouse(const Arg *arg)
 			nw = sw;
 			nh = sh;
 
-			if (!selws->layout->arrange || ISFLOATING(c)) {
+			if (FREEFLOW(c)) {
 				resize(c, nx, ny, nw, nh, 1);
 				savefloats(c);
 			}
@@ -174,7 +180,7 @@ resizeorfacts(const Arg *arg)
 	if (!selws || !selws->sel)
 		return;
 
-	if (!selws->layout->arrange || ISFLOATING(selws->sel))
+	if (FREEFLOW(selws->sel))
 		resizemouse(arg);
 	else
 		dragfact(arg);

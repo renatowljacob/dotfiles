@@ -61,7 +61,7 @@ static const uint64_t
 	CfgReqPosRelativeToMonitor = 0x400000000000, // makes configure requests relative to the client's monitor
 	SwallowRetainSize = 0x800000000000, // allows for a client to retain its height and width when swallowed or unswallowed
 	NoWarp = 0x1000000000000, // disallow cursor to warp to this client
-	FlagPlaceholder0x2000000000000 = 0x2000000000000,
+	SwallowNoInheritFullScreen = 0x2000000000000, // prevents the client from inheriting the fullscreen property when swallowed / unswallowed
 	FlagPlaceholder0x4000000000000 = 0x4000000000000,
 	FlagPlaceholder0x8000000000000 = 0x8000000000000,
 	FlagPlaceholder0x10000000000000 = 0x10000000000000,
@@ -88,12 +88,16 @@ static const uint64_t
 #define DISALLOWED(C) (C && C->flags & Disallowed)
 #define HIDDEN(C) (C && ((C->flags & Hidden) || (getstate(C->win) == IconicState)))
 #define ISFIXED(C) (C && C->flags & Fixed)
-#define ISFLOATING(C) (C && C->flags & (Floating|Sticky))
+#define FLOATING(C) (C && C->flags & Floating)
+#define ISFLOATING(C) (C && C->flags & (Floating|Sticky|Fixed))
+#define ISTILED(C) (C && !(C->flags & (Floating|Sticky|Fixed)))
+#define FREEFLOW(C) (C && (ISFLOATING(C) || !C->ws->layout->arrange))
 #define ISLOCKED(C) (C && C->flags & Locked)
 #define ISSTICKY(C) (C && C->flags & Sticky)
 #define ISCENTERED(C) (C && C->flags & Centered)
 #define ISFULLSCREEN(C) (C && C->flags & FullScreen)
 #define ISFAKEFULLSCREEN(C) (C && C->flags & FakeFullScreen)
+#define ISTRUEFULLSCREEN(C) (C && (C->flags & FullScreen) && !(C->flags & FakeFullScreen))
 #define ISPERMANENT(C) (C && C->flags & Permanent)
 #define ISTERMINAL(C) (C && C->flags & Terminal)
 #define ISTRANSIENT(C) (C && C->flags & Transient)
@@ -128,6 +132,7 @@ static const uint64_t
 #define SKIPTASKBAR(C) (C && C->flags & SkipTaskbar)
 #define STEAMGAME(C) (C && C->flags & SteamGame)
 #define SWALLOWRETAINSIZE(C) (C && C->flags & SwallowRetainSize)
+#define SWALLOWNOINHERITFULLSCREEN(C) (C && C->flags & SwallowNoInheritFullScreen)
 #define SWITCHWORKSPACE(C) (C && C->flags & SwitchWorkspace)
 #define ENABLEWORKSPACE(C) (C && C->flags & EnableWorkspace)
 #define REVERTWORKSPACE(C) (C && C->flags & RevertWorkspace)
@@ -135,15 +140,15 @@ static const uint64_t
 #define MOVEPLACE(C) (C && C->flags & MovePlace)
 #define LOWER(C) (C && C->flags & Lower)
 #define RAISE(C) (C && C->flags & Raise)
-#define TILED(C) (C && C->win && !(C->flags & (Invisible|Hidden|Floating|Sticky)))
+#define TILED(C) (C && C->win && !(C->flags & (Invisible|Hidden|Floating|Fixed|Sticky)) && !ISTRUEFULLSCREEN(c))
 
 #define WASFLOATING(C) (C && C->prevflags & Floating)
+#define WASNOBORDER(C) (C && C->prevflags & NoBorder)
 #define WASFAKEFULLSCREEN(C) (C && C->prevflags & FakeFullScreen)
 #define WASFULLSCREEN(C) (C && C->prevflags & FullScreen)
 
 #define SETFLOATING(C) (addflag(C, Floating))
 #define SETFULLSCREEN(C) (addflag(C, FullScreen))
-#define SETTILED(C) (removeflag(C, Floating))
 
 #define LOCK(C) (addflag(C, Locked))
 #define UNLOCK(C) (removeflag(C, Locked))

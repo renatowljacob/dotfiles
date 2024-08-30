@@ -109,7 +109,7 @@ togglescratch(const Arg *arg)
 				}
 			} else {
 				XSetWindowBorder(dpy, c->win, scheme[SchemeScratchNorm][ColBorder].pixel);
-				if ((c->flags & AttachFlag) && ISINVISIBLE(c) && !ISFLOATING(c)) {
+				if ((c->flags & AttachFlag) && ISINVISIBLE(c) && ISTILED(c)) {
 					detach(c);
 					attachx(c, 0, c->ws);
 				}
@@ -142,7 +142,7 @@ togglescratch(const Arg *arg)
 		arrange_focus_on_monocle = 0;
 		if (ISVISIBLE(c)) {
 			showwsclient(c);
-			if (ISFULLSCREEN(c) && !ISFAKEFULLSCREEN(c))
+			if (ISTRUEFULLSCREEN(c))
 				clientfsrestore(c);
 			focus(c);
 		} else {

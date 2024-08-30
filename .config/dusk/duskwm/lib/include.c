@@ -1,4 +1,5 @@
 /* Utilities */
+#include "defaults.h"
 #include "lookup.c"
 
 /* Bar functionality */
@@ -52,6 +53,7 @@
 #endif
 #include "killunsel.c"
 #include "mark.c"
+#include "maximize.c"
 #include "movemouse.c"
 #include "resizemouse.c"
 #include "placemouse.c"
@@ -65,6 +67,7 @@
 #include "rotatestack.c"
 #include "savefloats.c"
 #include "setborderpx.c"
+#include "settitle.c"
 #ifdef XINERAMA
 #include "sortscreens.c"
 #endif // XINERAMA

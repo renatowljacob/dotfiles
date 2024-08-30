@@ -18,7 +18,7 @@ size_workspaces(Bar *bar, BarArg *a)
 		if (!w)
 			continue;
 		if (enabled(WorkspaceLabels)) {
-			c = firsttiled(ws);
+			c = getworkspacelabelclient(ws);
 			if (c) {
 				if (c->icon && prefer_window_icons_over_workspace_labels) {
 					w += occupied_workspace_label_format_length + c->icw;
@@ -81,7 +81,7 @@ draw_workspaces(Bar *bar, BarArg *a)
 		if (ws) {
 			draw_window_icon = 0;
 			if (enabled(WorkspaceLabels)) {
-				c = firsttiled(ws);
+				c = getworkspacelabelclient(ws);
 				if (c) {
 					if (c->icon && prefer_window_icons_over_workspace_labels) {
 						draw_window_icon = 1;
@@ -120,8 +120,16 @@ draw_workspaces(Bar *bar, BarArg *a)
 			if (plw && nextws)
 				drw_arrow(drw, x + w, y, plw, h, a->value, scheme[wsscheme][ColBg], scheme[nextscheme][ColBg], scheme[SchemeNorm][ColBg]);
 
-			drawindicator(ws, NULL, hasclients(ws), x, y, w , h, -1, 0, wsindicatortype);
-			drawindicator(ws, NULL, ws->pinned, x, y, w, h, -1, 0, wspinnedindicatortype);
+			drawindicator(ws, NULL, hasclients(ws), x, y, w , h, -1, 0, indicators[IndicatorWsOcc]);
+			drawindicator(ws, NULL, ws->pinned, x, y, w, h, -1, 0, indicators[IndicatorPinnedWs]);
+
+			if (!ws->visible) {
+				drawindicator(ws, NULL, 1, x, y, w, h, -1, 0, indicators[IndicatorWsNorm]);
+			} else if (ws == selws) {
+				drawindicator(ws, NULL, 1, x, y, w, h, -1, 0, indicators[IndicatorWsSel]);
+			} else {
+				drawindicator(ws, NULL, 1, x, y, w, h, -1, 0, indicators[IndicatorWsVis]);
+			}
 
 			if (bar->vert) {
 				y += bh;
@@ -165,7 +173,7 @@ click_workspaces(Bar *bar, Arg *arg, BarArg *a)
 			continue;
 
 		if (enabled(WorkspaceLabels)) {
-			c = firsttiled(ws);
+			c = getworkspacelabelclient(ws);
 			if (c) {
 				if (c->icon && prefer_window_icons_over_workspace_labels) {
 					w += occupied_workspace_label_format_length + c->icw;
@@ -219,7 +227,7 @@ hover_workspaces(Bar *bar, BarArg *a, XMotionEvent *ev)
 		if (!w)
 			continue;
 		if (enabled(WorkspaceLabels)) {
-			c = firsttiled(ws);
+			c = getworkspacelabelclient(ws);
 			if (c) {
 				if (c->icon && prefer_window_icons_over_workspace_labels) {
 					w += occupied_workspace_label_format_length + c->icw;
@@ -308,11 +316,17 @@ nextwsicon(Bar *bar, Workspace *ws, Workspace **next, char **nexticon, int *next
 	}
 }
 
+/* Used in the context of the WorkspaceLabels functionality and
+ * chooses the client that is to be used for the workspace label
+ * or icon. The first tiled client is preferred, then it falls
+ * back to the first visible client (even if that client is
+ * hidden).
+ */
 Client *
-firsttiled(Workspace *ws)
+getworkspacelabelclient(Workspace *ws)
 {
-	Client *c;
-	for (c = ws->clients; c && (ISFLOATING(c) || ISINVISIBLE(c) || HIDDEN(c)); c = c->next);
+	Client *c = nexttiled(ws->clients);
+
 	if (!c)
 		for (c = ws->stack; c && ISINVISIBLE(c); c = c->snext);
 	return c;

@@ -33,7 +33,7 @@ comboviewwsbyindex(const Arg *arg)
 }
 
 void
-createworkspaces()
+createworkspaces(void)
 {
 	Workspace *pws, *ws;
 	Monitor *m;
@@ -103,6 +103,7 @@ createworkspace(int num, const WorkspaceRule *r)
 	strlcpy(ws->name, r->name, sizeof ws->name);
 
 	ws->layout = (r->layout == -1 ? &layouts[0] : &layouts[MIN(r->layout, LENGTH(layouts))]);
+	strlcpy(ws->ltsymbol, ws->layout->symbol, sizeof ws->ltsymbol);
 	ws->prevlayout = &layouts[1 % LENGTH(layouts)];
 	ws->mfact = (r->mfact == -1 ? mfact : r->mfact);
 	ws->nmaster = (r->nmaster == -1 ? nmaster : r->nmaster);
@@ -252,7 +253,8 @@ hasclients(Workspace *ws)
 	return c != NULL;
 }
 
-int hashidden(Workspace *ws)
+int
+hashidden(Workspace *ws)
 {
 	Client *c;
 
@@ -271,29 +273,58 @@ hasfloating(Workspace *ws)
 	if (!ws)
 		return 0;
 
-	for (c = ws->clients; c && (ISINVISIBLE(c) || SKIPTASKBAR(c) || HIDDEN(c) || !ISFLOATING(c)); c = c->next);
+	for (c = ws->clients; c && (ISINVISIBLE(c) || SKIPTASKBAR(c) || HIDDEN(c) || ISTILED(c)); c = c->next);
+	return c != NULL;
+}
+
+int
+hasfullscreen(Workspace *ws)
+{
+	Client *c;
+
+	if (!ws)
+		return 0;
+
+	for (c = ws->clients; c && !(ISTRUEFULLSCREEN(c) && !HIDDEN(c) && !ISINVISIBLE(c)); c = c->next);
 	return c != NULL;
 }
 
 int
 noborder(Client *c)
 {
+	Monitor *m = c->ws->mon;
+
 	if (disabled(NoBorders))
 		return 0;
+
+	if (FREEFLOW(c))
+		return 0;
+
+	if (ISTRUEFULLSCREEN(c))
+		return 0;
+
+	if (NOBORDER(c))
+		return 1;
+
+	/* Special case if client size takes up the entire window area */
+	if (abs(c->y - m->wy) <= m->gappoh && abs(c->x - m->wx) <= m->gappov)
+		return 1;
 
 	if (nexttiled(c->ws->clients) != c || nexttiled(c->next))
 		return 0;
 
-	if (ISFLOATING(c))
-		return 0;
-
-	if (ISFULLSCREEN(c) && !ISFAKEFULLSCREEN(c))
-		return 0;
-
-	if (!c->ws->layout->arrange)
-		return 0;
-
 	return 1;
+}
+
+void
+restoreborder(Client *c)
+{
+	XWindowChanges wc;
+	wc.border_width = c->bw;
+	wc.width = c->w;
+	wc.height = c->h;
+	XConfigureWindow(dpy, c->win, CWWidth|CWHeight|CWBorderWidth, &wc);
+	configure(c);
 }
 
 void
@@ -368,11 +399,13 @@ hidewsclients(Client *c)
 void
 showwsclient(Client *c)
 {
-	if (ISFLOATING(c) && ISVISIBLE(c)) {
+	if (ISVISIBLE(c) && (FREEFLOW(c) || ISTRUEFULLSCREEN(c))) {
+		if (WASNOBORDER(c))
+			restoreborder(c);
 		if (NEEDRESIZE(c)) {
 			removeflag(c, NeedResize);
 			XMoveResizeWindow(dpy, c->win, c->x, c->y, c->w, c->h);
-		} else if (!ISSTICKY(c) && c->sfx != -9999 && (!ISFULLSCREEN(c) || ISFAKEFULLSCREEN(c))) {
+		} else if (!ISSTICKY(c) && c->sfx != -9999 && !ISTRUEFULLSCREEN(c)) {
 			restorefloats(c);
 		} else {
 			show(c);
@@ -1101,7 +1134,7 @@ setwfact(const Arg *arg)
 }
 
 void
-setworkspaceareas()
+setworkspaceareas(void)
 {
 	Monitor *mon;
 	for (mon = mons; mon; mon = mon->next)
