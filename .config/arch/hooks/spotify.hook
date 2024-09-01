@@ -1,4 +1,4 @@
-# Run Spotx after target update while keeping account connections (lasftm)
+# Run Spotx after target update
 
 [Trigger]
 Operation = Install
@@ -11,4 +11,4 @@ Target = spotx-git
 Description = Running Spotx script...
 Depends = spotx-git
 When = PostTransaction
-Exec = /usr/bin/bash -c "killall -q spotify; sed -Ei 's/^[[:blank:]]*[\(]+.*connect[[:alnum:]]+/# &/ ; s/^connect[[:alnum:]]+/# &/' usr/bin/spotx; spotx -f -P /opt/spotify >/dev/null"
+Exec = /usr/bin/bash -c "killall -q spotify; spotx -f -P /opt/spotify >/dev/null"
