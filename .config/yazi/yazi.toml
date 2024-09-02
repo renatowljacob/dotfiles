@@ -25,3 +25,5 @@ prepend_rules = [
 tab_size = 4
 image_filter = "catmull-rom"
 image_quality = 50
+wrap = "yes"
+image_delay = 100

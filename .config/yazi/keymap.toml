@@ -1,45 +1,28 @@
-# relative-motions keymaps
-[[manager.prepend_keymap]]
-on = [ "1" ]
-run = "plugin relative-motions --args=1"
-desc = "Move in relative steps"
+[manager]
+prepend_keymap = [
+	# relative-motions keymaps
+	{ on = [ "1" ], run = "plugin relative-motions --args=1", desc = "Move in relative steps" },
+	{ on = [ "2" ], run = "plugin relative-motions --args=2", desc = "Move in relative steps" },
+	{ on = [ "3" ], run = "plugin relative-motions --args=3", desc = "Move in relative steps" },
+	{ on = [ "4" ], run = "plugin relative-motions --args=4", desc = "Move in relative steps" },
+	{ on = [ "5" ], run = "plugin relative-motions --args=5", desc = "Move in relative steps" },
+	{ on = [ "6" ], run = "plugin relative-motions --args=6", desc = "Move in relative steps" },
+	{ on = [ "7" ], run = "plugin relative-motions --args=7", desc = "Move in relative steps" },
+	{ on = [ "8" ], run = "plugin relative-motions --args=8", desc = "Move in relative steps" },
+	{ on = [ "9" ], run = "plugin relative-motions --args=9", desc = "Move in relative steps" },
 
-[[manager.prepend_keymap]]
-on = [ "2" ]
-run = "plugin relative-motions --args=2"
-desc = "Move in relative steps"
-
-[[manager.prepend_keymap]]
-on = [ "3" ]
-run = "plugin relative-motions --args=3"
-desc = "Move in relative steps"
-
-[[manager.prepend_keymap]]
-on = [ "4" ]
-run = "plugin relative-motions --args=4"
-desc = "Move in relative steps"
-
-[[manager.prepend_keymap]]
-on = [ "5" ]
-run = "plugin relative-motions --args=5"
-desc = "Move in relative steps"
-
-[[manager.prepend_keymap]]
-on = [ "6" ]
-run = "plugin relative-motions --args=6"
-desc = "Move in relative steps"
-
-[[manager.prepend_keymap]]
-on = [ "7" ]
-run = "plugin relative-motions --args=7"
-desc = "Move in relative steps"
-
-[[manager.prepend_keymap]]
-on = [ "8" ]
-run = "plugin relative-motions --args=8"
-desc = "Move in relative steps"
-
-[[manager.prepend_keymap]]
-on = [ "9" ]
-run = "plugin relative-motions --args=9"
-desc = "Move in relative steps"
+	{ on = [ "b", "g" ], run = [
+		'''
+		shell 'case $(file --mime-type -Lb $0) in
+					image/*) feh --bg-fill $0 && printf "Image set as wallpaper" ;;
+					*) lf -remote "send $id echoerr $(basename $0) is not a image" ;;
+				esac' --confirm
+	'''], desc = "Set desktop background" },
+	{ on = [ "b", "l" ], run = [
+		'''
+		shell 'case $(file --mime-type -Lb $f) in
+				image/*) betterlockscreen -u $f ;;
+				*) lf -remote "send $id echoerr $(basename $f) is not a image" ;;
+				esac' --confirm
+		'''], desc = "Set lockscreen background" },
+]

@@ -100,22 +100,8 @@ cmd lockscreen %{{
     esac
 }}
 
-cmd size-geometry %{{
-    case $(file --mime-type -Lb $f) in
-	image/*) identify $f | awk '{ print $3 }' ;;
-	*) lf -remote "send $id echoerr $(basename $f) is not a image" ;;
-    esac
-}}
-
 cmd size %{{
     du -sh $f | sed -En 's/(^[[:digit:]]+.?[[:alnum:]]+).*/\1B/p'
-}}
-
-cmd tmux-session ${{
-    case $(file --mime-type -Lb $f) in
-        inode/directory) tmux-session $f ;;
-        *) tmux-session $(dirname $(realpath $f)) ;;
-    esac
 }}
 
 cmd quit-and-cd &{{
@@ -153,8 +139,6 @@ map rI :rename; cmd-home
 map rA :rename; cmd-end
 map rc :rename; cmd-delete-home
 map rC :rename; cmd-end; cmd-delete-home
-map sg size-geometry
-map t; map tm tmux-session
 map tg tag-toggle
 map Q quit-and-cd
 
