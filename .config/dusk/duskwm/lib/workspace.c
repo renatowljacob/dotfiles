@@ -290,15 +290,35 @@ hasfullscreen(Workspace *ws)
 }
 
 int
-noborder(Client *c)
+ismaximized(Client *c, int x, int y, int w, int h)
 {
 	Monitor *m = c->ws->mon;
+
+	if (w * h == 0) {
+		x = c->x;
+		y = c->y;
+		w = c->w;
+		h = c->h;
+	}
+
+	return abs(y - m->wy) <= m->gappoh &&
+	       abs(x - m->wx) <= m->gappov &&
+	       abs(w - m->ww) <= (m->gappov + c->bw) * 2 &&
+	       abs(h - m->wh) <= (m->gappoh + c->bw) * 2;
+}
+
+int
+noborder(Client *c, int x, int y, int w, int h)
+{
+	int maximized;
 
 	if (disabled(NoBorders))
 		return 0;
 
+	maximized = ismaximized(c, x, y, w, h);
+
 	if (FREEFLOW(c))
-		return 0;
+		return maximized;
 
 	if (ISTRUEFULLSCREEN(c))
 		return 0;
@@ -307,7 +327,7 @@ noborder(Client *c)
 		return 1;
 
 	/* Special case if client size takes up the entire window area */
-	if (abs(c->y - m->wy) <= m->gappoh && abs(c->x - m->wx) <= m->gappov)
+	if (maximized)
 		return 1;
 
 	if (nexttiled(c->ws->clients) != c || nexttiled(c->next))
@@ -676,13 +696,12 @@ togglepinnedws(const Arg *arg)
 void
 togglews(const Arg *arg)
 {
-	Monitor *m;
+	Monitor *m = selmon;
 
-	if (!selws)
+	if (!m->prevwsmask)
 		return;
 
-	m = selws->mon;
-	viewwsmask(m, m->wsmask);
+	viewwsmask(m, m->prevwsmask);
 }
 
 void
@@ -765,10 +784,25 @@ viewwsonmon(Workspace *ws, Monitor *m, int enablews)
 	if (m == NULL)
 		m = selmon;
 
+	/* Workspaces that are assigned to dummymon are not intended to be viewed; they are temporary
+	 * assigned to the the dummy monitor in the context of the workspaces_per_mon functionality and
+	 * they are staying there until the surplus monitor is available.
+	 *
+	 * That said there may be obscure edge cases where a client can get assigned to a workspace on
+	 * the dummy monitor or such a workspace being brought into view. If so we allow that workspace
+	 * to be brought to the selected monitor.
+	 */
+	if (ws->mon == dummymon)
+		ws->mon = selmon;
+
+	if (m == dummymon)
+		m = selmon;
+	
 	Monitor *omon = NULL;
 	Workspace *ows = NULL, *w;
 
-	m->prevwsmask = getwsmask(m);
+	if (!combo)
+		m->prevwsmask = getwsmask(m);
 
 	if (enabled(WorkspacePreview)) {
 		storepreview(ws->mon->selws);
@@ -784,7 +818,8 @@ viewwsonmon(Workspace *ws, Monitor *m, int enablews)
 		if (selws && selws->mon != ws->mon) {
 			do_warp = 1;
 			m = ws->mon;
-			m->prevwsmask = getwsmask(m);
+			if (!combo)
+				m->prevwsmask = getwsmask(m);
 			monitorchanged = 1;
 			selmon = m;
 		}
@@ -862,7 +897,8 @@ viewwsonmon(Workspace *ws, Monitor *m, int enablews)
 				hidews(w);
 	}
 
-	storewsmask();
+	if (!combo)
+		storewsmask();
 
 	drawws(ws, m, m->prevwsmask, enablews, arrangeall, do_warp);
 }

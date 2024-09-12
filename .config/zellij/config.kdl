@@ -90,7 +90,7 @@ keybinds clear-defaults=true {
         bind "g" { ScrollToTop; }
         bind "G" { ScrollToBottom; }
         bind "Ctrl g" { ScrollToBottom; SwitchToMode "Normal"; }
-        bind "c" { EditScrollback; SwitchToMode "Normal"; }
+        bind "e" { EditScrollback; SwitchToMode "Normal"; }
         bind "s" { SwitchToMode "EnterSearch"; SearchInput 0; }
         bind "j" "Down" { ScrollDown; }
         bind "k" "Up" { ScrollUp; }
@@ -99,7 +99,7 @@ keybinds clear-defaults=true {
         bind "Ctrl d" { HalfPageScrollDown; }
         bind "Ctrl u" { HalfPageScrollUp; }
         // uncomment this and adjust key if using copy_on_select=false
-        // bind "Alt c" { Copy; }
+        bind "Alt c" { Copy; }
     }
     search {
         bind "Esc" { SwitchToMode "Pane"; }
@@ -112,7 +112,7 @@ keybinds clear-defaults=true {
         bind "Ctrl d" { HalfPageScrollDown; }
         bind "Ctrl u" { HalfPageScrollUp; }
         bind "n" { Search "down"; }
-        bind "p" { Search "up"; }
+        bind "N" { Search "up"; }
         bind "c" { SearchToggleOption "CaseSensitivity"; }
         bind "w" { SearchToggleOption "Wrap"; }
         bind "W" { SearchToggleOption "WholeWord"; }

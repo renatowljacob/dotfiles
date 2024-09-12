@@ -647,7 +647,7 @@ applyrules(Client *c)
 
 			if (r->workspace)
 				for (ws = workspaces; ws && strcmp(ws->name, r->workspace) != 0; ws = ws->next);
-			c->ws = ws ? ws : selws;
+			c->ws = ws && ws->mon != dummymon ? ws : selws;
 
 			if (r->floatpos)
 				setfloatpos(c, r->floatpos, 0, 1);
@@ -721,8 +721,6 @@ reapplyrules(Client *c)
 		c->flags = flags;
 		return 0;
 	}
-
-	removeflag(c, ReapplyRules);
 
 	if (DISALLOWED(c)) {
 		killclient(&((Arg) { .v = c }));
@@ -809,6 +807,9 @@ reapplyrules(Client *c)
 	if (SEMISCRATCHPAD(c) && c->scratchkey)
 		initsemiscratchpad(c);
 
+	if (SWITCHWORKSPACE(c) && !c->ws->visible)
+		viewwsonmon(c->ws, c->ws->mon, 0);
+
 	if (ISVISIBLE(c))
 		show(c);
 	else
@@ -882,7 +883,8 @@ applysizehints(Client *c, int *x, int *y, int *w, int *h, int interact)
 		if (c->maxh)
 			*h = MIN(*h, c->maxh);
 	}
-	if (noborder(c))
+
+	if (noborder(c, *x, *y, *w, *h))
 		addflag(c, NoBorder);
 
 	return *x != c->x || *y != c->y || *w != c->w || *h != c->h || NOBORDER(c);
@@ -2474,7 +2476,7 @@ manage(Window w, XWindowAttributes *wa)
 		}
 	}
 
-	if (!ISTRUEFULLSCREEN(c) && !noborder(c))
+	if (!ISTRUEFULLSCREEN(c) && !noborder(c, 0, 0, 0, 0))
 		restoreborder(c);
 
 	arrange(c->ws);

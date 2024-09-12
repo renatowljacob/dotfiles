@@ -39,14 +39,18 @@ void
 markall(const Arg *arg)
 {
 	Client *c;
+
 	for (c = selws->clients; c; c = c->next) {
 		if (ISMARKED(c) || ISINVISIBLE(c))
 			continue;
 
-		if ((arg->i == 2 && !HIDDEN(c)) || (arg->i != 2 && HIDDEN(c)))
+		if ((arg->i == MARKALL_HIDDEN && !HIDDEN(c)) || (arg->i != MARKALL_HIDDEN && HIDDEN(c)))
 			continue;
 
-		if (arg->i == 1 && ISTILED(c))
+		if (arg->i == MARKALL_FLOATING && !FREEFLOW(c))
+			continue;
+
+		if (arg->i == MARKALL_TILED && !ISTILED(c))
 			continue;
 
 		markclient(c);

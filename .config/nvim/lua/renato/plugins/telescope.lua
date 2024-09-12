@@ -25,8 +25,8 @@ return {
 				return vim.fn.executable("make") == 1
 			end,
 		},
-		{ "nvim-telescope/telescope-ui-select.nvim" },
-
+		"nvim-telescope/telescope-ui-select.nvim",
+		"debugloop/telescope-undo.nvim",
 		-- Useful for getting pretty icons, but requires a Nerd Font.
 		{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
 	},
@@ -78,6 +78,7 @@ return {
 		-- Enable Telescope extensions if they are installed
 		pcall(require("telescope").load_extension, "fzf")
 		pcall(require("telescope").load_extension, "ui-select")
+		pcall(require("telescope").load_extension, "undo")
 
 		-- See `:help telescope.builtin`
 		local builtin = require("telescope.builtin")
@@ -97,6 +98,7 @@ return {
 		vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "Search Resume" })
 		vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = 'Search Recent Files ("." for repeat)' })
 		vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "Find existing buffers" })
+		vim.keymap.set("n", "<leader>su", "<cmd>Telescope undo<CR>", { desc = "Search undo tree" })
 
 		-- Slightly advanced example of overriding default behavior and theme
 		vim.keymap.set("n", "<leader>/", function()
