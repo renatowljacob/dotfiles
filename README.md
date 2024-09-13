@@ -14,7 +14,7 @@ CEO of LARPing
 - **Terminal Multiplexer:** [Zellij](https://github.com/zellij-org/zellij)
 - **Text Editor:** [Neovim](https://neovim.io/)
 - **Application Launcher:** [dmenu](https://tools.suckless.org/dmenu/)
-- **File Manager:** [lf](https://github.com/gokcehan/lf)
+- **File Manager:** [yazi](https://github.com/sxyazi/yazi)
 - **Notifications:** [dunst](https://github.com/dunst-project/dunst)
 - **Image Viewer:** [nsxiv](https://codeberg.org/nsxiv/nsxiv)
 - **Video Player:** [mpv](https://mpv.io/)
