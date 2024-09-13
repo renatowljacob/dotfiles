@@ -11,6 +11,14 @@ for repo in $@; do
 		git clone -q --depth 1 --recursive --shallow-submodules \
 			https://github.com/$repo $plugdir
 	fi
+	if [[ $repo == "zdharma-continuum/fast-syntax-highlighting" ]]; then
+		mytheme="~/.config/zsh/theme/default.ini"
+		themefile="~/.config/zsh/plugins/fast-syntax-highlighting/themes/default.ini"
+
+		if [[ -e $mytheme && -e $themefile ]]; then
+			cp $mytheme $themefile
+		fi
+	fi
 	if [[ ! -e $initfile ]]; then
 		initfiles=($plugdir/*.{plugin.zsh,zsh-theme,zsh,sh}(N))
 		(( $#initfiles )) || { echo >&2 "No init file '$repo'." && continue }
@@ -23,8 +31,8 @@ done
 
 repos=(
 	jeffreytse/zsh-vi-mode
+	zdharma-continuum/fast-syntax-highlighting
 	zsh-users/zsh-autosuggestions
-	zsh-users/zsh-syntax-highlighting
 	zsh-users/zsh-history-substring-search
 )
 

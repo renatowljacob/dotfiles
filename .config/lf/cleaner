@@ -1,6 +1,0 @@
-#!/bin/sh
-#
-# from https://github.com/thimc/lfimg
-if [ -n "$FIFO_UEBERZUG" ]; then
-	printf '{"action": "remove", "identifier": "PREVIEW"}\n' > "$FIFO_UEBERZUG"
-fi
