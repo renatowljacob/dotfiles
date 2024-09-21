@@ -82,6 +82,8 @@ vim.opt.scrolloff = 10
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
+vim.opt.autoread = true
+
 -- Floating windows border configuration
 vim.diagnostic.config({
 	float = { border = "rounded" },

@@ -95,7 +95,7 @@ static uint64_t functionality = 0
 //	|BarBorder // draw a border around the bar
 	|BarPadding // add vertical and side padding as per vertpad and sidepad variables above
 //	|NoBorders // as per the noborder patch, show no border when only one client in tiled mode
-//	|Warp // warp cursor to currently focused window
+	|Warp // warp cursor to currently focused window
 //	|DecorationHints // omit drawing the window border if the applications asks not to
 	|FocusedOnTop // allows focused window to stay on top of other windows
 //	|FocusedOnTopTiled // additional toggle to allow focused tiled clients to show on top of floating windows

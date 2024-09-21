@@ -60,6 +60,16 @@ vim.keymap.set({ "n", "v" }, ")", ")zz")
 vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
 
+-- Quicklist navigation
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "qf",
+	callback = function(event)
+		local opts = { buffer = event.buf, silent = true }
+		vim.keymap.set("n", "]q", "<cmd>cn | wincmd p<CR>", opts)
+		vim.keymap.set("n", "[q", "<cmd>cN | wincmd p<CR>", opts)
+	end,
+})
+
 -- Clear search highlight
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
@@ -71,14 +81,3 @@ vim.keymap.set("n", "<leader>nx", "<cmd>Neorg index<CR>", { desc = "Go to index 
 
 -- Toggle highlight color
 vim.keymap.set("n", "<leader>dh", "<cmd>HighlightColors Toggle<CR>", { desc = "Toggle Highlight Colors" })
-
--- Funny calculator
--- https://www.reddit.com/r/neovim/comments/1d8yeb0/simple_calculator_in_neovim/
-vim.keymap.set("i", "<C-.>", function()
-	vim.ui.input({ prompt = "Calculator: " }, function(input)
-		local calc = load("return " .. (input or ""))()
-		if calc then
-			vim.api.nvim_feedkeys(tostring(calc), "i", true)
-		end
-	end)
-end)
