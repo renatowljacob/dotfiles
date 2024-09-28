@@ -22,4 +22,5 @@ prepend_keymap = [
 				*) false ;;
 				esac' --confirm
 		'''], desc = "Set lockscreen background" },
+	{ on = [ "g", "n" ], run = "cd ~/Documents/notes", desc = "Go to notes directory" },
 ]

@@ -81,3 +81,6 @@ vim.keymap.set("n", "<leader>nx", "<cmd>Neorg index<CR>", { desc = "Go to index 
 
 -- Toggle highlight color
 vim.keymap.set("n", "<leader>dh", "<cmd>HighlightColors Toggle<CR>", { desc = "Toggle Highlight Colors" })
+
+-- Delete buffer
+vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Delete buffer" })

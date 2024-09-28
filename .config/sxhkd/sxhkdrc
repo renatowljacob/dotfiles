@@ -30,3 +30,10 @@ super + alt + c
 
 super + x
 	dunstctl history-pop
+
+# xcolor
+super + e
+	xcolor --format HEX | xsel -b
+
+super + shift + e
+	xcolor --format rgb | xsel -b
