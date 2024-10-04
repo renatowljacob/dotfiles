@@ -20,6 +20,7 @@ return {
 			"markdown",
 			"markdown_inline",
 			"norg",
+			"latex",
 			"query",
 			"sql",
 			"typescript",

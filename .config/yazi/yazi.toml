@@ -15,10 +15,15 @@ open_browser = [
 edit = [
 	{ run = 'nvim "$@"', block = true, desc = "Edit" },
 ]
+edit_image = [
+	{ run = 'krita "$@"', desc = "Edit image" },
+]
 
 [open]
 prepend_rules = [
-	{ name = "*.html", use = [ "open_browser", "edit" ] },
+	{ name = "*.html", use = [ "edit", "open_browser" ] },
+	{ name = "*.pdf", use = [ "open", "open_browser" ] },
+	{ mime = "image/*", use = [ "open", "edit_image", "open_browser" ] },
 ]
 
 [preview]

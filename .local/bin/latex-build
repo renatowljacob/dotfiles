@@ -1,0 +1,33 @@
+#!/bin/sh
+
+make_pdf(){
+	pdflatex $1
+}
+
+make_references(){
+	biber $1
+}
+
+document=$1
+
+if [ -z "$document" ]; then
+	printf "%bError: invalid argument\n"
+	exit 1
+fi
+
+if [ ! -e "$document" ]; then
+	printf "%bError: invalid document\n"
+	exit 2
+fi
+
+make_pdf $document
+
+if [ $(grep -G -e "\\\\label")] && [ $(grep -G -e "\\\\ref") ]; then
+	make_pdf $document
+fi
+
+if [ $(grep -G -e "^\\\\usepackage.*{biblatex}" "$document") ] && \
+	[ $(grep -G -e "^\\\\addbibresource.*{.\+}" "$document") ]; then
+	make_references $document
+	make_pdf $document
+fi

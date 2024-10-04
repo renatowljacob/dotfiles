@@ -173,6 +173,19 @@ return {
 			emmet_language_server = {},
 			html = {},
 			jdtls = {},
+			ltex = {
+				settings = {
+					ltex = {
+						enabled = {
+							"latex",
+						},
+						language = "pt-BR", -- "en-US",
+						additionalRules = {
+							motherTongue = "pt-BR",
+						},
+					},
+				},
+			},
 			lua_ls = {
 				-- cmd = {...},
 				-- filetypes = { ...},

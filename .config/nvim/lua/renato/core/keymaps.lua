@@ -80,7 +80,10 @@ vim.keymap.set("i", "<C-k>", "<C-b>")
 vim.keymap.set("n", "<leader>nx", "<cmd>Neorg index<CR>", { desc = "Go to index file" })
 
 -- Toggle highlight color
-vim.keymap.set("n", "<leader>dh", "<cmd>HighlightColors Toggle<CR>", { desc = "Toggle Highlight Colors" })
+vim.keymap.set("n", "<leader>dh", "<cmd>HighlightColors Toggle<CR>", { desc = "Toggle [H]ighlight Colors" })
 
 -- Delete buffer
-vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Delete buffer" })
+vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "[D]elete buffer" })
+
+-- Toggle spellchecking
+vim.keymap.set("n", "<leader>dl", "<cmd>setlocal invspell<CR>", { desc = "Toggle Spellchecking" })
