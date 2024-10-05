@@ -3,9 +3,9 @@
 pkgs=$(pacman -Qdtq) 
 if [ $? -eq 0 ]; then
 	printf "\033[1;32m==>\033[0m Orphaned packages found\n"
-	for item in $pkgs
+	for pkg in $pkgs
 	do
-		printf "  \033[1;34m->\033[0m $item\n"
+		printf "  \033[1;34m->\033[0m $pkg\n"
 	done
 else
 	printf "\033[1;32m==>\033[0m No orphaned packages found\n"

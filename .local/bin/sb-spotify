@@ -1,17 +1,14 @@
 #!/bin/sh
 
-if ps -C spotify > /dev/null; then
-	bgcolor='#1A1B26'
-	accentcolor='#1ED760'
-
-	# Nerd Fonts
-	# style="^c$accentcolor^^r00,00,12,h^^f12^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,8,h^^d^^f26^^c$accentcolor^"
-	
-	# Font Awesome
-	style="^c$accentcolor^^r00,00,13,h^^f13^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,7,h^^d^^f26^^c$accentcolor^"
+if pgrep spotify > /dev/null; then
 	status=$(playerctl -p spotify status)
 	track=$(playerctl -p spotify metadata -f '{{trunc(artist, 20)}} — {{trunc(title, 20)}}^f10^')
 	
+	bgcolor='#1A1B26'
+	accentcolor='#1ED760'
+
+	style="^c$accentcolor^^r00,00,13,h^^f13^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,7,h^^d^^f26^^c$accentcolor^"
+
 	case $status in 
 		Playing) status=" " ;;
 		*) status=" " ;;

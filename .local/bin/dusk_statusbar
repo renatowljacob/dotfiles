@@ -58,6 +58,6 @@ while true; do
 		exec ${BASH_SOURCE[0]}
 	fi
 
-	((secs+=1))
-	sleep 1
+	((secs+=2))
+	sleep 2
 done

@@ -1,14 +1,32 @@
 #!/bin/sh
 #
-# from https://github.com/ericmurphyxyz/dotfiles/blob/master/.local/bin/volume
+# From https://github.com/ericmurphyxyz/dotfiles/blob/master/.local/bin/volume
 
-# Increment, decrement, or mute the volume using Pipewire and send a notification
+# Control volume using Pipewire and send a notification
 
-update() {
-	if ps -C dusk > /dev/null; then
-		duskc --ignore-reply run_command setstatus 3 "$(sb-volume)"
+send_notification() {
+	if [ "$1" = "mute" ]; then
+		icon="mute";
+	elif [ "$volume" -lt 33 ]; then
+		icon="off";
+	elif [ "$volume" -lt 66 ]; then
+		icon="low";
 	else
-		kill -37 $(pidof dwmblocks) >/dev/null 2>&1
+		icon="high";
+	fi
+
+	if [ "$1" = "mute" ]; then
+		text="Currently muted";
+	else
+		text="Currently at ${volume}%";
+	fi
+
+	dunstify -a "Volume" -r 9993 -h int:value:"$volume" -i "volume-$icon" "Volume" "$text" -t 2000
+}
+
+update(){
+	if pgrep dusk > /dev/null; then
+		duskc --ignore-reply run_command setstatus 3 "$(sb-volume)"
 	fi
 }
 
@@ -31,14 +49,6 @@ case $1 in
 esac
 
 volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | tr -dc '0-9' | sed 's/^0\{1,2\}//')
-
-
-send_notification() {
-	if [ "$1" = "mute" ]; then icon="mute"; elif [ "$volume" -lt 33 ]; then icon="off"; elif [ "$volume" -lt 66 ]; then icon="low"; else icon="high"; fi
-	if [ "$1" = "mute" ]; then text="Currently muted"; else text="Currently at ${volume}%"; fi
-
-	dunstify -a "Volume" -r 9993 -h int:value:"$volume" -i "volume-$icon" "Volume" "$text" -t 2000
-}
 
 case $1 in
 	mute)
