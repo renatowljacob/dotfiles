@@ -1,33 +1,85 @@
 #!/bin/sh
 
+# Compiles latex to pdf
 make_pdf(){
 	pdflatex $1
 }
 
+# Use biber to generate references
 make_references(){
 	biber $1
+}
+
+# Check if biblatex is defined and not commented out
+has_biblatex(){
+	querypkg=$(grep -e "^\\\\usepackage.*{biblatex}" "$1")
+	queryres=$(grep -e "^\\\\addbibresource.*{.\+}" "$1")
+	queryall="$querypkg$queryres"
+
+	if [ -z "$queryall" ]; then
+		return 1
+	fi
+
+	# If commented out entries are equal to total count
+	if [ $(grep -c % <<< "$queryall") -eq $(wc -l <<< "$queryall") ]; then
+		return 1
+	fi
+
+	make_references "$1"
+
+	return 0
+}
+
+# Check whether labels and refs are defined and not commented out
+has_ref_or_label(){
+	queryref=$(grep -e "\\\\ref" "$1")
+	querylab=$(grep -e "\\\\label" "$1")
+	queryall="$queryref$querylab"
+
+	if [ -z "$queryall" ]; then
+		return 1
+	fi
+
+	# If commented out entries are equal to total count
+	if [ $(grep -c % <<< "$queryall" ) -eq $(wc -l <<< "$queryall") ]; then
+		return 1
+	fi
+
+	return 0
 }
 
 document=$1
 
 if [ -z "$document" ]; then
-	printf "%bError: invalid argument\n"
+	printf "%bError: "$document" is not a valid argument\n"
 	exit 1
 fi
 
 if [ ! -e "$document" ]; then
-	printf "%bError: invalid document\n"
+	printf "%bError: "$document" does not exist\n"
 	exit 2
 fi
 
-make_pdf $document
+# Compile to pdf for the first time
+make_pdf "$document"
 
-if [ $(grep -G -e "\\\\label")] && [ $(grep -G -e "\\\\ref") ]; then
-	make_pdf $document
+# Check if recompilation is necessary
+check=1
+
+has_biblatex "$document"
+result=$?
+if [ $result -eq 0 ]; then
+	check=0
 fi
 
-if [ $(grep -G -e "^\\\\usepackage.*{biblatex}" "$document") ] && \
-	[ $(grep -G -e "^\\\\addbibresource.*{.\+}" "$document") ]; then
-	make_references $document
-	make_pdf $document
+has_ref_or_label "$document"
+result=$?
+if [ $result -eq 0 ]; then
+	check=0
 fi
+
+if [ $check -eq 0 ]; then
+	make_pdf "$document"
+fi
+
+exit 0
