@@ -1,0 +1,19 @@
+# Adapted from Arctic Studios - https://github.com/arcticicestudio/nord
+
+color background          color15    default
+color listnormal          color15    default
+color listnormal_unread   color1     default
+color listfocus           color0     color4
+color listfocus_unread    color0     color4   bold
+color title               color4     default  bold
+color info                color8     color0
+color article             color7     default
+color end-of-text-marker  color5     default
+
+# highlights
+highlight article "^(Feed|Link):.*$" color6 default bold
+highlight article "^(Title|Date|Author):.*$" color6 default bold
+highlight article "https?://[^ ]+" color2 default underline
+highlight article "\\[[0-9]+\\]" color2 default bold
+highlight article "\\[image\\ [0-9]+\\]" color2 default bold
+highlight feedlist "^─.*$" color6 color0 bold
