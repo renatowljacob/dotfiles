@@ -25,7 +25,7 @@ send_notification() {
 }
 
 update(){
-	if pgrep dusk > /dev/null; then
+	if ps -C dusk > /dev/null; then
 		duskc --ignore-reply run_command setstatus 3 "$(sb-volume)"
 	fi
 }

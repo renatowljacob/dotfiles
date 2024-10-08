@@ -64,21 +64,21 @@ fi
 make_pdf "$document"
 
 # Check if recompilation is necessary
-check=1
+rebuild=0
 
 has_biblatex "$document"
 result=$?
 if [ $result -eq 0 ]; then
-	check=0
+	rebuild=1
 fi
 
 has_ref_or_label "$document"
 result=$?
 if [ $result -eq 0 ]; then
-	check=0
+	rebuild=1
 fi
 
-if [ $check -eq 0 ]; then
+if [ $rebuild -eq 1 ]; then
 	make_pdf "$document"
 fi
 

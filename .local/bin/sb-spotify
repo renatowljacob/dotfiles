@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if pgrep spotify > /dev/null; then
+if ps -C spotify > /dev/null; then
 	status=$(playerctl -p spotify status)
 	track=$(playerctl -p spotify metadata -f '{{trunc(artist, 20)}} — {{trunc(title, 20)}}^f10^')
 	

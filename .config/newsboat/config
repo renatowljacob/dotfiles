@@ -1,4 +1,6 @@
-include ~/.config/newsboat/tokyo_night
+include ~/.config/newsboat/tokyo-night
+
+# Keybindings
 
 # jk - move up/down
 unbind-key j
@@ -28,3 +30,6 @@ bind-key f goto-url
 unbind-key ^D
 bind-key ^D halfpagedown
 bind-key ^U halfpageup
+
+# Options
+text-width 80
