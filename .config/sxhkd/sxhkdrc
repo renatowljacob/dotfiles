@@ -1,14 +1,14 @@
 # fullscreen
 @Print
-	scrot -F ~/Pictures/screenshots/'%m-%d-%Y.png' -e 'xclip -selection clipboard -t image/png -i $f'
+	scrot -F ~/Pictures/screenshots/'%m-%d-%Y.png' -e 'xclip -selection clipboard -t image/png -i $f' -q 100
 
 # selection
 super + @Print
-	scrot -s ~/Pictures/screenshots/'%m-%d-%Y.png' --line mode=edge,width=2 -e 'xclip -selection clipboard -t image/png -i $f'
+	scrot -s ~/Pictures/screenshots/'%m-%d-%Y.png' --freeze --line 'mode=classic',width=2 -e 'xclip -selection clipboard -t image/png -i $f' -q 100
 
 # focused window
 super + shift + @Print
-	scrot -ub ~/Pictures/screenshots/'%m-%d-%Y.png' -e 'xclip -selection clipboard -t image/png -i $f'
+	scrot -ub ~/Pictures/screenshots/'%m-%d-%Y.png' -e 'xclip -selection clipboard -t image/png -i $f' -q 100
 
 # lock screen
 super + ctrl + s

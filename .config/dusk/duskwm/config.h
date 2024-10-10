@@ -272,10 +272,11 @@ static const Rule clientrules[] = {
 	// { .instance = "spterm (w)", .scratchkey = 'w', .flags = Floating },
 	// { .instance = "spterm (e)", .scratchkey = 'e', .flags = Floating },
 	// { .instance = "spfm (r)", .scratchkey = 'r', .flags = Floating },
+	// Terminals
 	{ .class = "org.wezfurlong.wezterm", .flags = Terminal|NoSwallow },
 	{ .class = "kitty", .flags = Terminal },
 	{ .class = "st-256color", .flags = Terminal|AttachBottom },
-	{ .class = "Xephyr", .flags = NoSwallow|Floating|Centered },
+	// General
 	{ .class = "Chromium", .flags = NoSwallow, .workspace = "3" },
 	{ .class = "firefox", .flags = NoSwallow, .workspace = "1" },
 	{ .class = "firefoxdeveloperedition", .flags = NoSwallow },
@@ -283,6 +284,10 @@ static const Rule clientrules[] = {
 	{ .class = "Steam", .flags = Floating|Centered, .workspace = "4" },
 	{ .class = "steam_app_", .flags = SteamGame, .workspace = "4" },
 	{ .class = "vesktop", .workspace = "4" },
+	{ .class = "Xephyr", .flags = NoSwallow|Floating|Centered },
+	{ .class = "zen-alpha", .flags = NoSwallow },
+	{ .class = "zen-uni", .flags = NoSwallow, .workspace = "3" },
+	{ .class = "zen-def", .flags = NoSwallow, .workspace = "1" },
 	{ .title = "Event Tester", .flags = NoSwallow },
 };
 

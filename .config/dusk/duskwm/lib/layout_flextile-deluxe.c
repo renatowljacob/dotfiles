@@ -538,7 +538,6 @@ arrange_monocle(Workspace *ws, int x, int y, int h, int w, int ih, int iv, int n
 
 		if (c != focused)
 			hide(c);
-		}
 	}
 
 	skipfocusevents();
