@@ -62,16 +62,15 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 alias cat='bat '
 alias du='gdu '
+alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 alias grep='grep --color=auto '
 alias lf='lfrun '
 alias locate='plocate '
 alias ls='eza --icons=always --hyperlink --no-quotes'
-alias siv='nsxiv-rifle '
-alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
-alias rm='trash '
 alias nvim-debug='NVIM_APPNAME="nvim-debug" nvim'
-alias pip='~/.python/venv/bin/pip'
-alias pip3='~/.python/venv/bin/pip3'
+alias rm='trash '
+alias siv='nsxiv-rifle '
+
 
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down

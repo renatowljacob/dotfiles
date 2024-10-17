@@ -37,3 +37,6 @@ super + e
 
 super + shift + e
 	xcolor --format rgb | xsel -b
+
+super + shift + apostrophe
+	clipmenu -fn 'JetBrainsMono Nerd Font:style=Medium:pixelsize=14:antialias=true:autohint=true' -nb '#1a1b26' -nf '#c0caf5' -sb '#283457' -sf '#c0caf5'

@@ -45,7 +45,8 @@ numlockx &
 udiskie -s &
 qbittorrent &
 ~/.fehbg &
-picom -b --corner-radius-rules "3:class_g = 'dmenu'" &
+picom -b &
 unclutter -b &
+clipmenud &
 sxhkd -m 1 &
 exec dusk

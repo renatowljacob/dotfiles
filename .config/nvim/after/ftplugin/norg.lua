@@ -8,6 +8,7 @@ vim.opt_local.wrap = false
 
 vim.wo.conceallevel = 2
 vim.wo.foldlevel = 1
+vim.o.foldnestmax = 20
 
 vim.opt_local.spell = true
 vim.opt_local.spelllang = { "en_us", "pt_br" }

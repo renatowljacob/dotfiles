@@ -169,7 +169,16 @@ return {
 			--
 			-- But for many setups, the LSP (`ts_ls`) will work just fine
 			clangd = {},
-			cssls = {},
+			cssls = {
+				settings = {
+					css = {
+						format = {
+							spaceAroundSelectorSeparator = true,
+						},
+					},
+				},
+			},
+			css_variables = {},
 			emmet_language_server = {},
 			html = {},
 			jdtls = {},
