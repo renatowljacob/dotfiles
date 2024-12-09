@@ -1,7 +1,8 @@
-// If you'd like to override the default keybindings completely, be sure to change "keybinds" to "keybinds clear-defaults=true"
 keybinds clear-defaults=true {
     normal {
         bind "Ctrl Space" { SwitchToMode "Pane"; }
+        bind "Alt Enter" { NewPane; }
+        bind "Alt q" { CloseFocus; }
         bind "Alt j" { FocusNextPane; }
         bind "Alt k" { FocusPreviousPane; }
         bind "Alt h" { Resize "Increase Left"; }
@@ -9,8 +10,12 @@ keybinds clear-defaults=true {
         bind "Alt J" { MovePane; }
         bind "Alt K" { MovePaneBackwards; }
         bind "Alt f" { ToggleFocusFullscreen; }
-        bind "Alt n" { GoToNextTab; } // next
-        bind "Alt p" { GoToPreviousTab; } // previous
+        bind "Alt r" { SwitchToMode "RenamePane"; PaneNameInput 0; }
+        bind "Ctrl Alt t" { NewTab; }
+        bind "Ctrl Alt q" { CloseTab; }
+        bind "Ctrl Alt n" { GoToNextTab; } // next
+        bind "Ctrl Alt p" { GoToPreviousTab; } // previous
+        bind "Ctrl Alt r" { SwitchToMode "RenameTab"; TabNameInput 0; }
         bind "Alt 1" { GoToTab 1; }
         bind "Alt 2" { GoToTab 2; }
         bind "Alt 3" { GoToTab 3; }
@@ -36,7 +41,7 @@ keybinds clear-defaults=true {
         bind "H" { Resize "Increase Left"; }
         bind "L" { Resize "Increase Right"; }
         bind "Enter" { NewPane; }
-        bind "c" { CloseFocus; }
+        bind "q" { CloseFocus; }
         bind "f" { ToggleFocusFullscreen; }
         bind "z" { TogglePaneFrames; }
         bind "F" { ToggleFloatingPanes; }
@@ -45,7 +50,7 @@ keybinds clear-defaults=true {
 
         // Tab setup
         bind "Ctrl t" { NewTab; }
-        bind "Ctrl c" { CloseTab; }
+        bind "Ctrl q" { CloseTab; }
         bind "Ctrl r" { SwitchToMode "RenameTab"; TabNameInput 0; }
         bind "Ctrl b" { BreakPane; }
         bind "Ctrl n" { GoToNextTab; } // next
@@ -131,7 +136,7 @@ keybinds clear-defaults=true {
     }
     shared_except "normal" {
         bind "Ctrl Space" { SwitchToMode "Normal"; }
-        bind "Ctrl q" { Quit; }
+        bind "Alt q" { Quit; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
     }
@@ -149,64 +154,13 @@ plugins {
     filepicker location="zellij:strider" {
         cwd "/"
     }
+    configuration location="zellij:configuration"
+    plugin-manager location="zellij:plugin-manager"
 }
 
-// Choose what to do when zellij receives SIGTERM, SIGINT, SIGQUIT or SIGHUP
-// eg. when terminal window with an active zellij session is closed
-// Options:
-//   - detach (Default)
-//   - quit
-//
-// on_force_close "quit"
-
-//  Send a request for a simplified ui (without arrow fonts) to plugins
-//  Options:
-//    - true
-//    - false (Default)
-//
 simplified_ui true
-
-// Choose the path to the default shell that zellij will use for opening new panes
-// Default: $SHELL
-//
-// default_shell "fish"
-
-// Choose the path to override cwd that zellij will use for opening new panes
-//
-// default_cwd ""
-
-// Toggle between having pane frames around the panes
-// Options:
-//   - true (default)
-//   - false
-//
-// pane_frames true
-
-// Toggle between having Zellij lay out panes according to a predefined set of layouts whenever possible
-// Options:
-//   - true (default)
-//   - false
-//
-// auto_layout true
-
-// Whether sessions should be serialized to the cache folder (including their tabs/panes, cwds and running commands) so that they can later be resurrected
-// Options:
-//   - true (default)
-//   - false
-//
-// session_serialization false
-
-// Whether pane viewports are serialized along with the session, default is false
-// Options:
-//   - true
-//   - false (default)
-// serialize_pane_viewport true
-
-// Scrollback lines to serialize along with the pane viewport when serializing sessions, 0
-// defaults to the scrollback size. If this number is higher than the scrollback size, it will
-// also default to the scrollback size. This does nothing if `serialize_pane_viewport` is not true.
-//
-// scrollback_lines_to_serialize 10000
+auto_layout true
+session_serialization true
 
 // Tokyonight Zellij Colors
 // Add this file to your `CONFIG_DIR/themes` directory as described here:
@@ -228,93 +182,9 @@ themes {
     }
 }
 
-// Choose the theme that is specified in the themes section.
-// Default: default 
-
 theme "tokyonight_night"
-
-// The name of the default layout to load on startup
-// Default: "default"
-//
 default_layout "compact"
-
-// Choose the mode that zellij uses when starting up.
-// Default: normal
-//
-default_mode "pane"
-
-// Toggle enabling the mouse mode.
-// On certain configurations, or terminals this could
-// potentially interfere with copying text.
-// Options:
-//   - true (default)
-//   - false
-//
-// mouse_mode false
-
-// Configure the scroll back buffer size
-// This is the number of lines zellij stores for each pane in the scroll back
-// buffer. Excess number of lines are discarded in a FIFO fashion.
-// Valid values: positive integers
-// Default value: 10000
-//
-// scroll_buffer_size 10000
-
-// Provide a command to execute when copying text. The text will be piped to
-// the stdin of the program to perform the copy. This can be used with
-// terminal emulators which do not support the OSC 52 ANSI control sequence
-// that will be used by default if this option is not set.
-// Examples:
-//
-// copy_command "xclip -selection clipboard" // x11
-// copy_command "wl-copy"                    // wayland
-// copy_command "pbcopy"                     // osx
-
-// Choose the destination for copied text
-// Allows using the primary selection buffer (on x11/wayland) instead of the system clipboard.
-// Does not apply when using copy_command.
-// Options:
-//   - system (default)
-//   - primary
-//
-// copy_clipboard "primary"
-
-// Enable or disable automatic copy (and clear) of selection when releasing mouse
-// Default: true
-//
-// copy_on_select false
-
-// Path to the default editor to use to edit pane scrollbuffer
-// Default: $EDITOR or $VISUAL
-//
-// scrollback_editor "/usr/bin/vim"
-
-// When attaching to an existing session with other users,
-// should the session be mirrored (true)
-// or should each user have their own cursor (false)
-// Default: false
-//
-// mirror_session true
-
-// The folder in which Zellij will look for layouts
-//
-// layout_dir "/path/to/my/layout_dir"
-
-// The folder in which Zellij will look for themes
-//
-// theme_dir "/path/to/my/theme_dir"
-
-// Enable or disable the rendering of styled and colored underlines (undercurl).
-// May need to be disabled for certain unsupported terminals
-// Default: true
-//
-// styled_underlines false
-
-// Enable or disable writing of session metadata to disk (if disabled, other sessions might not know
-// metadata info on this session)
-// Default: false
-//
-// disable_session_metadata true
+default_mode "normal"
 
 ui {
     pane_frames {

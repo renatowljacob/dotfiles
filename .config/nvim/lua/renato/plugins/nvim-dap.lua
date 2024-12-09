@@ -28,6 +28,7 @@ return {
 	config = function()
 		local dap = require("dap")
 		local dapui = require("dapui")
+		local colors = require("tokyonight.colors").setup()
 
 		require("mason-nvim-dap").setup({
 			-- Makes a best effort to setup the various debuggers with
@@ -72,6 +73,30 @@ return {
 		vim.keymap.set("n", "<F7>", dapui.toggle, { desc = "Debug: See last session result." })
 		vim.keymap.set({ "n", "v" }, "<leader>DK", dapui.eval, { desc = "Debug: Evaluate expression." })
 		vim.keymap.set("n", "<leader>DD", dapui.float_element, { desc = "Debug: Inspect element." })
+
+		-- Change breakpoint icons
+		vim.api.nvim_set_hl(0, "DapBreak", { fg = colors.red })
+		vim.api.nvim_set_hl(0, "DapStop", { fg = colors.yellow })
+		local breakpoint_icons = vim.g.have_nerd_font
+				and {
+					Breakpoint = "",
+					BreakpointCondition = "",
+					BreakpointRejected = "",
+					LogPoint = "",
+					Stopped = "",
+				}
+			or {
+				Breakpoint = "●",
+				BreakpointCondition = "⊜",
+				BreakpointRejected = "⊘",
+				LogPoint = "◆",
+				Stopped = "⭔",
+			}
+		for type, icon in pairs(breakpoint_icons) do
+			local tp = "Dap" .. type
+			local hl = (type == "Stopped") and "DapStop" or "DapBreak"
+			vim.fn.sign_define(tp, { text = icon, texthl = hl, numhl = hl })
+		end
 
 		dap.listeners.after.event_initialized["dapui_config"] = dapui.open
 		dap.listeners.before.event_terminated["dapui_config"] = dapui.close

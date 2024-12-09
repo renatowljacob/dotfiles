@@ -274,20 +274,15 @@ static const Rule clientrules[] = {
 	// { .instance = "spfm (r)", .scratchkey = 'r', .flags = Floating },
 	// Terminals
 	{ .class = "org.wezfurlong.wezterm", .flags = Terminal|NoSwallow },
-	{ .class = "kitty", .flags = Terminal },
 	{ .class = "st-256color", .flags = Terminal|AttachBottom },
 	// General
-	{ .class = "Chromium", .flags = NoSwallow, .workspace = "3" },
-	{ .class = "firefox", .flags = NoSwallow, .workspace = "1" },
-	{ .class = "firefoxdeveloperedition", .flags = NoSwallow },
-	{ .class = "Spotify", .workspace = "5" },
-	{ .class = "Steam", .flags = Floating|Centered, .workspace = "4" },
-	{ .class = "steam_app_", .flags = SteamGame, .workspace = "4" },
-	{ .class = "vesktop", .workspace = "4" },
-	{ .class = "Xephyr", .flags = NoSwallow|Floating|Centered },
-	{ .class = "zen-alpha", .flags = NoSwallow },
+	{ .class = "steam_app_", .flags = SteamGame, .workspace = "5" },
+	{ .class = "steam", .flags = Floating|Centered, .workspace = "4" },
 	{ .class = "zen-uni", .flags = NoSwallow, .workspace = "3" },
+	{ .class = "vesktop", .workspace = "4" },
 	{ .class = "zen-def", .flags = NoSwallow, .workspace = "1" },
+	{ .class = "Spotify", .workspace = "6" },
+	{ .class = "zen-alpha", .flags = NoSwallow },
 	{ .title = "Event Tester", .flags = NoSwallow },
 };
 
@@ -426,7 +421,8 @@ static const WorkspaceRule wsrules[] = {
 	{  "2",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
 	{  "3",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
 	{  "4",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
-	{  "5",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
+	{  "5",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
+	{  "6",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
 };
 
 static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */

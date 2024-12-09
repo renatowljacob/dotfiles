@@ -39,14 +39,15 @@ export XDG_RUNTIME_DIR="/run/user/$UID"
 export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 
 /usr/lib/polkit-kde-authentication-agent-1 &
+~/.fehbg &
+clipmenud &
+numlockx &
+picom -b &
+qbittorrent &
+sxhkd -m 1 &
+udiskie -s &
+unclutter -b &
+wezterm start "nvim" "-c" "Neorg index" &
 xidlehook --not-when-audio --not-when-fullscreen \
     --timer 600 'betterlockscreen --lock' '' &
-numlockx &
-udiskie -s &
-qbittorrent &
-~/.fehbg &
-picom -b &
-unclutter -b &
-clipmenud &
-sxhkd -m 1 &
 exec dusk

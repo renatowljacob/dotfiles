@@ -3,9 +3,9 @@
     follow = none
 
     width = 400
-    height = 400
+    height = (0, 400)
     origin = top-right
-    offset = 6x42
+    offset = (6,42)
     scale = 0
 
     notification_limit = 6
@@ -54,7 +54,7 @@
     icon_position = left
     min_icon_size = 40
     max_icon_size = 80
-    icon_path = /home/espritmakomako/.local/share/icons/dunst
+    icon_path = ~/.local/share/icons/dunst
     default_icon = bell
 
     sticky_history = yes

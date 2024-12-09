@@ -5,7 +5,7 @@
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+vim.g.maplocalleader = "\\"
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "<leader>dd", function()
@@ -28,8 +28,8 @@ vim.keymap.set("n", "]b", "<cmd>bnext<CR>", { desc = "Next buffer" })
 --
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set("n", "TT", vim.cmd.terminal, { desc = "Enter terminal mode" })
-vim.keymap.set("t", "TQ", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+vim.keymap.set("n", "<C-t>", vim.cmd.terminal, { desc = "Enter terminal mode" })
+vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set("n", "<left>", '<cmd>echo "Use h to move!!"<CR>')
@@ -83,7 +83,9 @@ vim.keymap.set("n", "<leader>nx", "<cmd>Neorg index<CR>", { desc = "Go to index 
 vim.keymap.set("n", "<leader>dh", "<cmd>HighlightColors Toggle<CR>", { desc = "Toggle [H]ighlight Colors" })
 
 -- Delete buffer
-vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "[D]elete buffer" })
+vim.keymap.set("n", "<leader>bd", function()
+	require("mini.bufremove").delete()
+end, { desc = "[D]elete buffer" })
 
 -- Toggle spellchecking
 vim.keymap.set("n", "<leader>dl", "<cmd>setlocal invspell<CR>", { desc = "Toggle Spellchecking" })

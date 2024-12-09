@@ -114,7 +114,6 @@ return {
 		vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "Search Help" })
 		vim.keymap.set("n", "<leader>sH", builtin.highlights, { desc = "Search Highlights" })
 		vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "Search Keymaps" })
-		vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "Search Files" })
 		vim.keymap.set("n", "<leader>ss", builtin.builtin, { desc = "Search Select Telescope" })
 		vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "Search Current Word" })
 		vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "Search by Grep" })
@@ -140,6 +139,10 @@ return {
 				prompt_title = "Live Grep in Open Files",
 			})
 		end, { desc = "Search in Open Files" })
+
+		vim.keymap.set("n", "<leader>sf", function()
+			builtin.find_files({ hidden = true })
+		end, { desc = "Search Files" })
 
 		-- Shortcut for searching your Neovim configuration files
 		vim.keymap.set("n", "<leader>sn", function()

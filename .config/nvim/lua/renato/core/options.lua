@@ -98,3 +98,5 @@ vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldmethod = "expr"
 vim.opt.foldtext = ""
 vim.opt.foldenable = false
+
+vim.opt.laststatus = 3
