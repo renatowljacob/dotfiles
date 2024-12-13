@@ -58,6 +58,8 @@ vim.opt.timeoutlen = 300
 vim.opt.splitright = false
 vim.opt.splitbelow = false
 
+vim.opt.laststatus = 3
+
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
@@ -88,7 +90,6 @@ vim.opt.autoread = true
 vim.diagnostic.config({
 	float = { border = "rounded" },
 })
-
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
 	border = "single",
 })
@@ -99,4 +100,22 @@ vim.opt.foldmethod = "expr"
 vim.opt.foldtext = ""
 vim.opt.foldenable = false
 
-vim.opt.laststatus = 3
+vim.opt.sessionoptions = {
+	"blank",
+	"buffers",
+	"folds",
+	"globals",
+	"help",
+	"options",
+	"sesdir",
+	"tabpages",
+	"terminal",
+	"winsize",
+}
+
+-- Without noinsert, omnifunc breaks rainbow-delimiters :P idk
+vim.opt.completeopt = {
+	"menuone",
+	"noinsert",
+	"popup",
+}

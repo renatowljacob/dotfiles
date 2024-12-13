@@ -13,7 +13,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 -- Resize splits if window got resized
-vim.api.nvim_create_autocmd({ "VimResized" }, {
+vim.api.nvim_create_autocmd("VimResized", {
 	desc = "Resize splits in window resize",
 	group = vim.api.nvim_create_augroup("resize-splits", { clear = true }),
 	callback = function()
@@ -47,5 +47,98 @@ vim.api.nvim_create_autocmd("TermOpen", {
 	callback = function()
 		vim.opt_local.number = false
 		vim.opt_local.relativenumber = false
+		vim.opt_local.signcolumn = "no"
+	end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	desc = "Quickfix list navigation keymaps",
+	group = vim.api.nvim_create_augroup("set-quickfix-keymaps", { clear = true }),
+	pattern = "qf",
+	callback = function(event)
+		local opts = { buffer = event.buf, silent = true }
+
+		local highlight_line = function()
+			local index = vim.fn.getqflist({ idx = 0 }).idx
+			local qfline = vim.fn.getqflist()[index]
+			local bufnr, line = qfline.bufnr, qfline.lnum - 1
+
+			local highlight = "IncSearch"
+			local namespace = vim.api.nvim_create_namespace("highlight_quickfix")
+			local timeout = 150
+			local timer ---@type uv.uv_timer_t
+
+			local clear_hl = function()
+				pcall(vim.api.nvim_buf_clear_namespace, bufnr, namespace, 0, -1)
+				pcall(vim.api.nvim__win_del_ns, vim.fn.bufwinid(bufnr), namespace)
+			end
+
+			vim.api.nvim__win_add_ns(vim.fn.bufwinid(bufnr), namespace)
+			vim.highlight.range(bufnr, namespace, highlight, { line, 0 }, { line, vim.fn.col("$") })
+
+			if timer then
+				timer:close()
+				assert(clear_hl)
+				clear_hl()
+			end
+
+			timer = vim.defer_fn(clear_hl, timeout)
+		end
+
+		vim.keymap.set("n", "]q", function()
+			vim.cmd("cn | wincmd p")
+			highlight_line()
+		end, opts)
+		vim.keymap.set("n", "[q", function()
+			vim.cmd("cp | wincmd p")
+			highlight_line()
+		end, opts)
+	end,
+})
+
+---@type table<number, {token:lsp.ProgressToken, msg:string, done:boolean}[]>
+local progress = vim.defaulttable()
+vim.api.nvim_create_autocmd("LspProgress", {
+	desc = "Lsp Progress Notification",
+	group = vim.api.nvim_create_augroup("lsp-notification", { clear = true }),
+	---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
+	callback = function(ev)
+		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+		local value = ev.data.params.value --[[@as {percentage?: number, title?: string, message?: string, kind: "begin" | "report" | "end"}]]
+		if not client or type(value) ~= "table" then
+			return
+		end
+		local p = progress[client.id]
+
+		for i = 1, #p + 1 do
+			if i == #p + 1 or p[i].token == ev.data.params.token then
+				p[i] = {
+					token = ev.data.params.token,
+					msg = ("[%3d%%] %s%s"):format(
+						value.kind == "end" and 100 or value.percentage or 100,
+						value.title or "",
+						value.message and (" **%s**"):format(value.message) or ""
+					),
+					done = value.kind == "end",
+				}
+				break
+			end
+		end
+
+		local msg = {} ---@type string[]
+		progress[client.id] = vim.tbl_filter(function(v)
+			return table.insert(msg, v.msg) or not v.done
+		end, p)
+
+		local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+		---@diagnostic disable-next-line: param-type-mismatch
+		vim.notify(table.concat(msg, "\n"), "info", {
+			id = "lsp_progress",
+			title = client.name,
+			opts = function(notif)
+				notif.icon = #progress[client.id] == 0 and " "
+					or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+			end,
+		})
 	end,
 })

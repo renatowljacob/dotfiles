@@ -2,10 +2,16 @@
 --  See `:help vim.keymap.set()`
 
 -- Set <space> as the leader key
+-- Set \ as the local leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+
+-- Useful keymaps for config testing and plugin development
+vim.keymap.set("n", "<leader>ns", "<cmd>source %<CR>", { desc = "Source file" })
+vim.keymap.set("n", "<leader>nx", ":.lua<CR>", { desc = "Execute lua line" })
+vim.keymap.set("v", "<leader>nx", ":lua<CR>", { desc = "Execute lua lines" })
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "<leader>dd", function()
@@ -14,28 +20,53 @@ end, { desc = "Toggle Diagnostics" })
 vim.keymap.set("n", "<leader>de", vim.diagnostic.open_float, { desc = "Show diagnostic Error messages" })
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setloclist, { desc = "Open diagnostic Quickfix list" })
 
--- Open Netrw (overriden by tfm keymap, fallback)
+-- Open netrw
 vim.keymap.set("n", "<leader>lf", vim.cmd.Explore, { desc = "Netrw" })
 vim.keymap.set("n", "<leader>lv", vim.cmd.Lexplore, { desc = "Netrw on the left side" })
 
--- View next/previous buffer in the list
+-- Delete buffer
+vim.keymap.set("n", "<leader>obd", function()
+	require("mini.bufremove").delete()
+end, { desc = "Delete buffer" })
+
+-- Change to next/previous buffer in the list
 vim.keymap.set("n", "[b", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
 vim.keymap.set("n", "]b", "<cmd>bnext<CR>", { desc = "Next buffer" })
+
+vim.keymap.set("n", "<leader>otn", "<cmd>tabnew<CR>", { desc = "New Tab" })
+vim.keymap.set("n", "<leader>otd", "<cmd>tabclose<CR>", { desc = "Delete Tab" })
+
+-- Change to next/previous tab in the list
+vim.keymap.set("n", "[t", "<cmd>tabprevious<CR>", { desc = "Previous Tab" })
+vim.keymap.set("n", "]t", "<cmd>tabNext<CR>", { desc = "Next Tab" })
+
+-- CD to current buffer path
+vim.keymap.set("n", "<leader>ocd", function()
+	local bufpath = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
+	local cwd = vim.fn.getcwd()
+
+	if cwd == bufpath then
+		vim.notify("Already in buffer directory")
+		return
+	end
+
+	local rootdir = require("renato.core.helpers").find_root(cwd, bufpath)
+
+	vim.fn.chdir(bufpath)
+	vim.notify("Changed to " .. bufpath:sub(#rootdir + 2) .. " directory")
+end, { desc = "Change to current buffer directory" })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set("n", "<C-t>", vim.cmd.terminal, { desc = "Enter terminal mode" })
+vim.keymap.set("n", "<C-t><C-n>", vim.cmd.terminal, { desc = "New terminal" })
+vim.keymap.set("n", "<C-t><C-t>", function()
+	require("snacks.terminal").toggle()
+end, { desc = "Toggle terminal" })
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set("n", "<left>", '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set("n", "<right>", '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set("n", "<up>", '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set("n", "<down>", '<cmd>echo "Use j to move!!"<CR>')
+-- Workaround to not to delete the whole line after a typo
+vim.keymap.set("t", "<S-space>", "<space>")
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -60,32 +91,20 @@ vim.keymap.set({ "n", "v" }, ")", ")zz")
 vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
 
--- Quicklist navigation
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "qf",
-	callback = function(event)
-		local opts = { buffer = event.buf, silent = true }
-		vim.keymap.set("n", "]q", "<cmd>cn | wincmd p<CR>", opts)
-		vim.keymap.set("n", "[q", "<cmd>cN | wincmd p<CR>", opts)
-	end,
-})
-
 -- Clear search highlight
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Change diagraph key
 vim.keymap.set("i", "<C-k>", "<C-b>")
 
--- Neorg keymap
-vim.keymap.set("n", "<leader>nx", "<cmd>Neorg index<CR>", { desc = "Go to index file" })
-
 -- Toggle highlight color
-vim.keymap.set("n", "<leader>dh", "<cmd>HighlightColors Toggle<CR>", { desc = "Toggle [H]ighlight Colors" })
-
--- Delete buffer
-vim.keymap.set("n", "<leader>bd", function()
-	require("mini.bufremove").delete()
-end, { desc = "[D]elete buffer" })
+vim.keymap.set("n", "<leader>dh", "<cmd>HighlightColors Toggle<CR>", { desc = "Toggle Highlight Colors" })
 
 -- Toggle spellchecking
 vim.keymap.set("n", "<leader>dl", "<cmd>setlocal invspell<CR>", { desc = "Toggle Spellchecking" })
+
+-- Neorg keymap
+vim.keymap.set("n", "<localleader>nx", "<cmd>Neorg index<CR>", { desc = "Go to index file" })
+
+-- Telescope auto-session
+vim.keymap.set("n", "<leader>sS", "<cmd>SessionSearch<CR>", { desc = "Search Session" })

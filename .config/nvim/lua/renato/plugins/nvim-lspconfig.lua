@@ -11,11 +11,18 @@ return {
 
 		-- Useful status updates for LSP.
 		-- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-		{ "j-hui/fidget.nvim", opts = {} },
+		-- { "j-hui/fidget.nvim", opts = {} },
 
 		-- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
 		-- used for completion, annotations and signatures of Neovim APIs
-		{ "folke/lazydev.nvim", opts = {} },
+		{
+			"folke/lazydev.nvim",
+			opts = {
+				library = {
+					{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+				},
+			},
+		},
 	},
 	config = function()
 		-- Brief aside: **What is LSP?**
@@ -201,6 +208,11 @@ return {
 			},
 			jdtls = {},
 			ltex = {
+				filetypes = {
+					"markdown",
+					"norg",
+					"tex",
+				},
 				settings = {
 					ltex = {
 						enabled = {

@@ -2,6 +2,13 @@ return {
 	-- Autocompletion
 	"hrsh7th/nvim-cmp",
 	event = "InsertEnter",
+	opts = function(_, opts)
+		opts.sources = opts.sources or {}
+		table.insert(opts.sources, {
+			name = "lazydev",
+			group_index = 0,
+		})
+	end,
 	dependencies = {
 		-- Snippet Engine & its associated nvim-cmp source
 		{
@@ -88,7 +95,6 @@ return {
 				-- Scroll the documentation window [b]ack / [f]orward
 				["<C-b>"] = cmp.mapping.scroll_docs(-4),
 				["<C-f>"] = cmp.mapping.scroll_docs(4),
-
 				-- Accept ([y]es) the completion.
 				--  This will auto-import if your LSP supports it.
 				--  This will expand snippets if the LSP sent a snippet.
@@ -97,7 +103,7 @@ return {
 				-- Manually trigger a completion from nvim-cmp.
 				--  Generally you don't need this, because nvim-cmp will display
 				--  completions whenever it has completion options available.
-				["<C-Space>"] = cmp.mapping.complete({}),
+				["<C-x><C-o>"] = cmp.mapping.complete({}),
 
 				-- Think of <c-j> as moving to the right of your snippet expansion.
 				--  So if you have a snippet that's like:

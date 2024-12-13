@@ -14,7 +14,6 @@ vim.o.foldenable = true
 vim.opt_local.spell = true
 vim.opt_local.spelllang = { "en_us", "pt_br" }
 
-vim.keymap.set("n", "<localleader>nx", "<cmd>Neorg index<CR>", { buffer = true, desc = "Go to index file" })
 vim.keymap.set("n", "<localleader>nr", "<cmd>Neorg return<CR>", { buffer = true, desc = "Return to index" })
 vim.keymap.set(
 	"n",

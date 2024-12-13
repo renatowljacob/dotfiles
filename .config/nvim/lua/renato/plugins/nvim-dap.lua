@@ -24,7 +24,7 @@ return {
 		-- Add your own debuggers here
 		"leoluz/nvim-dap-go",
 	},
-	keys = { "<F5>", "<leader>DB", "<leader>Db", "<F7>" },
+	keys = { "<F5>", "<leader>tb", "<leader>tc", "<leader>tt", "<F7>" },
 	config = function()
 		local dap = require("dap")
 		local dapui = require("dapui")
@@ -55,11 +55,11 @@ return {
 		vim.keymap.set("n", "<F4>", dap.restart, { desc = "Debug: Restart" })
 		vim.keymap.set("n", "<F6>", dap.run_last, { desc = "Debug: Run last session" })
 		vim.keymap.set("n", "<F8>", dap.terminate, { desc = "Debug: Terminate" })
-		vim.keymap.set("n", "<leader>DB", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
-		vim.keymap.set("n", "<leader>Db", function()
+		vim.keymap.set("n", "<leader>tt", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
+		vim.keymap.set("n", "<leader>tb", function()
 			dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
 		end, { desc = "Debug: Set Breakpoint" })
-		vim.keymap.set("n", "<leader>DC", dap.clear_breakpoints, { desc = "Debug: Clear Breakpoints" })
+		vim.keymap.set("n", "<leader>tc", dap.clear_breakpoints, { desc = "Debug: Clear Breakpoints" })
 
 		-- Dap UI setup
 		-- For more information, see |:help nvim-dap-ui|

@@ -183,7 +183,7 @@ themes {
 }
 
 theme "tokyonight_night"
-default_layout "compact"
+default_layout "standard"
 default_mode "normal"
 
 ui {

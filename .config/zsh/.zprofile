@@ -6,13 +6,11 @@ if [ $? -ne 0 ]; then
     select item in "${list[@]}"
     do
         case $item in
-        "Dusk")
+        "Dusk"|"")
             startx "$XDG_CONFIG_HOME/X11/xinitrc"
             break
             ;;
-        "Shell")
-            break
-            ;;
+        "Shell") break;;
         *) echo "invalid option $REPLY";;
         esac
     done

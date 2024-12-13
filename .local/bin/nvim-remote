@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# Open files using full paths to avoid opening files relative to Neovim's cwd
+
+if [ $# -eq 0 ]; then
+	nvim --server $NVIM --remote
+	exit 0
+fi
+
+while (( "$#" )); do
+	if [ ! -f $1 ]; then
+		nvim --server $NVIM --remote "$(pwd)/$1"
+	else
+		nvim --server $NVIM --remote "$(realpath $1)"
+	fi
+
+	shift
+done

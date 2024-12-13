@@ -82,9 +82,13 @@ return {
 				mappings = {
 					i = {
 						["<CR>"] = select_one_or_multi,
+						["<C-Enter>"] = "file_vsplit",
+						["<S-Enter>"] = "file_split",
 					},
 					n = {
 						["<CR>"] = select_one_or_multi,
+						["<C-Enter>"] = "file_vsplit",
+						["<S-Enter>"] = "file_split",
 					},
 				},
 				path_display = { "smart" },
@@ -140,6 +144,7 @@ return {
 			})
 		end, { desc = "Search in Open Files" })
 
+		-- Show hidden files
 		vim.keymap.set("n", "<leader>sf", function()
 			builtin.find_files({ hidden = true })
 		end, { desc = "Search Files" })
@@ -148,6 +153,14 @@ return {
 		vim.keymap.set("n", "<leader>sn", function()
 			builtin.find_files({ cwd = vim.fn.stdpath("config") })
 		end, { desc = "Search Neovim files" })
+
+		-- Search Neovim plugin files
+		vim.keymap.set("n", "<leader>sp", function()
+			builtin.find_files({
+				---@diagnostic disable-next-line:param-type-mismatch
+				cwd = vim.fs.joinpath(vim.fn.stdpath("data"), "lazy"),
+			})
+		end, { desc = "Search plugin files" })
 
 		vim.keymap.set("n", "<leader>sN", function()
 			builtin.find_files({ cwd = "~/Documents/notes/" })
