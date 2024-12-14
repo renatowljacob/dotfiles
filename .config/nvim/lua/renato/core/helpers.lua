@@ -1,14 +1,4 @@
--- Debugging function
--- Talk about overkill
-P = function(var)
-	local version = vim.version.parse(vim.system({ "nvim", "--version" }, { text = true }):wait().stdout)
-
-	if vim.version.lt(version, "0.11.0") then
-		print(vim.inspect(var))
-	else
-		vim.print(var)
-	end
-end
+-- Functions used in my config
 
 local M = {}
 
@@ -23,11 +13,7 @@ function M.find_root(cwd, path)
 
 	local match = cwd:match(path)
 
-	if not match then
-		return M.find_root(cwd, vim.fs.dirname(path))
-	else
-		return match
-	end
+	return match or M.find_root(cwd, vim.fs.dirname(path))
 end
 
 return M

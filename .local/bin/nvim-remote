@@ -1,18 +1,47 @@
 #!/bin/sh
-#
+
 # Open files using full paths to avoid opening them relative to Neovim's cwd
+
+# BUG: +cmd, -c and --cmd containing more than 1 argument (even if quoted) are
+# not supported because POSIX sucks :thumbsup: (I can't properly detect quotes)
+# I will probably rewrite this in another language later in the future
+
+# from https://github.com/dylanaraps/pure-sh-bible?tab=readme-ov-file#trim-leading-and-trailing-white-space-from-string
+trim_string() {
+    trim=${1#${1%%[![:space:]]*}}
+
+    trim=${trim%${trim##*[![:space:]]}}
+
+    printf '%s\n' "$trim"
+}
 
 if [ $# -eq 0 ]; then
 	nvim --server $NVIM --remote
 	exit 0
 fi
 
+str_arr=""
+
 while (( "$#" )); do
 	if [ ! -f $1 ]; then
-		nvim --server $NVIM --remote "$PWD/$1"
+		case $1 in
+			-[tuicSswW]|--startuptime|--listen|--cmd)
+				str_arr="$str_arr $1 $2"
+				shift 2
+				continue
+				;;
+			-l)
+				str_arr="$str_arr $@"
+				break
+				;;
+			[-+]*) str_arr="$str_arr $1" ;;
+			[a-zA-Z0-9_]*) str_arr="$str_arr $PWD/$1" ;;
+		esac
 	else
-		nvim --server $NVIM --remote "$(realpath $1)"
+		str_arr="$str_arr $(realpath $1)"
 	fi
 
 	shift
 done
+
+nvim --server $NVIM --remote $(trim_string "$str_arr")
