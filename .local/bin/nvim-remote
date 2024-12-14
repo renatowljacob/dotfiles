@@ -20,28 +20,28 @@ if [ $# -eq 0 ]; then
 	exit 0
 fi
 
-str_arr=""
+args=""
 
 while (( "$#" )); do
 	if [ ! -f $1 ]; then
 		case $1 in
 			-[tuicSswW]|--startuptime|--listen|--cmd)
-				str_arr="$str_arr $1 $2"
+				args="$args $1 $2"
 				shift 2
 				continue
 				;;
 			-l)
-				str_arr="$str_arr $@"
+				args="$args $@"
 				break
 				;;
-			[-+]*) str_arr="$str_arr $1" ;;
-			[a-zA-Z0-9_]*) str_arr="$str_arr $PWD/$1" ;;
+			[-+]*) args="$args $1" ;;
+			[a-zA-Z0-9_]*) args="$args $PWD/$1" ;;
 		esac
 	else
-		str_arr="$str_arr $(realpath $1)"
+		args="$args $(realpath $1)"
 	fi
 
 	shift
 done
 
-nvim --server $NVIM --remote $(trim_string "$str_arr")
+nvim --server $NVIM --remote $(trim_string "$args")
