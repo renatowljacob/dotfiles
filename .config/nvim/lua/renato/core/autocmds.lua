@@ -4,6 +4,9 @@
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.highlight.on_yank()`
+
+local helpers = require("renato.core.helpers")
+
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",
 	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
@@ -55,43 +58,19 @@ vim.api.nvim_create_autocmd("FileType", {
 	desc = "Quickfix list navigation keymaps",
 	group = vim.api.nvim_create_augroup("set-quickfix-keymaps", { clear = true }),
 	pattern = "qf",
-	callback = function(event)
-		local opts = { buffer = event.buf, silent = true }
-
-		local highlight_line = function()
-			local index = vim.fn.getqflist({ idx = 0 }).idx
-			local qfline = vim.fn.getqflist()[index]
-			local bufnr, line = qfline.bufnr, qfline.lnum - 1
-
-			local highlight = "IncSearch"
-			local namespace = vim.api.nvim_create_namespace("highlight_quickfix")
-			local timeout = 150
-			local timer ---@type uv.uv_timer_t
-
-			local clear_hl = function()
-				pcall(vim.api.nvim_buf_clear_namespace, bufnr, namespace, 0, -1)
-				pcall(vim.api.nvim__win_del_ns, vim.fn.bufwinid(bufnr), namespace)
-			end
-
-			vim.api.nvim__win_add_ns(vim.fn.bufwinid(bufnr), namespace)
-			vim.highlight.range(bufnr, namespace, highlight, { line, 0 }, { line, vim.fn.col("$") })
-
-			if timer then
-				timer:close()
-				assert(clear_hl)
-				clear_hl()
-			end
-
-			timer = vim.defer_fn(clear_hl, timeout)
-		end
+	callback = function()
+		local opts = { silent = true }
+		local buffer = helpers.buf
 
 		vim.keymap.set("n", "]q", function()
 			vim.cmd("cn | wincmd p")
-			highlight_line()
+
+			buffer.highlight_line(buffer.get_qfline())
 		end, opts)
 		vim.keymap.set("n", "[q", function()
 			vim.cmd("cp | wincmd p")
-			highlight_line()
+
+			buffer.highlight_line(buffer.get_qfline())
 		end, opts)
 	end,
 })

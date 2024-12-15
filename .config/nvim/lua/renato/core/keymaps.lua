@@ -8,6 +8,8 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+local helpers = require("renato.core.helpers")
+
 -- Useful keymaps for config testing and plugin development
 vim.keymap.set("n", "<leader>ns", "<cmd>source %<CR>", { desc = "Source file" })
 vim.keymap.set("n", "<leader>nx", ":.lua<CR>", { desc = "Execute lua line" })
@@ -50,7 +52,7 @@ vim.keymap.set("n", "<leader>ocd", function()
 		return
 	end
 
-	local rootdir = require("renato.core.helpers").find_root(cwd, bufpath)
+	local rootdir = helpers.fs.find_root(cwd, bufpath)
 
 	vim.fn.chdir(bufpath)
 	vim.notify("Changed to " .. bufpath:sub(#rootdir + 2) .. " directory")
