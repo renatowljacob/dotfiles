@@ -22,12 +22,33 @@ export FZF_CTRL_T_OPTS="
   --preview 'bat -n --color=always {}'
   --bind 'ctrl-/:change-preview-window(down|hidden|)'"
 
-# fzf theming
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
---color=fg:#c0caf5,bg:#1a1b26,hl:#ff9e64 \
---color=fg+:#c0caf5:,bg+:#292e42,hl+:#ff9e64 \
---color=info:#c0caf5:bold,prompt:#9ece6a:bold,pointer:#f7768e:bold \
---color=marker:#7aa2f7,spinner:#7aa2f7,header:#7aa2f7"
+  --highlight-line \
+  --info=inline-right \
+  --ansi \
+  --layout=reverse \
+  --bind 'ctrl-f:half-page-down' \
+  --bind 'ctrl-b:half-page-up' \
+  --bind 'ctrl-d:preview-half-page-down' \
+  --bind 'ctrl-u:preview-half-page-up' \
+  --border=none \
+  --color=bg+:#2e3c64 \
+  --color=bg:#1f2335 \
+  --color=border:#29a4bd \
+  --color=fg:#c0caf5 \
+  --color=gutter:#1f2335 \
+  --color=header:#ff9e64 \
+  --color=hl+:#2ac3de \
+  --color=hl:#2ac3de \
+  --color=info:#545c7e \
+  --color=marker:#f7768e \
+  --color=pointer:#f7768e \
+  --color=prompt:#2ac3de \
+  --color=query:#c0caf5:regular \
+  --color=scrollbar:#29a4bd \
+  --color=separator:#ff9e64 \
+  --color=spinner:#f7768e \
+"
 
 # bemenu theming
 export BEMENU_OPTS="-c --fixed-height -B 3 -R 3 -W 0.3 -H 30 \

@@ -1,8 +1,8 @@
 #!/bin/sh
 
-bgcolor='#1A1B26'
+bgcolor='#24283b'
 accentcolor='#BB9AF7'
 
-icon="^c$accentcolor^^r00,00,14,h^^f14^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,6,h^^d^^f26^^c$accentcolor^"
+icon="^c${accentcolor}^^r00,00,14,h^^f14^^b${accentcolor}^^c${bgcolor}^ ^c${accentcolor}^^r00,00,6,h^^d^^f22^^c${accentcolor}^"
 
-printf "$icon$(date '+%R')"
+printf '%s' "${icon}$(date '+%R')"

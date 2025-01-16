@@ -1,85 +1,54 @@
 #!/bin/sh
 
-# Compile latex to pdf
-make_pdf(){
-	pdflatex $1
-}
-
-# Use biber to generate references
-make_references(){
-	biber $1
-}
-
 # Check if biblatex is defined and not commented out
 has_biblatex(){
-	querypkg=$(grep -e "^\\\\usepackage.*{biblatex}" "$1")
-	queryres=$(grep -e "^\\\\addbibresource.*{.\+}" "$1")
-	queryall="$querypkg$queryres"
+	queryall=$(grep -e "^\\\\usepackage.*{biblatex}" -e "^\\\\addbibresource.*{.\+}" "${1}")
 
-	if [ -z "$queryall" ]; then
-		return 1
-	fi
+	[ -z "${queryall}" ] && return 1
 
 	# If commented out entries are equal to total count
-	if [ $(grep -c % <<< "$queryall") -eq $(wc -l <<< "$queryall") ]; then
-		return 1
-	fi
+	[ "$(printf '%s' "${queryall}" | grep -c %)" -eq \
+		"$(printf '%s' "${queryall}" | wc -l)" ] &&
+			return 1
 
-	make_references "$1"
+	# Use biber to generate references
+	biber "${1}"
 
 	return 0
 }
 
 # Check whether labels and refs are defined and not commented out
 has_ref_or_label(){
-	queryref=$(grep -e "\\\\ref" "$1")
-	querylab=$(grep -e "\\\\label" "$1")
-	queryall="$queryref$querylab"
+	queryall=$(grep -e "\\\\ref" -e "\\\\label" "${1}")
 
-	if [ -z "$queryall" ]; then
-		return 1
-	fi
+	[ -z "${queryall}" ] && return 1
 
 	# If commented out entries are equal to total count
-	if [ $(grep -c % <<< "$queryall" ) -eq $(wc -l <<< "$queryall") ]; then
-		return 1
-	fi
+	[ "$(printf "%s" "${queryall}" | grep -c %)" -eq \
+		"$(printf "%s" "${queryall}" | wc -l)" ] &&
+			return 1
 
 	return 0
 }
 
-document=$1
+document=${1}
 
-if [ -z "$document" ]; then
-	printf "%bError: "$document" is not a valid argument\n"
+if [ -z "${document}" ]; then
+	printf "%b" "Error: \"${document}\" is not a valid argument\n"
 	exit 1
 fi
 
-if [ ! -e "$document" ]; then
-	printf "%bError: "$document" does not exist\n"
+if [ ! -e "${document}" ]; then
+	printf "%b" "Error: \"${document}\" does not exist\n"
 	exit 2
 fi
 
+# Compile latex to pdf
+
 # Compile to pdf for the first time
-make_pdf "$document"
+pdflatex "${document}"
 
 # Check if recompilation is necessary
-rebuild=0
-
-has_biblatex "$document"
-result=$?
-if [ $result -eq 0 ]; then
-	rebuild=1
+if has_biblatex "${document}" || has_ref_or_label "${document}"; then
+	pdflatex "${document}"
 fi
-
-has_ref_or_label "$document"
-result=$?
-if [ $result -eq 0 ]; then
-	rebuild=1
-fi
-
-if [ $rebuild -eq 1 ]; then
-	make_pdf "$document"
-fi
-
-exit 0

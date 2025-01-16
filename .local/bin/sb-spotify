@@ -2,17 +2,17 @@
 
 if ps -C spotify > /dev/null; then
 	status=$(playerctl -p spotify status)
-	track=$(playerctl -p spotify metadata -f '{{trunc(artist, 20)}} — {{trunc(title, 20)}}^f10^')
+	track=$(playerctl -p spotify metadata -f '{{trunc(artist, 20)}} — {{trunc(title, 20)}}')
 	
-	bgcolor='#1A1B26'
+	bgcolor='#24283b'
 	accentcolor='#1ED760'
 
-	style="^c$accentcolor^^r00,00,13,h^^f13^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,7,h^^d^^f26^^c$accentcolor^"
+	style="^c${accentcolor}^^r00,00,13,h^^f13^^b${accentcolor}^^c${bgcolor}^ ^c${accentcolor}^^r00,00,7,h^^d^^f24^^c${accentcolor}^"
 
-	case $status in 
+	case ${status} in 
 		Playing) status=" " ;;
-		*) status=" " ;;
+		Paused) status=" " ;;
 	esac
 
-	printf "$style$status $track"
+	printf '%b' "${style}${status} ${track}^f6^"
 fi

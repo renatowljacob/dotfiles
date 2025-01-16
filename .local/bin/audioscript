@@ -1,0 +1,188 @@
+#!/usr/bin/bash
+
+# TODO: Extract tags from filename or template
+
+# Options
+declare -a opts=() metadata=()
+declare -i backup=0 clear=0 dryrun=0 force=0 inplace=0 verbose=0
+declare backupdir format
+declare -r scriptname='audioscript'
+
+# Functions
+usage() {
+	cat <<EOF
+${scriptname}
+
+Usage: ${scriptname} [OPTS] EXT FILE...
+
+Convert audio FILE to specified EXT format using ffmpeg
+
+FILE: File to be converted
+EXT: Format to which FILE will be converted
+
+General options:
+-b, --backup [DIR]        Make backup of each file
+-d, --dryrun              Perform dry run, do not make any changes
+-f, --force               Overwrite existent files
+-h, --help                Print this message
+-i, --in-place            Edit in place, do not create new files
+-v, --verbose             Log ffmpeg message
+
+Format conversion:
+-e, --extension           Format to which to convert
+
+Metadata edition:
+--album                   Set album tag
+--artist                  Set artist tag
+--comment                 Set comment tag
+--genre                   Set genre tag
+--title                   Set title tag
+--track                   Set track tag
+--year                    Set year tag
+--clear                   Clear all tags
+
+To clear a specific tag, pass an empty string (example: --album "")
+EOF
+}
+
+enumerate() {
+	local file="$1"
+
+	local counter=1
+	if [[ ! -d ${file} ]]; then
+		local extension="${file##*.}"
+		local filename="${file%.*}"
+		local filename="${filename%-[0-9][0-9][0-9]*}"
+
+		while [[ -e "${filename}-$(printf '%03d' ${counter}).${extension}" ]]; do
+			counter=$((counter + 1))
+		done
+
+		file="${filename}-$(printf '%03d' ${counter}).${extension}"
+	else
+		while [[ -e "${file}-$(printf '%03d' ${counter})" ]]; do
+			counter=$((counter + 1))
+		done
+
+		file="${file}-$(printf '%03d' ${counter})"
+	fi
+
+	printf '%s' "${file}"
+}
+
+make_backup() {
+	local dir="backup"
+
+	if [[ -n ${backupdir} ]]; then
+		dir="${backupdir}"
+	else
+		dir=$(enumerate "${dir}")
+		mkdir "${dir}"
+	fi
+
+	cp "$@" "${dir}" >/dev/null 2>&1
+}
+
+# TODO: Implement verbose level option (script logging != ffmpeg logging)
+# verbose() {
+# 	case 1 in
+# 	esac
+# }
+
+opt_short='b::de:fhiv'
+opt_long=('backup::' 'dryrun' 'extension:' 'force' 'help' 'in-place'
+	'verbose' 'album:' 'artist:' 'comment:' 'genre:' 'title:' 'track:'
+	'year:' 'clear')
+
+TEMP=$(getopt -n 'audioscript' -o "${opt_short}" -l "${opt_long[*]}" -- "$@" || exit 1)
+
+eval set -- "$TEMP"
+unset TEMP
+
+while true; do
+	case "$1" in
+	-b|--backup)
+		if [[ -d $2 ]]; then
+			backupdir="$2"
+			shift
+		fi
+
+		backup=1
+		;;
+	-d|--dryrun) dryrun=1 ;;
+	-e|--extension)
+		format="$2"
+		shift
+		;;
+	-f|--force) force=1 ;;
+	-h|--help)
+		usage
+		exit 0
+		;;
+	-i|--in-place) inplace=1 ;;
+	-v|--verbose) verbose=1 ;;
+	--album|--artist|--comment|--genre|--title|--track|--year)
+		metadata+=('-metadata' "${1##*-}=$2")
+		shift
+		;;
+	--clear) clear=1 ;;
+	--)
+		shift
+		break
+		;;
+	*)
+		if [[ $# == 0 ]]; then
+			printf '%b' 'audioscript: no files specified\n' >&2
+			exit 3
+		fi
+
+		break
+		;;
+	esac
+
+	shift
+done
+
+# Sanity check
+if [[ ${dryrun} == 1 && $((dryrun + backup + force + inplace)) -gt 1 ]]; then
+	printf '%b' 'audioscript: dryrun, backup, force, in-place: Only one operation allowed at a time\n' >&2
+	exit 4
+fi
+
+if [[ ${force} == 1 ]]; then
+	opts+=('-y')
+else
+	opts+=('-n')
+fi
+
+[[ ${backup} == 1 ]] && make_backup "$@"
+
+[[ ${clear} == 1 ]] && opts+=('-map_metadata' '-1')
+
+[[ ${verbose} == 0 ]] && opts+=('-loglevel' 'quiet')
+
+for file in "$@"
+do
+	if [[ ! -f ${file} ]]; then
+		printf '%b' "Invalid path: ${file}. Skipping...\n" >&2
+		continue
+	fi
+
+	extension="${file##*.}"
+	format=${format:-$extension}
+	filename="${file%.*}"
+	newfile="$filename.$format"
+
+	if [[ $dryrun == 0 ]]; then
+		if [[ ${extension} == "${format}" ]]; then
+			newfile=$(enumerate "$newfile")
+			ffmpeg -i "${file}" "${opts[@]}" "${metadata[@]}" -c copy "${newfile}"
+		else
+			ffmpeg -i "${file}" "${opts[@]}" "${metadata[@]}" "${newfile}"
+		fi
+
+		[[ ${inplace} == 1 ]] && mv "${newfile}" "${file}" && newfile="${file}"
+	fi
+
+	printf '%b' "${file} => ${newfile}\n"
+done

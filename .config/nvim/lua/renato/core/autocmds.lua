@@ -15,12 +15,11 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
--- Resize splits if window got resized
 vim.api.nvim_create_autocmd("VimResized", {
 	desc = "Resize splits in window resize",
 	group = vim.api.nvim_create_augroup("resize-splits", { clear = true }),
 	callback = function()
-		local current_tab = vim.fn.tabpagenr()
+		local current_tab = vim.api.nvim_get_current_tabpage()
 
 		vim.cmd("tabdo wincmd =")
 		vim.cmd("tabnext " .. current_tab)
@@ -48,9 +47,12 @@ vim.api.nvim_create_autocmd("TermOpen", {
 	desc = "Set local options for terminal buffer",
 	group = vim.api.nvim_create_augroup("set-terminal-opts", { clear = true }),
 	callback = function()
-		vim.opt_local.number = false
-		vim.opt_local.relativenumber = false
-		vim.opt_local.signcolumn = "no"
+		local winid = vim.api.nvim_get_current_win()
+		local current_win_opt = vim.wo[winid][0]
+
+		current_win_opt.number = false
+		current_win_opt.relativenumber = false
+		current_win_opt.signcolumn = "no"
 	end,
 })
 
@@ -119,5 +121,18 @@ vim.api.nvim_create_autocmd("LspProgress", {
 					or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
 			end,
 		})
+	end,
+})
+
+-- I just get a blank screen until I type <C-C>, dunno why :P
+vim.api.nvim_create_autocmd("VimEnter", {
+	desc = "Suckless when it sucks",
+	group = vim.api.nvim_create_augroup("suckless-when", { clear = true }),
+	callback = function()
+		if vim.env.TERM ~= "st-256color" or vim.env.TERM ~= "st" then
+			return
+		end
+
+		vim.api.nvim_input("<C-C>")
 	end,
 })

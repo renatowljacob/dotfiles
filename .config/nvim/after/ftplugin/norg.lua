@@ -1,17 +1,20 @@
-vim.opt_local.shiftwidth = 2
-vim.opt_local.tabstop = 2
+local winid = vim.api.nvim_get_current_win()
+local current_win_opt = vim.wo[winid][0]
 
-vim.opt_local.list = false
-vim.opt_local.showbreak = ""
+vim.bo.shiftwidth = 2
+vim.bo.tabstop = 2
 
-vim.opt_local.wrap = false
+current_win_opt.list = false
+vim.wo.showbreak = ""
 
-vim.wo.conceallevel = 2
-vim.wo.foldlevel = 1
-vim.o.foldnestmax = 20
-vim.o.foldenable = true
+current_win_opt.wrap = false
 
-vim.opt_local.spell = true
+current_win_opt.conceallevel = 2
+current_win_opt.foldlevel = 1
+current_win_opt.foldnestmax = 20
+current_win_opt.foldenable = true
+
+current_win_opt.spell = true
 vim.opt_local.spelllang = { "en_us", "pt_br" }
 
 vim.keymap.set("n", "<localleader>nr", "<cmd>Neorg return<CR>", { buffer = true, desc = "Return to index" })

@@ -61,37 +61,36 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 alias cat='bat '
+alias cs50="CC='clang' CFLAGS='-ferror-limit=1 -gdwarf-4 -ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-gnu-folding-constant -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wshadow' LDLIBS='-lcrypt -lcs50 -lm' make "
 alias du='gdu '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 alias grep='grep --color=auto '
-alias lf='lfrun '
 alias locate='plocate '
-alias ls='eza --icons=auto --hyperlink --no-quotes'
-alias nvim='nvim-remote'
-alias nvim-debug='NVIM_APPNAME="nvim-debug" nvim'
+alias ls='eza --icons=auto --hyperlink --no-quotes '
+alias nvim='nvim-remote '
+alias nvim-debug='$HOME/Repos/git/neovim/build/bin/nvim '
 alias rm='trash '
 alias siv='nsxiv-rifle '
-
+# Conveniences around pacman using fzf
+# alias :
 
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
 
-LFCD=$HOME/.config/lf/lf.bash
-if [ -f "$LFCD" ]; then
-	emulate ksh -c 'source $LFCD'
+export MANWIDTH=80
+if [ $TERM != "linux" ]; then
+	export MANROFFOPT=-P-i
 fi
 
-export CC="clang"
-export CFLAGS="-ferror-limit=1 -gdwarf-4 -ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-gnu-folding-constant -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wshadow"
-export LDLIBS="-lcrypt -lcs50 -lm"
-
+export CFLAGS_ERR="-fmax-errors=1 -Werror "
+export CFLAGS="-std=c11 -O0 -gdwarf -ggdb -Wall -Wextra -Wformat-overflow -Wuse-after-free=1 -Wstrict-prototypes -Wshadow -Wconversion "
 export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
 
 function yy() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
 	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		cd "$cwd"
+	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd "$cwd"
 	fi
 	rm -f -- "$tmp"
 }

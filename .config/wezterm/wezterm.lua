@@ -50,9 +50,8 @@ else
 	config.font_size = 13
 end
 
-config.color_scheme = "Tokyo Night"
+config.color_scheme = "Tokyo Night Storm"
 config.enable_tab_bar = false
-config.window_background_opacity = 0.97
 
 config.max_fps = 120
 config.scrollback_lines = 10000

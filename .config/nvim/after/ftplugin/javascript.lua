@@ -1,3 +1,5 @@
-vim.opt_local.colorcolumn = "120"
+local winid = vim.api.nvim_get_current_win()
+local current_win_opt = vim.wo[winid][0]
 
-vim.opt.foldenable = true
+current_win_opt.colorcolumn = "120"
+current_win_opt.foldenable = true

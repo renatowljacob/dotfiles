@@ -1,47 +1,55 @@
-#!/bin/sh
+#!/usr/bin/bash
 
-# Open files using full paths to avoid opening them relative to Neovim's cwd
+# Neovim doesn't resolve filepaths correctly when run as a server :P
 
-# BUG: +cmd, -c and --cmd containing more than 1 argument (even if quoted) are
-# not supported because POSIX sucks :thumbsup: (I can't properly detect quotes)
-# I will probably rewrite this in another language later in the future
+declare -a flags=() files=()
 
-# from https://github.com/dylanaraps/pure-sh-bible?tab=readme-ov-file#trim-leading-and-trailing-white-space-from-string
-trim_string() {
-    trim=${1#${1%%[![:space:]]*}}
+[[ -z ${NVIM} ]] && nvim "${@}" && exit 0
 
-    trim=${trim%${trim##*[![:space:]]}}
-
-    printf '%s\n' "$trim"
-}
-
-if [ $# -eq 0 ]; then
-	nvim --server $NVIM --remote
-	exit 0
+# TODO: Open a new, unnamed buffer
+if [[ ${#} == 0 ]]; then
+    printf '%b' "nvim-remote: no file specified\n"
+    exit 1
 fi
 
-args=""
+while true; do
+    case "${1}" in
+        --debug) set -xv && shift ;;
+        -l)
+            printf "nvim-remote: lua scripts are not supported in remote mode. See :h --remote"
+            exit 2
+            ;;
+        -[tuicswW]|--startuptime|--listen|--cmd)
+            if [[ -e ${2} ]]; then
+                flags+=("${1}" "$(realpath "${2}")")
+            else
+                flags+=("${1}" "\"${2}\"")
+            fi
 
-while (( "$#" )); do
-	if [ ! -f $1 ]; then
-		case $1 in
-			-[tuicSswW]|--startuptime|--listen|--cmd)
-				args="$args $1 $2"
-				shift 2
-				continue
-				;;
-			-l)
-				args="$args $@"
-				break
-				;;
-			[-+]*) args="$args $1" ;;
-			[a-zA-Z0-9_]*) args="$args $PWD/$1" ;;
-		esac
-	else
-		args="$args $(realpath $1)"
-	fi
+            shift 2
+            ;;
+        -[qrLS])
+            if [[ -e ${2} ]]; then
+                flags+=("${1}" "\"$(realpath "${2}")\"")
+                shift 2
+            else
+                flags+=("${1}")
+            fi
+            ;;
+        -*) flags+=("${1}") ;;
+        +*) flags+=("\"${1}\"") ;;
+        *)
+            [[ ${#} == 0 ]] && break
 
-	shift
+            if [[ -e ${1} ]]; then 
+                files+=("$(realpath "${1}")")
+            else
+                files+=("${PWD}/${1}")
+            fi
+            ;;
+    esac
+
+    shift
 done
 
-nvim --server $NVIM --remote $(trim_string "$args")
+nvim "${flags[@]}" --server "${NVIM}" --remote "${files[@]}"

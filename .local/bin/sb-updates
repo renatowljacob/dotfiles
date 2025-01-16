@@ -1,12 +1,12 @@
 #!/bin/sh
 
-updates=$((checkupdates; paru -Qu) | wc -l)
+updates=$( (checkupdates; paru -Qu) | wc -l)
 
-bgcolor='#1A1B26'
+bgcolor='#24283b'
 accentcolor='#9ECE6A'
 
-style="^c$accentcolor^^r00,00,14,h^^f14^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,6,h^^d^^f26^^c$accentcolor^"
+style="^c${accentcolor}^^r00,00,14,h^^f14^^b${accentcolor}^^c${bgcolor}^ ^c${accentcolor}^^r00,00,6,h^^d^^f22^^c${accentcolor}^"
 
-if [ $updates -ge 10 ]; then
-	printf "$style$updates^f10^"
+if [ "${updates}" -ge 10 ]; then
+	printf '%s' "${style}${updates}^f8^"
 fi

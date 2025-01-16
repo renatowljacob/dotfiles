@@ -2,23 +2,23 @@
 
 volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | tr -dc '0-9' | sed 's/^0\{1,2\}//')
 
-bgcolor='#1A1B26'
+bgcolor='#24283b'
 accentcolor='#7DCFFF'
 
 # Icons
-iconhigh="^c$accentcolor^^r00,00,12,h^^f12^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,4,h^^d^^f24^^c$accentcolor^"
-iconmedium="^c$accentcolor^^r00,00,15,h^^f15^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,7,h^^d^^f27^^c$accentcolor^"
-iconlow="^c$accentcolor^^r00,00,16,h^^f16^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,10,h^^d^^f30^^c$accentcolor^"
-iconmuted="^c$accentcolor^^r00,00,14,h^^f14^^b$accentcolor^^c$bgcolor^ ^c$accentcolor^^r00,00,4,h^^d^^f24^^c$accentcolor^"
+iconhigh="^c${accentcolor}^^r00,00,12,h^^f12^^b${accentcolor}^^c${bgcolor}^ ^c${accentcolor}^^r00,00,4,h^^d^^f20^^c${accentcolor}^"
+iconmedium="^c${accentcolor}^^r00,00,15,h^^f15^^b${accentcolor}^^c${bgcolor}^ ^c${accentcolor}^^r00,00,7,h^^d^^f23^^c${accentcolor}^"
+iconlow="^c${accentcolor}^^r00,00,16,h^^f16^^b${accentcolor}^^c${bgcolor}^ ^c${accentcolor}^^r00,00,10,h^^d^^f26^^c${accentcolor}^"
+iconmuted="^c${accentcolor}^^r00,00,14,h^^f14^^b${accentcolor}^^c${bgcolor}^ ^c${accentcolor}^^r00,00,4,h^^d^^f20^^c${accentcolor}^"
 
 case "$(wpctl get-volume @DEFAULT_AUDIO_SINK@)" in
-	*MUTED* ) icon=$iconmuted ;;
+	*MUTED* ) icon=${iconmuted} ;;
 	*       )
 		case 1 in 
-			$(( $volume >= 66 )) ) icon=$iconhigh ;;
-			$(( $volume >= 33 )) ) icon=$iconmedium ;;
-			$(( $volume >= 0 )) ) icon=$iconlow ;;
+			$(( volume >= 66 )) ) icon=${iconhigh} ;;
+			$(( volume >= 33 )) ) icon=${iconmedium} ;;
+			$(( volume >= 0 )) ) icon=${iconlow} ;;
 		esac
 esac
 
-printf "$icon$volume%%"
+printf "${icon}${volume}%%^f1^"

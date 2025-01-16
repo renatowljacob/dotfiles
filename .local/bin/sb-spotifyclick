@@ -3,15 +3,33 @@
 # 1 = left click
 # 2 = middle click
 # 3 = right click
-# 12 = shift + right click
 # 4 = scroll up
 # 5 = scroll down
+# 13 = super + left click
+# 14 = super + middle click
+# 15 = super + right click
+
+get_volume()
+{
+	volume="$(printf '%.2f' "$(playerctl -p spotify volume)")"
+	volume="${volume##*.}"
+	dunstify -a "Spotify_Notifier" -r 9991 -h int:value:"${volume}" "Currently at ${volume}%" 
+}
 
 case $BLOCK_BUTTON in
-	1) playerctl -p spotify play-pause & ;;
-	2) xdotool search --class spotify set_desktop_for_window $(xdotool get_desktop) & ;;
-	12) playerctl -p spotify next & ;;
-	10) playerctl -p spotify previous & ;;
-	4) playerctl -p spotify volume 0.05+ & ;;
-	5) playerctl -p spotify volume 0.05- & ;;
+	1)
+		playerctl -p spotify play-pause
+		{
+			status="$(playerctl -p spotify status)"
+			if [ "${status}" = "Playing" ]; then
+				dunstify -a "Spotify_Notifier" -r 9991 "Paused"
+			elif [ "${status}" = "Paused" ]; then
+				dunstify -a "Spotify_Notifier" -r 9991 "Resumed"
+			fi;
+		} &
+		;;
+	4) playerctl -p spotify volume 0.05+ && get_volume & ;;
+	5) playerctl -p spotify volume 0.05- && get_volume & ;;
+	13) playerctl -p spotify previous & ;;
+	15) playerctl -p spotify next & ;;
 esac

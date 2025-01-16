@@ -102,8 +102,8 @@ char *colors[][2] = {
 	[SchemeMid]  = { "#eeeeee", "#770000" },
 	#endif // MORECOLOR_PATCH
 	#if HIGHLIGHT_PATCH || FUZZYHIGHLIGHT_PATCH
-	[SchemeSelHighlight]  = { "#1A1B26", "#FF9E64" },
-	[SchemeNormHighlight] = { "#FF9E64", "#1A1B26" },
+	[SchemeSelHighlight]  = { "#24283b", "#FF9E64" },
+	[SchemeNormHighlight] = { "#FF9E64", "#24283b" },
 	#endif // HIGHLIGHT_PATCH | FUZZYHIGHLIGHT_PATCH
 	#if HIGHPRIORITY_PATCH
 	[SchemeHp]   = { "#9ECE6A", "#1A1B26" },

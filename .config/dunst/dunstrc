@@ -3,7 +3,7 @@
     follow = none
 
     width = 400
-    height = (0, 400)
+    height = (0, 800)
     origin = top-right
     offset = (6,42)
     scale = 0
@@ -16,7 +16,7 @@
     progress_bar_min_width = 150
     progress_bar_max_width = 350
     progress_bar_corner_radius = 3
-    highlight = "#ff9e64"
+    highlight = "#FF9E64"
 
     icon_corner_radius = 3
 
@@ -34,7 +34,7 @@
 
     sort = yes
 
-    font = JetBrainsMono NF 13
+    font = JetBrainsMono NF 14
     line_height = 2
     markup = full
     format = "<b>%a</b>\n%s\n<i>%b</i>"
@@ -80,43 +80,55 @@
     per_monitor_dpi = false
 
 [urgency_low]
-    background = "#1a1b26"
-    foreground = "#c0caf5"
+    background = "#24283B"
+    foreground = "#C0CAF5"
     override_dbus_timeout = 6
 
 [urgency_normal]
-    background = "#1a1b26"
-    foreground = "#c0caf5"
+    background = "#24283B"
+    foreground = "#C0CAF5"
     override_dbus_timeout = 6
 
 [urgency_critical]
-    background = "#283457"
-    foreground = "#c0caf5"
+    background = "#2E3C64"
+    foreground = "#C0CAF5"
     override_dbus_timeout = 0
     new_icon = circle-exclamation-critical
-
-[Spotify]
-    appname = Spotify
-    max_icon_size = 100
-    override_dbus_timeout = 4
-
-[Vivaldi]
-    appname = Vivaldi
-    new_icon = vivaldi
-
-[Firefox]
-    appname = Firefox
-    new_icon = firefox
-
-[Volume]
-    appname = Volume
-    override_dbus_timeout = 2
-    history_ignore = yes
 
 [Calendar]
     appname = Calendar
     format = "%s\n<i>%b</i>"
     icon_position = off
     alignment = center
+
+[Firefox]
+    appname = Firefox
+    new_icon = firefox
+
+[Spotify]
+    appname = Spotify
+    max_icon_size = 100
+    override_dbus_timeout = 4
+    height = (0, 400)
+
+[Spotify_Notifier]
+    appname = Spotify_Notifier
+    new_icon = spotify
+    max_icon_size = 50
+    override_dbus_timeout = 2
+    history_ignore = yes
+
+[Updates]
+    appname = Updates
+    max_icon_size = 50
+
+[Vivaldi]
+    appname = Vivaldi
+    new_icon = vivaldi
+
+[Volume]
+    appname = Volume
+    override_dbus_timeout = 2
+    history_ignore = yes
 
 # vim: ft=cfg

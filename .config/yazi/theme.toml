@@ -1,2 +1,12 @@
 [flavor]
-use = "tokyo-night-night"
+dark = "tokyo-night-storm"
+light = "tokyo-night-day"
+
+[manager]
+
+# Hovered
+hovered         = { reversed = true, bold = true }
+preview_hovered = { reversed = true, bold = true }
+
+# Border
+border_symbol = " "

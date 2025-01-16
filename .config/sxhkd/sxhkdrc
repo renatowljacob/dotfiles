@@ -1,42 +1,182 @@
-# fullscreen
-@Print
-	scrot -F ~/Pictures/screenshots/'%m-%d-%Y.png' -e 'xclip -selection clipboard -t image/png -i $f' -q 100
+# DUSK KEYBINDINGS
 
-# selection
-super + @Print
-	scrot -s ~/Pictures/screenshots/'%m-%d-%Y.png' --freeze --line 'mode=classic',width=2 -e 'xclip -selection clipboard -t image/png -i $f' -q 100
+# Movement
 
-# focused window
-super + shift + @Print
-	scrot -ub ~/Pictures/screenshots/'%m-%d-%Y.png' -e 'xclip -selection clipboard -t image/png -i $f' -q 100
+# focus on the next or previous client in the stack
+super + {j, k}
+	duskc run_command focusstack {1,-1}
 
-# lock screen
-super + ctrl + s
-	betterlockscreen --lock
+# move the selected client down or up the stack
+super + control + {j, k}
+	duskc run_command {pushdown,pushup}
 
-# volume control
+# allows focusing on hidden clients
+super + shift + {j, k}
+	duskc run_command focusstack {2,-2}
+
+# focus on the client left, right, above or below of the currently focused client
+super + alt + {h, l, k, j}
+	duskc run_command focusdir {0,1,2,3}
+
+# swap places with the client window on the immediate left, right, above or below of the current client
+super + control + alt + {h, l, k, j}
+	duskc run_command placedir {0,1,2,3}
+
+# Resizing
+
+# increase or decrease the size of the master area compared to the stack area(s)
+super + {h, l}
+	duskc run_command setmfact {-0.05,0.05}
+
+# increase, decrease or reset size respective to other windows within the same area
+super + control + {h, l, r}
+	duskc run_command setcfact {0.25,-0.25,0.0}
+
+# Spawning
+
+# spawn dmenu
+ISO_Level3_Shift
+	dmenu_run -fn "JetBrainsMono:weight=100:pixelsize=16:antialias=true" -nb "#24283b" -nf "#C0CAF5" -sb "#364a82" -sf "#C0CAF5"
+
+# spawn terminals
+super + Return
+	st
+
+super + alt + Return
+	wezterm
+
+# Misc
+
+# increase or decrease the number of clients in the master area
+super + {i, u}
+	duskc run_command incnmaster {1,-1}
+
+super + b
+	duskc run_command togglebar
+
+# minimized the currently selected client (or show if minimized)
+super + shift + m
+	duskc run_command showhideclient
+
+# marks or unmarks the selected client for group action
+super + v
+	duskc run_command togglemark
+
+# moves the currently focused window to/from the master area (for tiled layouts) or change focus to the first client in the stack (master)
+super + {control, shift} + Return
+	duskc run_command {zoom,focusmaster}
+
+# close the currently focused window
+super + q
+	duskc run_command killclient
+
+# restart dusk
+super + shift + q
+	duskc run_command restart
+
+# exit dusk
+super + control + alt + q
+	duskc run_command quit
+
+# Layout
+
+# sets the tiling, monocle, floating or deck layout
+super + {t, m, f, d}
+	duskc run_command setlayout {0,1,15,16}
+
+# sets the spiral layout
+super + s
+	duskc run_command setlayout 2
+# sets the dwindle layout
+super + control + s
+	duskc run_command setlayout 3
+
+# toggles between current and previous layout
+super + space
+	duskc run_command setlayout -1
+
+# flip between horizontal and vertical layout
+super + control + f
+	duskc run_command layoutconvert
+
+# center client and take up 80% of the screen
+super + g
+	duskc run_command togglefloating
+
+# center client and take up 80% of the screen
+super + control + g
+	duskc run_command floatpos "50% 50% 80% 80%"
+
+# center client and take up 80% of the screen
+super + shift + f
+	duskc run_command togglefullscreen
+
+# view all workspaces on the current monitor that has clients
+super + 0
+	duskc run_command viewalloccwsonmon
+
+# view the workspace on the immediate right or left of current workspace (on the current monitor)
+super + {n, p}
+	duskc run_command viewwsdir {1,-1}
+
+# move client to workspace on the immediate right or left of current workspace (on the current monitor)
+super + control + {n, p}
+	duskc run_command movewsdir {1,-1}
+
+# view the next workspace right of current workspace that has clients (on the current monitor)
+super + Tab
+	duskc run_command viewwsdir 2
+
+# view the next workspace left of current workspace that has clients (on the current monitor)
+super + shift + Tab
+	duskc run_command viewwsdir -2
+
+# DESKTOP THINGS
+
+# Raise or lower volume
 @XF86Audio{Raise,Lower}Volume
-	volume {up, down}
+	volume {up,down}
 
+# Mute volume
 super + {XF86AudioLowerVolume, XF86AudioRaiseVolume}
 	volume mute
 
-# dunst notifications
+# Fullscreen screenshot
+@Print
+	scrot -F ~/Pictures/screenshots/'%m-%d-%Y.png' -e 'xclip -selection clipboard -t image/png -i $f' -q 100
+
+# Selection screenshot
+super + Print
+	scrot -s ~/Pictures/screenshots/'%m-%d-%Y.png' --freeze --line 'mode=classic',width=2 -e 'xclip -selection clipboard -t image/png -i $f' -q 100
+
+# Focused window screenshot
+super + control + Print
+	scrot -ub ~/Pictures/screenshots/'%m-%d-%Y.png' -e 'xclip -selection clipboard -t image/png -i $f' -q 100
+
+# Lockscreen
+super + shift + s
+	betterlockscreen --lock
+
+# Close notification
 super + c
 	dunstctl close
 
-super + alt + c
+# Close all notifications
+super + ctrl + c
 	dunstctl close-all
 
+# Pop a notification
 super + x
 	dunstctl history-pop
 
-# xcolor
-super + e
+# Pick color in hexadecimal
+super + w
 	xcolor --format HEX | xsel -b
 
-super + shift + e
+# Pick color in RGB
+super + ctrl + w
 	xcolor --format rgb | xsel -b
 
+# Clipboard manager
 super + shift + apostrophe
 	clipmenu -fn 'JetBrainsMono Nerd Font:style=Medium:pixelsize=14:antialias=true:autohint=true' -nb '#1a1b26' -nf '#c0caf5' -sb '#283457' -sf '#c0caf5'

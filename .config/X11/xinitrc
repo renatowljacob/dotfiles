@@ -8,7 +8,11 @@ sysmodmap=/etc/X11/xinit/.Xmodmap
 # merge in defaults and keymaps
 
 if [ -f $sysresources ]; then
-    xrdb -merge $sysresources
+    if [ -x /usr/bin/cpp ] ; then
+        xrdb -merge $sysresources
+    else
+        xrdb -nocpp -merge $sysresources
+    fi
 fi
 
 if [ -f $sysmodmap ]; then
@@ -16,7 +20,11 @@ if [ -f $sysmodmap ]; then
 fi
 
 if [ -f "$userresources" ]; then
-    xrdb -merge "$userresources"
+    if [ -x /usr/bin/cpp ] ; then
+        xrdb -merge "$userresources"
+    else
+        xrdb -nocpp -merge "$userresources"
+    fi
 fi
 
 if [ -f "$usermodmap" ]; then
@@ -38,16 +46,32 @@ fi
 export XDG_RUNTIME_DIR="/run/user/$UID" 
 export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 
-/usr/lib/polkit-kde-authentication-agent-1 &
-~/.fehbg &
-clipmenud &
-numlockx &
-picom -b &
-qbittorrent &
-sxhkd -m 1 &
-udiskie -s &
-unclutter -b &
-wezterm start "nvim" "-c" "Neorg index" &
-xidlehook --not-when-audio --not-when-fullscreen \
-    --timer 600 'betterlockscreen --lock' '' &
-exec dusk
+session=${1:-"dusk"}
+
+case $session in
+    "dusk")
+        /usr/lib/polkit-kde-authentication-agent-1 &
+        ~/.fehbg &
+        clipmenud &
+        numlockx &
+        picom -b &
+        qbittorrent &
+        sxhkd -m 1 &
+        udiskie -s &
+        unclutter -b &
+        st nvim -c "Neorg index" &
+        xidlehook --not-when-audio --not-when-fullscreen \
+            --timer 600 'betterlockscreen --lock' '' &
+        exec dusk
+        break
+        ;;
+    "awesome")
+        /usr/lib/polkit-kde-authentication-agent-1 &
+        clipmenud &
+        numlockx &
+        xidlehook --not-when-audio --not-when-fullscreen \
+            --timer 600 'betterlockscreen --lock' '' &
+        exec awesome
+        break
+        ;;
+esac

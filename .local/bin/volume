@@ -5,23 +5,23 @@
 # Control volume using Pipewire and send a notification
 
 send_notification() {
-	if [ "$1" = "mute" ]; then
+	if [ "${1}" = "mute" ]; then
 		icon="mute";
-	elif [ "$volume" -lt 33 ]; then
+	elif [ "${volume}" -lt 33 ]; then
 		icon="off";
-	elif [ "$volume" -lt 66 ]; then
+	elif [ "${volume}" -lt 66 ]; then
 		icon="low";
 	else
 		icon="high";
 	fi
 
-	if [ "$1" = "mute" ]; then
+	if [ "${1}" = "mute" ]; then
 		text="Currently muted";
 	else
 		text="Currently at ${volume}%";
 	fi
 
-	dunstify -a "Volume" -r 9993 -h int:value:"$volume" -i "volume-$icon" "Volume" "$text" -t 2000
+	dunstify -a "Volume" -r 9990 -h int:value:"${volume}" -i "volume-${icon}" "Volume" "${text}"
 }
 
 update(){
@@ -30,7 +30,7 @@ update(){
 	fi
 }
 
-case $1 in
+case ${1} in
 	up)
 		# Set the volume on (if it was muted)
 		wpctl set-mute @DEFAULT_AUDIO_SINK@ 0
@@ -50,7 +50,7 @@ esac
 
 volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | tr -dc '0-9' | sed 's/^0\{1,2\}//')
 
-case $1 in
+case ${1} in
 	mute)
 		case "$(wpctl get-volume @DEFAULT_AUDIO_SINK@)" in
 			*MUTED* ) send_notification mute;;
