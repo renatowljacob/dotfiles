@@ -40,6 +40,7 @@ vim.opt.sessionoptions = {
 	"folds",
 	"globals",
 	"help",
+	"localoptions",
 	"options",
 	"sesdir",
 	"tabpages",

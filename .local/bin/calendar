@@ -23,7 +23,7 @@ handle_action() {
 }
 
 TMP=${XDG_RUNTIME_DIR:-/tmp}/"$UID"_calendar_notification_month
-touch "${TMP}"
+: > "${TMP}"
 
 DIFF=$(<"${TMP}")
 

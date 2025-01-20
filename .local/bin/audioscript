@@ -6,14 +6,13 @@
 declare -a opts=() metadata=()
 declare -i backup=0 clear=0 dryrun=0 force=0 inplace=0 verbose=0
 declare backupdir format
-declare -r scriptname='audioscript'
 
 # Functions
 usage() {
 	cat <<EOF
-${scriptname}
+${0##*/}
 
-Usage: ${scriptname} [OPTS] EXT FILE...
+Usage: ${0##*/} [OPTS] EXT FILE...
 
 Convert audio FILE to specified EXT format using ffmpeg
 
