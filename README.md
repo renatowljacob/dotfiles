@@ -1,6 +1,7 @@
 # My dotfiles
 
-![05-21-2024](https://github.com/renatowljacob/dotfiles/assets/145359396/e951a45b-a831-4ee2-a9ec-08e546f2bc4c)
+![01-20-2025](https://github.com/user-attachments/assets/114ba006-aa2b-4180-9dae-e9c271722c70)
+![01-20-2025_001](https://github.com/user-attachments/assets/67231f45-c56a-4562-b637-5f93e974aec6)
 
 CEO of LARPing
 
