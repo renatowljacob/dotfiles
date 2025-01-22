@@ -10,6 +10,25 @@ local fmt = require("luasnip.extras.fmt").fmt
 ls.add_snippets("c", {
 	s(
 		{
+			name = "docstring",
+			trig = "docstring",
+			docstring = {
+				"/**",
+				"* docstring body",
+				"*/",
+			},
+		},
+		fmta(
+			[[
+/**
+* <>
+*/
+]],
+			{ i(1, "docstring") }
+		)
+	),
+	s(
+		{
 			name = "main function",
 			trig = "main",
 			docstring = {

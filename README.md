@@ -4,6 +4,8 @@
 
 CEO of LARPing
 
+If you're asking yourself what in heaven are these commit messages, they are generated from [Commitment](https://github.com/ngerakines/commitment)
+
 ## Things I Use
 
 - **Operating System:** [Arch Linux](https://archlinux.org/)
