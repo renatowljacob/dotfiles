@@ -1,17 +1,17 @@
 return {
-	{
-		"windwp/nvim-ts-autotag",
-		ft = {
-			"html",
-			"javascript",
-			"javascriptreact",
-			"markdown",
-			"php",
-			"typescript",
-			"typescriptreact",
-			"vue",
-			"xml",
-		},
-		opts = {},
-	},
+    {
+        "windwp/nvim-ts-autotag",
+        ft = {
+            "html",
+            "javascript",
+            "javascriptreact",
+            "markdown",
+            "php",
+            "typescript",
+            "typescriptreact",
+            "vue",
+            "xml",
+        },
+        opts = {},
+    },
 }

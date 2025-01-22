@@ -17,22 +17,27 @@ current_win_opt.foldenable = true
 current_win_opt.spell = true
 vim.opt_local.spelllang = { "en_us", "pt_br" }
 
-vim.keymap.set("n", "<localleader>nr", "<cmd>Neorg return<CR>", { buffer = true, desc = "Return to index" })
 vim.keymap.set(
-	"n",
-	"<localleader>nl",
-	"<cmd>Telescope neorg find_linkable<CR>",
-	{ buffer = true, desc = "Search Elements" }
+    "n",
+    "<localleader>nr",
+    "<cmd>Neorg return<CR>",
+    { buffer = true, desc = "Return to index" }
 )
 vim.keymap.set(
-	"n",
-	"<localleader>nh",
-	"<cmd>Telescope neorg search_headings<CR>",
-	{ buffer = true, desc = "Search [H]eadings" }
+    "n",
+    "<localleader>nl",
+    "<cmd>Telescope neorg find_linkable<CR>",
+    { buffer = true, desc = "Search Elements" }
 )
 vim.keymap.set(
-	"n",
-	"<localleader>nt",
-	"<Plug>(neorg.qol.todo-items.todo.task-cycle)",
-	{ buffer = true, desc = "Cycle [T]ask" }
+    "n",
+    "<localleader>nh",
+    "<cmd>Telescope neorg search_headings<CR>",
+    { buffer = true, desc = "Search [H]eadings" }
+)
+vim.keymap.set(
+    "n",
+    "<localleader>nt",
+    "<Plug>(neorg.qol.todo-items.todo.task-cycle)",
+    { buffer = true, desc = "Cycle [T]ask" }
 )

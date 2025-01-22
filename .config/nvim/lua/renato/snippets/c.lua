@@ -8,42 +8,42 @@ local fmta = require("luasnip.extras.fmt").fmta
 local fmt = require("luasnip.extras.fmt").fmt
 
 ls.add_snippets("c", {
-	s(
-		{
-			name = "docstring",
-			trig = "docstring",
-			docstring = {
-				"/**",
-				"* docstring body",
-				"*/",
-			},
-		},
-		fmta(
-			[[
+    s(
+        {
+            name = "docstring",
+            trig = "docstring",
+            docstring = {
+                "/**",
+                "* docstring body",
+                "*/",
+            },
+        },
+        fmta(
+            [[
 /**
 * <>
 */
 ]],
-			{ i(1, "docstring") }
-		)
-	),
-	s(
-		{
-			name = "main function",
-			trig = "main",
-			docstring = {
-				"int main(void)",
-				"or",
-				"int main(int argc, char *argv[])",
-				"{",
-				"\t// Function body",
-				"\treturn 0;",
-				"}",
-			},
-		},
-		c(1, {
-			fmta(
-				[[
+            { i(1, "docstring") }
+        )
+    ),
+    s(
+        {
+            name = "main function",
+            trig = "main",
+            docstring = {
+                "int main(void)",
+                "or",
+                "int main(int argc, char *argv[])",
+                "{",
+                "\t// Function body",
+                "\treturn 0;",
+                "}",
+            },
+        },
+        c(1, {
+            fmta(
+                [[
 int main(void)
 {
 	<>
@@ -51,10 +51,10 @@ int main(void)
 	return 0;
 }
 ]],
-				{ i(1, "// Function body") }
-			),
-			fmta(
-				[[
+                { i(1, "// Function body") }
+            ),
+            fmta(
+                [[
 int main(int argc, char *argv[])
 {
 	<>
@@ -62,280 +62,290 @@ int main(int argc, char *argv[])
 	return 0;
 }
 ]],
-				{ i(1, "// Function body") }
-			),
-		})
-	),
+                { i(1, "// Function body") }
+            ),
+        })
+    ),
 
-	s(
-		"function",
-		fmta(
-			[[
+    s(
+        "function",
+        fmta(
+            [[
 <> <>(<>)
 {
 	<>
 }
 ]],
-			{
-				i(1, "type"),
-				i(2, "name"),
-				i(3, "parameter"),
-				i(4, "// Function body"),
-			}
-		)
-	),
+            {
+                i(1, "type"),
+                i(2, "name"),
+                i(3, "parameter"),
+                i(4, "// Function body"),
+            }
+        )
+    ),
 
-	s(
-		{
-			name = "source file inclusion",
-			trig = "include",
-			docstring = {
-				'#include <file.h>/"file.h"',
-			},
-		},
-		c(1, {
-			fmt(
-				[[
+    s(
+        {
+            name = "source file inclusion",
+            trig = "include",
+            docstring = {
+                '#include <file.h>/"file.h"',
+            },
+        },
+        c(1, {
+            fmt(
+                [[
 #include <{}>
 ]],
-				{ i(1) }
-			),
+                { i(1) }
+            ),
 
-			fmt(
-				[[
+            fmt(
+                [[
 #include "{}"
 ]],
-				{ i(1) }
-			),
-		})
-	),
+                { i(1) }
+            ),
+        })
+    ),
 
-	s(
-		{
-			trig = "struct",
-			docstring = {
-				"struct object {",
-				"int data;",
-				"...",
-				"};",
-				"_________________________",
-				"typedef struct object {",
-				"int data;",
-				"...",
-				"} objects;",
-			},
-		},
-		c(1, {
-			fmta(
-				[[
+    s(
+        {
+            trig = "struct",
+            docstring = {
+                "struct object {",
+                "int data;",
+                "...",
+                "};",
+                "_________________________",
+                "typedef struct object {",
+                "int data;",
+                "...",
+                "} objects;",
+            },
+        },
+        c(1, {
+            fmta(
+                [[
 struct <> {
 	<>
 };
 ]],
-				{ i(1, "object"), i(2, "// Struct body") }
-			),
+                { i(1, "object"), i(2, "// Struct body") }
+            ),
 
-			fmta(
-				[[
+            fmta(
+                [[
 typedef struct <> {
 	<>
 } <>;
 ]],
-				{ i(1, "object"), i(2, "// Struct body"), i(3, "objects") }
-			),
-		})
-	),
+                { i(1, "object"), i(2, "// Struct body"), i(3, "objects") }
+            ),
+        })
+    ),
 
-	s(
-		{
-			name = "for loop",
-			trig = "for",
-			docstring = {
-				"for (init-statement; condition; inc-expression) {",
-				"\t// Loop body",
-				"}",
-			},
-		},
-		c(1, {
-			fmta(
-				[[
+    s(
+        {
+            name = "for loop",
+            trig = "for",
+            docstring = {
+                "for (init-statement; condition; inc-expression) {",
+                "\t// Loop body",
+                "}",
+            },
+        },
+        c(1, {
+            fmta(
+                [[
 for (<>; <>; <>) {
 	<>
 }
 ]],
-				{ i(1, "init-statement"), i(2, "condition"), i(3, "inc-expression"), i(4, "// Loop body") }
-			),
+                {
+                    i(1, "init-statement"),
+                    i(2, "condition"),
+                    i(3, "inc-expression"),
+                    i(4, "// Loop body"),
+                }
+            ),
 
-			fmta(
-				[[
+            fmta(
+                [[
 for (<>; <>; <>)
 {
 	<>
 }
 ]],
-				{ i(1, "init-statement"), i(2, "condition"), i(3, "inc-expression"), i(4, "// Loop body") }
-			),
-		})
-	),
+                {
+                    i(1, "init-statement"),
+                    i(2, "condition"),
+                    i(3, "inc-expression"),
+                    i(4, "// Loop body"),
+                }
+            ),
+        })
+    ),
 
-	s(
-		{
-			name = "while loop",
-			trig = "while",
-			docstring = {
-				"while (expression) {",
-				"\t// Loop body",
-				"}",
-			},
-		},
-		c(1, {
-			fmta(
-				[[
+    s(
+        {
+            name = "while loop",
+            trig = "while",
+            docstring = {
+                "while (expression) {",
+                "\t// Loop body",
+                "}",
+            },
+        },
+        c(1, {
+            fmta(
+                [[
 while (<>) {
 	<>
 }
 ]],
-				{ i(1, "expression"), i(2, "// While body") }
-			),
+                { i(1, "expression"), i(2, "// While body") }
+            ),
 
-			fmta(
-				[[
+            fmta(
+                [[
 while (<>)
 {
 	<>
 }
 ]],
-				{ i(1, "expression"), i(2, "// While body") }
-			),
-		})
-	),
+                { i(1, "expression"), i(2, "// While body") }
+            ),
+        })
+    ),
 
-	s(
-		{
-			name = "do while loop",
-			trig = "do .. while",
-			docstring = {
-				"do {",
-				"\t// Loop body",
-				"} while (expression)",
-			},
-		},
-		c(1, {
-			fmta(
-				[[
+    s(
+        {
+            name = "do while loop",
+            trig = "do .. while",
+            docstring = {
+                "do {",
+                "\t// Loop body",
+                "} while (expression)",
+            },
+        },
+        c(1, {
+            fmta(
+                [[
 do {
 	<>
 } while (<>);
 ]],
-				{ i(1, "// While body"), i(2, "expression") }
-			),
+                { i(1, "// While body"), i(2, "expression") }
+            ),
 
-			fmta(
-				[[
+            fmta(
+                [[
 do
 {
 	<>
 }
 while (<>);
 ]],
-				{ i(1, "// While body"), i(2, "expression") }
-			),
-		})
-	),
+                { i(1, "// While body"), i(2, "expression") }
+            ),
+        })
+    ),
 
-	s(
-		{
-			name = "if condition",
-			trig = "if",
-			docstring = {
-				"if (expression) {",
-				"\t// If body",
-				"}",
-			},
-		},
-		c(1, {
-			fmta(
-				[[
+    s(
+        {
+            name = "if condition",
+            trig = "if",
+            docstring = {
+                "if (expression) {",
+                "\t// If body",
+                "}",
+            },
+        },
+        c(1, {
+            fmta(
+                [[
 if (<>) {
 	<>
 }
 ]],
-				{ i(1, "expression"), i(2, "// Body") }
-			),
+                { i(1, "expression"), i(2, "// Body") }
+            ),
 
-			fmta(
-				[[
+            fmta(
+                [[
 if (<>)
 {
 	<>
 }
 ]],
-				{ i(1, "expression"), i(2, "// Body") }
-			),
-		})
-	),
+                { i(1, "expression"), i(2, "// Body") }
+            ),
+        })
+    ),
 
-	s(
-		{
-			name = "else condition",
-			trig = "else",
-			docstring = {
-				"else (expression) {",
-				"\t// Else body",
-				"}",
-			},
-		},
-		c(1, {
-			fmta(
-				[[
+    s(
+        {
+            name = "else condition",
+            trig = "else",
+            docstring = {
+                "else (expression) {",
+                "\t// Else body",
+                "}",
+            },
+        },
+        c(1, {
+            fmta(
+                [[
 else {
 	<>
 }
 ]],
-				{ i(1, "// Body") }
-			),
+                { i(1, "// Body") }
+            ),
 
-			fmta(
-				[[
+            fmta(
+                [[
 else
 {
 	<>
 }
 ]],
-				{ i(1, "// Body") }
-			),
-		})
-	),
+                { i(1, "// Body") }
+            ),
+        })
+    ),
 
-	s(
-		{
-			name = "else if condition",
-			trig = "else if",
-			docstring = {
-				"else if (expression) {",
-				"\t// Else If body",
-				"}",
-			},
-		},
-		c(1, {
-			fmta(
-				[[
+    s(
+        {
+            name = "else if condition",
+            trig = "else if",
+            docstring = {
+                "else if (expression) {",
+                "\t// Else If body",
+                "}",
+            },
+        },
+        c(1, {
+            fmta(
+                [[
 else if (<>) {
 	<>
 }
 ]],
-				{ i(1, "expression"), i(2, "// Body") }
-			),
+                { i(1, "expression"), i(2, "// Body") }
+            ),
 
-			fmta(
-				[[
+            fmta(
+                [[
 else if (<>)
 {
 	<>
 }
 ]],
-				{ i(1, "expression"), i(2, "// Body") }
-			),
-		})
-	),
+                { i(1, "expression"), i(2, "// Body") }
+            ),
+        })
+    ),
 })

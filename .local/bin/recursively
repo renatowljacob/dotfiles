@@ -1,0 +1,89 @@
+#!/bin/sh
+
+scriptname="${0##*/}"
+
+command=""
+dir="$PWD"
+pattern=""
+
+usage()
+{
+	cat <<EOF
+${scriptname}
+
+Usage: ${scriptname} [OPTION] COMMAND...
+
+Executes COMMAND recursively from DIRECTORY.
+
+Options:
+  -d, --directory        Directory to execute COMMAND from. If not set, the
+                           current working directory is used instead
+  -h, --help             Print this message
+  -p, --pattern          File pattern to match
+
+Examples:
+
+Print every file recursively:
+${scriptname} echo
+
+Print files containing a ".lua" substring recursively:
+${scriptname} -p ".lua" echo
+
+Print files from foo directory recursively:
+${scriptname} -d foo echo
+
+Open files containing a ".sh" substring in vim recursively:
+vim \$(${scriptname} -p ".sh")
+EOF
+}
+
+traverse()
+{
+    for file in "${1}"/*; do
+        lpattern="${2}"
+
+        [ -d "${file}" ] && traverse "${file}" "${lpattern}" "${command}"
+
+        if [ -n "${lpattern}" ]; then
+            case "${file}" in
+                *"${lpattern}"*) ${command} "${file}" ;;
+            esac
+        else
+            ${command} "${file}"
+        fi
+    done
+}
+
+while true; do
+    case "$1" in
+        -d|--directory)
+            dir="${2}" 
+
+            if [ ! -e "${dir}" ]; then
+                printf '%b\n' "${scriptname}: ${dir} does not exist" >&2
+                exit 1
+            fi
+
+            shift 2
+            ;;
+        -h|--help) usage && exit 0 ;;
+        -p|--pattern) pattern="${2}" && shift 2 ;;
+        --) shift ;;
+        *)
+            if [ ${#} -eq 0 ]; then
+                printf '%b\n' "${scriptname}: no files specified" >&2
+                exit 2
+            fi
+
+            if ! which "${1}" > /dev/null 2>&1; then
+                printf '%b\n' "${scriptname}: command not found" >&2
+                exit 3
+            fi
+
+            command="${*}"
+            break
+            ;;
+    esac
+done
+
+traverse "${dir}" "${pattern}" "${command}"
