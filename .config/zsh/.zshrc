@@ -126,6 +126,13 @@ function _fzf-man-widget()
 		--preview "${batman}" \
 		--bind "enter:execute(${manpage} | xargs -r man)" \
 }
+# Using only __zoxide_zi as a keybinding bugs my prompt so I have to enter a
+# new line idk :P
+function _zoxide_cdi()
+{
+	__zoxide_zi
+	zle accept-line
+}
 
 # Vim keybindings. ' ' at the start of some of them is meant to simulate a
 # leader key
@@ -135,6 +142,7 @@ function zvm_after_lazy_keybindings()
 	zvm_define_widget _pacman_sync
 	zvm_define_widget _pacman_query
 	zvm_define_widget _fzf-man-widget
+	zvm_define_widget _zoxide_cdi
 
 	zvm_bindkey vicmd ' pa' _pacman_aur # Search AUR packages
 	zvm_bindkey vicmd ' ps' _pacman_sync # Search Arch packages
@@ -143,6 +151,7 @@ function zvm_after_lazy_keybindings()
 	zvm_bindkey vicmd ' sh' fzf-history-widget # Search history
 	zvm_bindkey vicmd ' sd' fzf-cd-widget # Search directories
 	zvm_bindkey vicmd ' sm' _fzf-man-widget # Search man pages
+	zvm_bindkey vicmd ' ss' _zoxide_cdi # Search zoxide directories
 	zvm_bindkey viins '^Y' forward-char # Confirm suggestion (yes)
 	zvm_bindkey vicmd 'k' history-substring-search-up
 	zvm_bindkey vicmd 'j' history-substring-search-down

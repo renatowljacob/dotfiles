@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# 1 = left click
+
+case $BLOCK_BUTTON in
+	1)
+		cachefile="/tmp/dusk-updatesclick"
+		updates="$(checkupdates -c --nocolor)"
+
+		if [ -n "${updates}" ] || [ ! -e "${cachefile}" ]; then
+			{ printf '%s' "${updates:-$(checkupdates --nocolor)}"; paru -Qu; } \
+			| sed 's/\([[:alnum:]]*\) .*/\1/' > "${cachefile}"
+		fi
+
+		dunstify -a "Updates" "$(cat "${cachefile}")"
+		;;
+esac

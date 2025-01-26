@@ -285,24 +285,6 @@ return {
                     },
                 },
                 jdtls = {},
-                ltex = {
-                    filetypes = {
-                        "markdown",
-                        "norg",
-                        "tex",
-                    },
-                    settings = {
-                        ltex = {
-                            enabled = {
-                                "latex",
-                            },
-                            language = "pt-BR", -- "en-US",
-                            additionalRules = {
-                                motherTongue = "pt-BR",
-                            },
-                        },
-                    },
-                },
                 lua_ls = {
                     -- cmd = {...},
                     -- filetypes = { ...},
