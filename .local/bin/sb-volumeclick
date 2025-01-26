@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# 1 = left click
+# 4 = scroll up
+# 5 = scroll down
+
 case $BLOCK_BUTTON in
 	1) volume mute ;;
 	4) volume up ;;

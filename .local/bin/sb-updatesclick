@@ -4,7 +4,7 @@
 
 case $BLOCK_BUTTON in
 	1)
-		cachefile="/tmp/dusk-updatesclick"
+		cachefile=${XDG_RUNTIME_DIR:-/tmp}/"dusk-updatesclick"
 		updates="$(checkupdates -c --nocolor)"
 
 		if [ -n "${updates}" ] || [ ! -e "${cachefile}" ]; then
@@ -12,6 +12,7 @@ case $BLOCK_BUTTON in
 			| sed 's/\([[:alnum:]]*\) .*/\1/' > "${cachefile}"
 		fi
 
-		dunstify -a "Updates" "$(cat "${cachefile}")"
+		dunstify -a "Updates" "$(cat "${cachefile}")" \
+		&& duskc --ignore-reply run_command setstatus 4 "$(sb-updates)" &
 		;;
 esac

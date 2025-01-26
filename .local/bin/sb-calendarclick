@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# 1 = left click
+# 13 = super + left click
+# 15 = super + right click
+
 case $BLOCK_BUTTON in
 	1) calendar curr ;;
 	15) calendar next ;;

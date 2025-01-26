@@ -1,6 +1,6 @@
 #!/bin/sh
 
-updates=$( (checkupdates; paru -Qu) | wc -l)
+updates=$( { checkupdates; paru -Qu; } | wc -l)
 
 bgcolor='#24283b'
 accentcolor='#9ECE6A'
