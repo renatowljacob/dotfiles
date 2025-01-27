@@ -48,7 +48,11 @@ case ${1} in
 		;;
 esac
 
-volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | tr -dc '0-9' | sed 's/^0\{1,2\}//')
+volume=$(
+	wpctl get-volume @DEFAULT_AUDIO_SINK@ \
+	| tr -dc '0-9' \
+	| sed 's/^0\{1,2\}//'
+)
 
 case ${1} in
 	mute)
