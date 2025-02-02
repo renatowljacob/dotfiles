@@ -3,16 +3,19 @@
 # 1 = left click
 
 case $BLOCK_BUTTON in
-	1)
-		cachefile=${XDG_RUNTIME_DIR:-/tmp}/"dusk-updatesclick"
-		updates="$(checkupdates -c --nocolor)"
+1)
+    cachefile=${XDG_RUNTIME_DIR:-/tmp}/"dusk-updatesclick"
 
-		if [ -n "${updates}" ] || [ ! -e "${cachefile}" ]; then
-			{ printf '%s' "${updates:-$(checkupdates --nocolor)}"; paru -Qu; } \
-			| sed 's/\([[:alnum:]]*\) .*/\1/' > "${cachefile}"
-		fi
+    if updates="$(checkupdates -c --nocolor)" || [ ! -e "${cachefile}" ]; then
+        [ -n "${updates}" ] \
+            && printf '%s' "${updates:-$(checkupdates --nocolor)}" \
+            | sed 's/\([[:alnum:]]*\) .*/\1/' > "${cachefile}"
 
-		dunstify -a "Updates" "$(cat "${cachefile}")" \
-		&& duskc --ignore-reply run_command setstatus 4 "$(sb-updates)" &
-		;;
+        dunstify -a "Updates" "$(cat "${cachefile}")"
+    else
+        : > "${cachefile}" && dunstify -a "Updates" "No updates available"
+    fi
+
+    duskc --ignore-reply run_command setstatus 4 "$(sb-updates)" &
+    ;;
 esac

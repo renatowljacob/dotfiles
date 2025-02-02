@@ -5,7 +5,7 @@
 # 15 = super + right click
 
 case $BLOCK_BUTTON in
-	1) calendar curr ;;
-	15) calendar next ;;
-	13) calendar prev ;;
+1) calendar curr ;;
+15) calendar next ;;
+13) calendar prev ;;
 esac

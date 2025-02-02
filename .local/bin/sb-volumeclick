@@ -5,7 +5,7 @@
 # 5 = scroll down
 
 case $BLOCK_BUTTON in
-	1) volume mute ;;
-	4) volume up ;;
-	5) volume down ;;
+1) volume mute ;;
+4) volume up ;;
+5) volume down ;;
 esac

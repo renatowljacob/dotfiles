@@ -59,6 +59,7 @@ vim.api.nvim_create_autocmd("TermOpen", {
         current_win_opt.number = false
         current_win_opt.relativenumber = false
         current_win_opt.signcolumn = "no"
+        current_win_opt.winbar = ""
     end,
 })
 

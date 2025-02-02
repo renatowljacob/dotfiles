@@ -10,7 +10,7 @@ declare backupdir format scriptname="${0##*/}"
 # Functions
 usage()
 {
-	cat <<EOF
+    cat << EOF
 ${scriptname}
 
 Usage: ${scriptname} [OPTS] FILE...
@@ -24,7 +24,7 @@ General options:
   -d, --dryrun                    Perform dry run, do not make any changes
   -h, --help                      Print this message
   -v[LEVEL], --verbose [LEVEL]    Set verbose level. Defaults to 1 if no level
-                                    is given.
+                                    is specified.
                                     1 - FFMPEG log messages
                                     2 - Script messages
                                     3 - Both
@@ -48,94 +48,99 @@ EOF
 
 opt_short='b::de:hv::'
 opt_long=('backup::' 'dryrun' 'extension:' 'help'
-	'verbose::' 'album:' 'artist:' 'comment:' 'genre:' 'title:' 'track:'
-	'year:' 'clear')
+    'verbose::' 'album:' 'artist:' 'comment:' 'genre:' 'title:' 'track:'
+    'year:' 'clear')
 
-TEMP=$(getopt -n 'audioscript' -o "${opt_short}" -l "${opt_long[*]}" -- "$@" || exit 1)
+TEMP=$(getopt -n 'audioscript' -o "${opt_short}" -l "${opt_long[*]}" -- "$@" \
+    || exit 1)
 
 eval set -- "$TEMP"
 unset TEMP
 
 while true; do
-	case "$1" in
-	-b|--backup)
-		backupdir="${2:-backup}"
-		backup=1
-		shift
-		;;
-	-d|--dryrun) dryrun=1 ;;
-	-e|--extension)
-		format="$2"
-		shift
-		;;
-	-h|--help)
-		usage
-		exit 0
-		;;
-	-v|--verbose)
-		verbose="${2:-1}"
-		shift
-		;;
-	--album|--artist|--comment|--genre|--title|--track|--year)
-		metadata+=('-metadata' "${1##*-}=$2")
-		shift
-		;;
-	--clear) clear=1 ;;
-	--)
-		shift
-		break
-		;;
-	*)
-		if [[ $# == 0 ]]; then
-			printf '%b' "${scriptname}: no files specified\n" >&2
-			exit 3
-		fi
+    case "$1" in
+    -b | --backup)
+        backupdir="${2:-backup}"
+        backup=1
+        shift
+        ;;
+    -d | --dryrun) dryrun=1 ;;
+    -e | --extension)
+        format="$2"
+        shift
+        ;;
+    -h | --help)
+        usage
+        exit 0
+        ;;
+    -v | --verbose)
+        verbose="${2:-1}"
+        shift
+        ;;
+    --album | --artist | --comment | --genre | --title | --track | --year)
+        metadata+=('-metadata' "${1##*-}=$2")
+        shift
+        ;;
+    --clear) clear=1 ;;
+    --)
+        shift
+        break
+        ;;
+    *)
+        if [[ $# == 0 ]]; then
+            printf '%b\n' "${scriptname}: no files specified" >&2
+            exit 3
+        fi
 
-		break
-		;;
-	esac
+        break
+        ;;
+    esac
 
-	shift
+    shift
 done
 
 # Sanity check
-if [[ ${dryrun} == 1 && $(( dryrun + backup )) -gt 1 ]]; then
-	printf '%b' "${scriptname}: dryrun, backup: Only one operation allowed at a time\n" >&2
-	exit 4
+if [[ ${dryrun} == 1 && $((dryrun + backup)) -gt 1 ]]; then
+    printf '%b\n' "${scriptname}: dryrun, backup: Only one operation allowed at a time" >&2
+    exit 4
 fi
 
 [[ ${clear} == 1 ]] && opts+=('-map_metadata' '-1')
 
 [[ ${backup} == 1 ]] && mkdir -p "${backupdir}"
 
-case $(( verbose )) in
-	0) opts+=('-loglevel' 'quiet') ;;
-	2) opts+=('-loglevel' 'quiet'); set -xv ;;
-	3) set -xv ;;
+case $((verbose)) in
+0) opts+=('-loglevel' 'quiet') ;;
+2)
+    opts+=('-loglevel' 'quiet')
+    set -xv
+    ;;
+3) set -xv ;;
 esac
 
 for file in "$@"; do
-	if [[ ! -f ${file} ]]; then
-		printf '%b' "${scriptname}: Invalid path ${file}. Skipping...\n" >&2
-		continue
-	fi
+    if [[ ! -f ${file} ]]; then
+        printf '%b\n' "${scriptname}: Invalid path ${file}. Skipping..." >&2
+        continue
+    fi
 
-	extension="${file##*.}"
-	format=${format:-$extension}
-	filename="${file%.*}"
-	newfile="$filename.$format"
+    extension="${file##*.}"
+    format=${format:-$extension}
+    filename="${file%.*}"
+    newfile="$filename.$format"
 
-	if [[ ${dryrun} == 0 ]]; then
-		[[ ${backup} == 1 ]] && cp "${file}" "${backupdir}"
+    if [[ ${dryrun} == 0 ]]; then
+        [[ ${backup} == 1 ]] && cp "${file}" "${backupdir}"
 
-		if [[ ${extension} == "${format}" ]]; then
-			ffmpeg -i "${file}" "${opts[@]}" "${metadata[@]}" -c copy "${newfile}"
-		else
-			ffmpeg -i "${file}" "${opts[@]}" "${metadata[@]}" "${newfile}"
-		fi
+        if [[ ${extension} == "${format}" ]]; then
+            tmp="tmp.${RANDOM}.${extension}"
+            ffmpeg -i "${file}" "${opts[@]}" "${metadata[@]}" -c copy "${tmp}" \
+                && mv "${tmp}" "${file}"
+        else
+            ffmpeg -i "${file}" "${opts[@]}" "${metadata[@]}" "${newfile}" \
+                && rm "${file}"
+        fi
+    fi
 
-		rm "${file}"
-	fi
-
-	printf '%b' "${scriptname}: ${file} => ${newfile}\n"
+    printf '%b\n' "${scriptname}: ${file} => ${newfile}"
 done

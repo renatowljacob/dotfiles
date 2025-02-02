@@ -5,4 +5,4 @@ accentcolor='#7AA2F7'
 
 icon="^c${accentcolor}^^r00,00,13,h^^f13^^b${accentcolor}^^c${bgcolor}^ ^c${accentcolor}^^r00,00,5,h^^d^^f21^^c${accentcolor}^"
 
-printf '%b' "${icon}$(free -h | awk '/^Mem/ { print $3 }' | sed s/i/B/g)"
+printf '%s' "${icon}$(free -h | awk '/^Mem/ { print $3 }' | sed s/i/B/g)"

@@ -4,33 +4,35 @@
 
 # from https://github.com/chebro/calendar-notification
 
-send_notification() {
-	today=$(date '+%-d')
-	head=$(cal "${1}" | head -n1)
-	body=$(cal "${1}" | tail -n7 | sed -z "s|${today}|<u><b>${today}</b></u>|1")
-	foot="\n<i>       ~ calendar</i> 󰸗 "
-	dunstify -a Calendar -h string:x-canonical-private-synchronous:calendar \
-		"${head}" "${body}${foot}" -u NORMAL
+send_notification()
+{
+    today=$(date '+%-d')
+    head=$(cal "${1}" | head -n1)
+    body=$(cal "${1}" | tail -n7 | sed -z "s|${today}|<u><b>${today}</b></u>|1")
+    foot="\n<i>       ~ calendar</i> 󰸗 "
+    dunstify -a Calendar -h string:x-canonical-private-synchronous:calendar \
+        "${head}" "${body}${foot}" -u NORMAL
 }
 
-handle_action() {
-	echo "${DIFF}" > "${TMP}"
-	if [ "${DIFF}" -ge 0 ]; then
-		send_notification "+${DIFF} months"
-	else
-		send_notification "$((-DIFF)) months ago"
-	fi
+handle_action()
+{
+    echo "${DIFF}" > "${TMP}"
+    if [ "${DIFF}" -ge 0 ]; then
+        send_notification "+${DIFF} months"
+    else
+        send_notification "$((-DIFF)) months ago"
+    fi
 }
 
 TMP=${XDG_RUNTIME_DIR:-/tmp}/"${UID}"_calendar_notification_month
 touch "${TMP}"
 
-DIFF=$(<"${TMP}")
+DIFF=$(< "${TMP}")
 
 case $1 in
-	"curr") DIFF=0;;
-	"next") DIFF=$((DIFF+1));;
-	"prev") DIFF=$((DIFF-1));;
+"curr") DIFF=0 ;;
+"next") DIFF=$((DIFF + 1)) ;;
+"prev") DIFF=$((DIFF - 1)) ;;
 esac
 
 handle_action

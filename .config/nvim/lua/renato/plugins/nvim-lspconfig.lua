@@ -314,6 +314,7 @@ return {
                 -- Formatters
                 "clang-format",
                 "prettier",
+                "shfmt",
                 "stylua",
                 -- Linters
                 "shellcheck",

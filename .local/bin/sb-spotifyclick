@@ -10,39 +10,49 @@
 
 get_volume()
 {
-	volume="$(
-		printf '%.2f' "$(playerctl -p spotify volume)" \
-		| tr -dc '0-9' \
-		| sed 's/^0\{1,2\}//'
-	)"
-	dunstify -a "Spotify_Notifier" -r 9991 -h int:value:"${volume}" "Currently at ${volume}%" 
+    volume="$(
+        printf '%.2f' "$(playerctl -p spotify volume)" \
+            | tr -dc '0-9' \
+            | sed 's/^0\{1,2\}//'
+    )"
+
+    dunstify -a "Spotify_Notifier" -r 9991 -h int:value:"${volume}" \
+        "Currently at ${volume}%"
 }
 
 case $BLOCK_BUTTON in
-	1)
-		playerctl -p spotify play-pause
-			status="$(playerctl -p spotify status)"
-			if [ "${status}" = "Playing" ]; then
-				dunstify -a "Spotify_Notifier" -r 9991 "Paused" &
-			elif [ "${status}" = "Paused" ]; then
-				dunstify -a "Spotify_Notifier" -r 9991 "Resumed" &
-			fi;
-		;;
-	3)
-		position="$(playerctl -p spotify position)"
-		duration="$(playerctl -p spotify metadata mpris:length)"
+1)
+    playerctl -p spotify play-pause
+    status="$(playerctl -p spotify status)"
 
-		# Normalizing numbers for calculations
-		# Strip fractional part and 6 rightmost digits
-		ratio=$(( ${position%%.*} * 100 / ${duration%%[0-9][0-9][0-9][0-9][0-9][0-9]} ))
-		info="$(playerctl -p spotify metadata -f '{{artist}} — {{title}}
-			                      {{duration(position)}}/{{duration(mpris:length)}}')"
+    if [ "${status}" = "Playing" ]; then
+        dunstify -a "Spotify_Notifier" -r 9991 "Paused" &
+    elif [ "${status}" = "Paused" ]; then
+        dunstify -a "Spotify_Notifier" -r 9991 "Resumed" &
+    fi
+    ;;
+3)
+    position="$(playerctl -p spotify position)"
+    duration="$(playerctl -p spotify metadata mpris:length)"
 
-		# Strip decimal mark if any
-		dunstify -a "Spotify_Notifier" -r 9991 -h int:value:"${ratio%%.*}" "${info}" &
-		;;
-	4) playerctl -p spotify volume 0.05+ && get_volume & ;;
-	5) playerctl -p spotify volume 0.05- && get_volume & ;;
-	13) playerctl -p spotify previous ;;
-	15) playerctl -p spotify next ;;
+    # Normalizing numbers for calculations
+    # Strip fractional part and 6 rightmost digits
+    ratio=$((${position%%.*} * 100 / \
+        ${duration%%[0-9][0-9][0-9][0-9][0-9][0-9]}))
+
+    info="$(playerctl -p spotify metadata -f \
+        '{{title}}
+{{album}}
+{{artist}}
+
+                  {{duration(position)}}/{{duration(mpris:length)}}')"
+
+    # Strip decimal mark if any
+    dunstify -a "Spotify_Notifier" -r 9991 -h int:value:"${ratio%%.*}" \
+        "${info}" &
+    ;;
+4) playerctl -p spotify volume 0.05+ && get_volume & ;;
+5) playerctl -p spotify volume 0.05- && get_volume & ;;
+13) playerctl -p spotify previous ;;
+15) playerctl -p spotify next ;;
 esac

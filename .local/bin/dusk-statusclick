@@ -1,9 +1,9 @@
 #!/bin/sh
 
 case $BLOCK_STATUS in
-	0) sb-calendarclick ;;
-	3) sb-volumeclick ;;
-	4) sb-updatesclick ;;
-	5) sb-spotifyclick ;;
-	*) dunstify -a dusk -t 2000 "Unknown status" ;;
+0) sb-calendarclick ;;
+3) sb-volumeclick ;;
+4) sb-updatesclick ;;
+5) sb-spotifyclick ;;
+*) dunstify -a dusk -t 2000 "Unknown status" ;;
 esac

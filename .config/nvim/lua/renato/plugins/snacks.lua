@@ -2,7 +2,7 @@ return {
     {
         "folke/snacks.nvim",
         opts = {
-            terminal = {},
+            terminal = { enabled = true },
             notifier = {
                 style = "fancy",
             },

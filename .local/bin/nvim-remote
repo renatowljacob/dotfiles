@@ -8,48 +8,52 @@ declare -a flags=() files=()
 
 # TODO: Open a new, unnamed buffer
 if [[ ${#} == 0 ]]; then
-    printf '%b' "nvim-remote: no file specified\n"
+    printf '%b\n' "nvim-remote: no file specified"
     exit 1
 fi
 
 while true; do
     case "${1}" in
-        --debug) set -xv && shift ;;
-        -l)
-            printf "nvim-remote: lua scripts are not supported in remote mode. See :h --remote"
-            exit 2
-            ;;
-        -[tuicswW]|--startuptime|--listen|--cmd)
-            if [[ -e ${2} ]]; then
-                flags+=("${1}" "$(realpath "${2}")")
-            else
-                flags+=("${1}" "\"${2}\"")
-            fi
+    --debug) set -xv && shift ;;
+    -l)
+        printf '%b' "nvim-remote: lua scripts are not supported in remote \
+            mode. See :h --remote"
+        exit 2
+        ;;
+    -[tuicswW] | --startuptime | --listen | --cmd)
+        if [[ -e ${2} ]]; then
+            flags+=("${1}" "$(realpath "${2}")")
+        else
+            flags+=("${1}" "\"${2}\"")
+        fi
 
+        shift 2
+        ;;
+    -[qrLS])
+        if [[ -e ${2} ]]; then
+            flags+=("${1}" "\"$(realpath "${2}")\"")
             shift 2
-            ;;
-        -[qrLS])
-            if [[ -e ${2} ]]; then
-                flags+=("${1}" "\"$(realpath "${2}")\"")
-                shift 2
-            else
-                flags+=("${1}")
-            fi
-            ;;
-        -*) flags+=("${1}") ;;
-        +*) flags+=("\"${1}\"") ;;
-        *)
-            [[ ${#} == 0 ]] && break
+        else
+            flags+=("${1}")
+        fi
+        ;;
+    -*) flags+=("${1}") ;;
+    +*) flags+=("\"${1}\"") ;;
+    *)
+        [[ ${#} == 0 ]] && break
 
-            if [[ -e ${1} ]]; then 
-                files+=("$(realpath "${1}")")
-            else
-                files+=("${PWD}/${1}")
-            fi
-            ;;
+        if [[ -e ${1} ]]; then
+            files+=("$(realpath "${1}")")
+        else
+            files+=("${PWD}/${1}")
+        fi
+        ;;
     esac
 
     shift
 done
 
+# Open files in the previous window (so that the terminal buffer is not
+# replaced)
+nvim --server "${NVIM}" --remote-send "<ESC><ESC>:wincmd p<CR>"
 nvim "${flags[@]}" --server "${NVIM}" --remote "${files[@]}"

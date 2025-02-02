@@ -8,7 +8,7 @@ pattern=""
 
 usage()
 {
-	cat <<EOF
+    cat << EOF
 ${scriptname}
 
 Usage: ${scriptname} [OPTION] COMMAND...
@@ -46,7 +46,7 @@ traverse()
 
         if [ -n "${lpattern}" ]; then
             case "${file}" in
-                *"${lpattern}"*) ${command} "${file}" ;;
+            *"${lpattern}"*) ${command} "${file}" ;;
             esac
         else
             ${command} "${file}"
@@ -56,33 +56,33 @@ traverse()
 
 while true; do
     case "$1" in
-        -d|--directory)
-            dir="${2}" 
+    -d | --directory)
+        dir="${2}"
 
-            if [ ! -e "${dir}" ]; then
-                printf '%b\n' "${scriptname}: ${dir} does not exist" >&2
-                exit 1
-            fi
+        if [ ! -e "${dir}" ]; then
+            printf '%b\n' "${scriptname}: ${dir} does not exist" >&2
+            exit 1
+        fi
 
-            shift 2
-            ;;
-        -h|--help) usage && exit 0 ;;
-        -p|--pattern) pattern="${2}" && shift 2 ;;
-        --) shift ;;
-        *)
-            if [ ${#} -eq 0 ]; then
-                printf '%b\n' "${scriptname}: no files specified" >&2
-                exit 2
-            fi
+        shift 2
+        ;;
+    -h | --help) usage && exit 0 ;;
+    -p | --pattern) pattern="${2}" && shift 2 ;;
+    --) shift ;;
+    *)
+        if [ ${#} -eq 0 ]; then
+            printf '%b\n' "${scriptname}: no files specified" >&2
+            exit 2
+        fi
 
-            if ! which "${1}" > /dev/null 2>&1; then
-                printf '%b\n' "${scriptname}: command not found" >&2
-                exit 3
-            fi
+        if ! which "${1}" > /dev/null 2>&1; then
+            printf '%b\n' "${scriptname}: command not found" >&2
+            exit 3
+        fi
 
-            command="${*}"
-            break
-            ;;
+        command="${*}"
+        break
+        ;;
     esac
 done
 

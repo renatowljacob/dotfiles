@@ -1,11 +1,10 @@
 #!/bin/sh
 
 if pkgs=$(pacman -Qtdq); then
-	printf '%b' "\033[1;32m==>\033[0m Orphaned packages found\n"
-	for pkg in ${pkgs}
-	do
-		printf '%b' "  \033[1;34m->\033[0m ${pkg}\n"
-	done
+    printf '%b\n' "\033[1;32m==>\033[0m Orphaned packages found"
+    for pkg in ${pkgs}; do
+        printf '%b\n' "  \033[1;34m->\033[0m ${pkg}"
+    done
 else
-	printf '%b' "\033[1;32m==>\033[0m No orphaned packages found\n"
+    printf '%b\n' "\033[1;32m==>\033[0m No orphaned packages found"
 fi
