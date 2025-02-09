@@ -13,10 +13,10 @@ function plugin-load
 				https://github.com/$repo $plugdir
 		fi
 		if [[ $repo == "zdharma-continuum/fast-syntax-highlighting" ]]; then
-			mytheme="~/.config/zsh/theme/default.ini"
-			themefile="~/.config/zsh/plugins/fast-syntax-highlighting/themes/default.ini"
+			mytheme="$HOME/.config/zsh/theme/tokyonight.ini"
+			themefile="$plugdir/themes/default.ini"
 
-			[[ -e $mytheme && -e $themefile ]] && cp $mytheme $themefile
+			rm $themefile && ln -s $mytheme $themefile
 		fi
 		if [[ ! -e $initfile ]]; then
 			initfiles=($plugdir/*.{plugin.zsh,zsh-theme,zsh,sh}(N))
@@ -30,6 +30,7 @@ function plugin-load
 
 repos=(
 	jeffreytse/zsh-vi-mode
+	kazhala/dotbare
 	zdharma-continuum/fast-syntax-highlighting
 	zsh-users/zsh-autosuggestions
 	zsh-users/zsh-history-substring-search
@@ -62,7 +63,7 @@ alias siv='nsxiv-rifle '
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 # Completion
-autoload -U compinit; compinit
+autoload -U compinit && compinit
 
 # Options
 unsetopt menu_complete
@@ -83,10 +84,105 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
+# Dotbare
+export DOTBARE_DIR="$HOME/.dotfiles"
+export DOTBARE_TREE="$HOME"
+
+_dotbare_completion_cmd
+
+# Keybindings
+# Prevent typos (for some reason <S-Space> is bound to delete the entire line)
+bindkey -s "^[[32;2u" " "
+
+# Functions
+
+# Some keybindings bugs the prompt so they must be reseted afterwards (using
+# zle reset-prompt)
+function _fzf-man-widget()
+{
+	local manpage="echo {} \
+		| sed 's/\([[:alnum:][:punct:]]*\) (\([[:alnum:]]*\)).*/\2 \1/'"
+	local batman="${manpage} \
+		| xargs -r man \
+		| col -bx \
+		| bat --language=man --plain --color always"
+
+	man -k . \
+		| sort \
+		| awk -v blue=$(tput setaf 4) -v cyan=$(tput setaf 6) \
+		-v res=$(tput sgr0) -v bld=$(tput bold) \
+			'{ $1=blue bld $1; $2=res cyan $2; $3=res $3; } 1' \
+		| fzf \
+		-q "$1" \
+		--ansi \
+		--tiebreak=begin \
+		--prompt=' Man > '  \
+		--preview-window '50%,rounded,<70(up,85%,border-bottom)' \
+		--preview "${batman}" \
+		--bind "enter:execute(${manpage} | xargs -r man)" \
+}
+function _git_add()
+{
+	if ! dotbare --git fadd; then
+		zle reset-prompt
+	fi
+}
+function _git_files()
+{
+	if ! dotbare --git fedit; then
+		zle reset-prompt
+	fi
+}
+function _git_grep()
+{
+	if ! dotbare --git fgrep; then
+		zle reset-prompt
+	fi
+}
+function _git_log()
+{
+	if ! dotbare --git flog; then
+		zle reset-prompt
+	fi
+}
+function _git_stash()
+{
+	if ! dotbare --git fstash; then
+		zle reset-prompt
+	fi
+}
+function _git_status()
+{
+	if ! dotbare --git fstat; then
+		zle reset-prompt
+	fi
+}
+function _pacman_sync()
+{
+	local packages="$(pacman -Slq \
+		| fzf --multi --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} \
+		| awk "{print \$2}")')"
+
+	[ -n "${packages}" ] && doas pacman -S -- "${packages}"
+}
+function _pacman_query()
+{
+	local packages="$(pacman -Qq \
+		| fzf --multi --preview 'pacman -Qi {1}')"
+
+	[ -n "${packages}" ] && doas pacman -Rsun -- "${packages}"
+}
+function _pacman_aur()
+{
+	local packages="$(paru -Slq | fzf --multi --preview 'paru -Si {1}')"
+
+	[ -n "${packages}" ] && paru -S -- "${packages}"
+}
 # Yazi
 function yy()
 {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+
 	yazi "$@" --cwd-file="$tmp"
 
 	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] &&
@@ -96,52 +192,32 @@ function yy()
 
 	rm -f -- "$tmp"
 }
-
-# Keybinding functions
-function _pacman_sync()
-{
-	pacman -Slq | fzf --multi --preview 'cat <(pacman -Si {1}) <(pacman -Fl \
-		{1} | awk "{print \$2}")' | xargs -ro doas pacman -S
-}
-function _pacman_query()
-{
-	doas pacman -Rsun "$(pacman -Qq | fzf --multi --preview 'pacman -Qi {1}')"
-}
-function _pacman_aur()
-{
-	paru -Slq | fzf --multi --preview 'paru -Si {1}' | xargs -ro paru -S
-}
-function _fzf-man-widget()
-{
-	manpage="echo {} | sed 's/\([[:alnum:][:punct:]]*\) (\([[:alnum:]]*\)).*/\2 \1/'"
-	batman="${manpage} | xargs -r man | col -bx | bat --language=man --plain --color always"
-	man -k . | sort \
-	| awk -v blue=$(tput setaf 4) -v cyan=$(tput setaf 6) -v res=$(tput sgr0) -v bld=$(tput bold) '{ $1=blue bld $1; $2=res cyan $2; $3=res $3; } 1' \
-	| fzf  \
-		-q "$1" \
-		--ansi \
-		--tiebreak=begin \
-		--prompt=' Man > '  \
-		--preview-window '50%,rounded,<70(up,85%,border-bottom)' \
-		--preview "${batman}" \
-		--bind "enter:execute(${manpage} | xargs -r man)" \
-}
-# Using only __zoxide_zi as a keybinding bugs my prompt so I have to enter a
-# new line idk :P
 function _zoxide_cdi()
 {
 	__zoxide_zi
-	zle accept-line
+	zle reset-prompt
 }
 
-# Vim keybindings. ' ' at the start of some of them is meant to simulate a
+# ZVM keybindings. ' ' at the start of some of them is meant to simulate a
 # leader key
 function zvm_after_lazy_keybindings()
 {
+	zvm_define_widget _fzf-man-widget
+	zvm_define_widget _git_add
+	zvm_define_widget _git_files
+	zvm_define_widget _git_grep
+	zvm_define_widget _git_log
+	zvm_define_widget _git_stash
+	zvm_define_widget _git_status
 	zvm_define_widget _pacman_aur
 	zvm_define_widget _pacman_sync
 	zvm_define_widget _pacman_query
-	zvm_define_widget _fzf-man-widget
+	zvm_define_widget _widget_dotbare_fadd
+	zvm_define_widget _widget_dotbare_fedit
+	zvm_define_widget _widget_dotbare_fgrep
+	zvm_define_widget _widget_dotbare_flog
+	zvm_define_widget _widget_dotbare_fstas
+	zvm_define_widget _widget_dotbare_fstat
 	zvm_define_widget _zoxide_cdi
 
 	zvm_bindkey vicmd ' pa' _pacman_aur # Search AUR packages
@@ -152,7 +228,18 @@ function zvm_after_lazy_keybindings()
 	zvm_bindkey vicmd ' sd' fzf-cd-widget # Search directories
 	zvm_bindkey vicmd ' sm' _fzf-man-widget # Search man pages
 	zvm_bindkey vicmd ' ss' _zoxide_cdi # Search zoxide directories
-	zvm_bindkey viins '^Y' forward-char # Confirm suggestion (yes)
+	zvm_bindkey vicmd ' da' _widget_dotbare_fadd
+	zvm_bindkey vicmd ' df' _widget_dotbare_fedit
+	zvm_bindkey vicmd ' dg' _widget_dotbare_fgrep
+	zvm_bindkey vicmd ' dl' _widget_dotbare_flog
+	zvm_bindkey vicmd ' dS' _widget_dotbare_fstash
+	zvm_bindkey vicmd ' ds' _widget_dotbare_fstat
+	zvm_bindkey vicmd ' ga' _git_add
+	zvm_bindkey vicmd ' gf' _git_files
+	zvm_bindkey vicmd ' gg' _git_grep
+	zvm_bindkey vicmd ' gl' _git_log
+	zvm_bindkey vicmd ' gS' _git_stash
+	zvm_bindkey vicmd ' gs' _git_status
 	zvm_bindkey vicmd 'k' history-substring-search-up
 	zvm_bindkey vicmd 'j' history-substring-search-down
 }

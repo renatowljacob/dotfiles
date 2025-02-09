@@ -120,6 +120,7 @@
 
 [Updates]
     appname = Updates
+    new_icon = updates
     max_icon_size = 50
 
 [Vivaldi]

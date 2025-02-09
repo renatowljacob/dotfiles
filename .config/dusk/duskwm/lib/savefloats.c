@@ -51,4 +51,3 @@ restorefloats(Client *c)
 
 	resize(c, x, y, w, h, 0);
 }
-

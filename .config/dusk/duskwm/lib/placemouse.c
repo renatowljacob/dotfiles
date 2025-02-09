@@ -12,7 +12,6 @@ placemouse(const Arg *arg)
 	attachmode = prevattachmode = AttachMaster;
 
 	c = ws->sel;
-
 	if (!c)
 		return;
 	if (!ws->layout->arrange) /* no support for placemouse when floating layout is used */

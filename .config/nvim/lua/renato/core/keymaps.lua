@@ -101,7 +101,6 @@ vim.keymap.set(
     "<C-\\><C-n>",
     { desc = "Exit terminal mode" }
 )
-vim.keymap.set("t", "<S-space>", "<space>") -- Prevent typos
 
 -- Center screen after certain motions
 vim.keymap.set({ "n", "v" }, "<C-d>", "<C-d>zz")

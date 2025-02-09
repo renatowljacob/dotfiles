@@ -8,5 +8,8 @@ light = "tokyo-night-day"
 hovered         = { reversed = true, bold = true }
 preview_hovered = { reversed = true, bold = true }
 
+# Find
+find_keyword  = { fg = "#24283b", bg = "#ff9e64", bold = true }
+
 # Border
 border_symbol = " "

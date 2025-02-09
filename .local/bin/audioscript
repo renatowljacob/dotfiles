@@ -30,16 +30,17 @@ General options:
                                     3 - Both
 
 Format conversion:
-  -e, --extension                 Format to convert to
+  -e, --extension=EXT             Format extension to which to convert
 
 Metadata edition:
-  --album {ALBUM}                 Set album tag
-  --artist {ARTIST}               Set artist tag
-  --comment {COMMENT}             Set comment tag
-  --genre {GENRE}                 Set genre tag
-  --title {TITLE}                 Set title tag
-  --track {TRACK}                 Set track tag
-  --year {YEAR}                   Set year tag
+  --album=ALBUM                   Set album tag
+  --artist=ARTIST                 Set artist tag
+  --comment=COMMENT               Set comment tag
+  --date=DATE                     Set date tag
+  --genre=GENRE                   Set genre tag
+  --title=TITLE                   Set title tag
+  --track=TRACK                   Set track tag
+  --year=YEAR                     Set year tag
   --clear                         Clear all tags
 
 To clear a specific tag, pass an empty string (example: --album "")
@@ -48,7 +49,7 @@ EOF
 
 opt_short='b::de:hv::'
 opt_long=('backup::' 'dryrun' 'extension:' 'help'
-    'verbose::' 'album:' 'artist:' 'comment:' 'genre:' 'title:' 'track:'
+    'verbose::' 'album:' 'artist:' 'comment:' 'date:' 'genre:' 'title:' 'track:'
     'year:' 'clear')
 
 TEMP=$(getopt -n 'audioscript' -o "${opt_short}" -l "${opt_long[*]}" -- "$@" \
@@ -77,7 +78,8 @@ while true; do
         verbose="${2:-1}"
         shift
         ;;
-    --album | --artist | --comment | --genre | --title | --track | --year)
+    --album | --artist | --comment | --date | --genre | --title | --track | \
+        --year)
         metadata+=('-metadata' "${1##*-}=$2")
         shift
         ;;
@@ -88,7 +90,7 @@ while true; do
         ;;
     *)
         if [[ $# == 0 ]]; then
-            printf '%b\n' "${scriptname}: no files specified" >&2
+            printf '%b\n' "${scriptname}: no files specified. See --help" >&2
             exit 3
         fi
 
@@ -124,10 +126,19 @@ for file in "$@"; do
         continue
     fi
 
+    # Input file extension
     extension="${file##*.}"
+
+    # Format to convert to. If no format is specified, the file extension will
+    # be used instead, i.e. no conversion occurs
     format=${format:-$extension}
-    filename="${file%.*}"
-    newfile="$filename.$format"
+
+    # Extensionless basename
+    stem="${file%.*}"
+
+    # Output file. Only significant if a conversion takes place, otherwise it's
+    # just for logging
+    newfile="$stem.$format"
 
     if [[ ${dryrun} == 0 ]]; then
         [[ ${backup} == 1 ]] && cp "${file}" "${backupdir}"

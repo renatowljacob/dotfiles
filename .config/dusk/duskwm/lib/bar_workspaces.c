@@ -63,7 +63,7 @@ draw_workspaces(Bar *bar, BarArg *a)
 				}
 
 			nextscheme =
-				nextws == nextws->mon->selws
+				nextws == nextws->mon->selws && nextws->visible
 				? nextws->scheme[SELECTED]
 				: nextws->visible
 				? nextws->scheme[VISIBLE]
@@ -326,7 +326,6 @@ Client *
 getworkspacelabelclient(Workspace *ws)
 {
 	Client *c = nexttiled(ws->clients);
-
 	if (!c)
 		for (c = ws->stack; c && ISINVISIBLE(c); c = c->snext);
 	return c;

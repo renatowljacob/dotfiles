@@ -9,7 +9,7 @@ export HISTFILE=$ZDOTDIR/.zhistory
 export HISTSIZE=10000
 export SAVEHIST=9000
 
-export EDITOR=nvim
+export EDITOR=nvim-remote
 
 # fzf-zsh integration
 
@@ -23,14 +23,16 @@ export FZF_CTRL_T_OPTS="
   --bind 'ctrl-/:change-preview-window(down|hidden|)'"
 
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
+  --ansi \
   --highlight-line \
   --info=inline-right \
-  --ansi \
   --layout=reverse \
+  --scroll-off=10 \
   --bind 'ctrl-f:half-page-down' \
   --bind 'ctrl-b:half-page-up' \
   --bind 'ctrl-d:preview-half-page-down' \
   --bind 'ctrl-u:preview-half-page-up' \
+  --bind 'ctrl-r:select-all' \
   --border=none \
   --color=bg+:#2e3c64 \
   --color=bg:#1f2335 \

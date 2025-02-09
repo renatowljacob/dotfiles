@@ -3,6 +3,7 @@ vim.g.have_nerd_font = true
 
 --  GLOBAL OPTIONS
 vim.o.autoread = true
+vim.o.diffopt = "internal,filler,closeoff,linematch:60"
 vim.o.hlsearch = true
 vim.o.scrolloff = 10
 vim.o.timeoutlen = 300
@@ -72,7 +73,7 @@ vim.wo.wrap = true
 vim.wo.linebreak = true
 vim.wo.breakindent = true
 --       Misc
-vim.wo.colorcolumn = "81"
+vim.wo.colorcolumn = "80"
 
 --  MISC
 --       Floating windows border configuration

@@ -33,3 +33,4 @@ bind-key ^U halfpageup
 
 # Options
 text-width 80
+refresh-on-startup yes

@@ -1,3 +1,4 @@
+
 /* Indicator types */
 enum {
 	IndicatorWs = 0, // occupied alias for backwards support, may be removed in the future

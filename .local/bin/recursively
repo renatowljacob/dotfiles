@@ -39,8 +39,8 @@ EOF
 
 traverse()
 {
-    for file in "${1}"/*; do
-        lpattern="${2}"
+    for file in "$1"/*; do
+        lpattern="$2"
 
         [ -d "${file}" ] && traverse "${file}" "${lpattern}" "${command}"
 
@@ -57,7 +57,7 @@ traverse()
 while true; do
     case "$1" in
     -d | --directory)
-        dir="${2}"
+        dir="$2"
 
         if [ ! -e "${dir}" ]; then
             printf '%b\n' "${scriptname}: ${dir} does not exist" >&2
@@ -67,15 +67,15 @@ while true; do
         shift 2
         ;;
     -h | --help) usage && exit 0 ;;
-    -p | --pattern) pattern="${2}" && shift 2 ;;
+    -p | --pattern) pattern="$2" && shift 2 ;;
     --) shift ;;
     *)
-        if [ ${#} -eq 0 ]; then
+        if [ $# -eq 0 ]; then
             printf '%b\n' "${scriptname}: no files specified" >&2
             exit 2
         fi
 
-        if ! which "${1}" > /dev/null 2>&1; then
+        if ! which "$1" > /dev/null 2>&1; then
             printf '%b\n' "${scriptname}: command not found" >&2
             exit 3
         fi

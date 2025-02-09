@@ -6,7 +6,7 @@
 
 send_notification()
 {
-    if [ "${1}" = "mute" ]; then
+    if [ "$1" = "mute" ]; then
         icon="mute"
     elif [ "${volume}" -lt 33 ]; then
         icon="off"
@@ -16,7 +16,7 @@ send_notification()
         icon="high"
     fi
 
-    if [ "${1}" = "mute" ]; then
+    if [ "$1" = "mute" ]; then
         text="Currently muted"
     else
         text="Currently at ${volume}%"
@@ -33,7 +33,7 @@ update()
     fi
 }
 
-case ${1} in
+case $1 in
 up)
     # Set the volume on (if it was muted)
     wpctl set-mute @DEFAULT_AUDIO_SINK@ 0
@@ -57,7 +57,7 @@ volume=$(
         | sed 's/^0\{1,2\}//'
 )
 
-case ${1} in
+case $1 in
 mute)
     case "$(wpctl get-volume @DEFAULT_AUDIO_SINK@)" in
     *MUTED*) send_notification mute ;;

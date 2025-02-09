@@ -3,7 +3,7 @@
 # Check if biblatex is defined and not commented out
 has_biblatex()
 {
-    queryall=$(grep -e "^\\\\usepackage.*{biblatex}" -e "^\\\\addbibresource.*{.\+}" "${1}")
+    queryall=$(grep -e "^\\\\usepackage.*{biblatex}" -e "^\\\\addbibresource.*{.\+}" "$1")
 
     [ -z "${queryall}" ] && return 1
 
@@ -13,7 +13,7 @@ has_biblatex()
         && return 1
 
     # Use biber to generate references
-    biber "${1}"
+    biber "$1"
 
     return 0
 }
@@ -21,7 +21,7 @@ has_biblatex()
 # Check whether labels and refs are defined and not commented out
 has_ref_or_label()
 {
-    queryall=$(grep -e "\\\\ref" -e "\\\\label" "${1}")
+    queryall=$(grep -e "\\\\ref" -e "\\\\label" "$1")
 
     [ -z "${queryall}" ] && return 1
 
@@ -33,7 +33,7 @@ has_ref_or_label()
     return 0
 }
 
-document=${1}
+document=$1
 
 if [ -z "${document}" ]; then
     printf "%b\n" "Error: \"${document}\" is not a valid argument"

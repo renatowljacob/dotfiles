@@ -7,8 +7,8 @@
 send_notification()
 {
     today=$(date '+%-d')
-    head=$(cal "${1}" | head -n1)
-    body=$(cal "${1}" | tail -n7 | sed -z "s|${today}|<u><b>${today}</b></u>|1")
+    head=$(cal "$1" | head -n1)
+    body=$(cal "$1" | tail -n7 | sed -z "s|${today}|<u><b>${today}</b></u>|1")
     foot="\n<i>       ~ calendar</i> 󰸗 "
     dunstify -a Calendar -h string:x-canonical-private-synchronous:calendar \
         "${head}" "${body}${foot}" -u NORMAL

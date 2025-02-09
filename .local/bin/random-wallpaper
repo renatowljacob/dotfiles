@@ -1,0 +1,82 @@
+#!/bin/sh
+
+scriptname="${0##*/}"
+lockscreen=0
+wallpaper=0
+
+usage()
+{
+    cat << EOF
+${scriptname}
+
+Usage: ${scriptname} [OPTS] {-w|-l} FILE...
+
+Set random image from FILE as wallpaper or lockscreen
+
+Options:
+  -h, --help          Print this message
+  -l, --lockscreen    Set FILE as lockscreen
+  -w, --wallpaper     Set FILE as wallpaper
+
+  Both -l and -w can be used simultaneously
+EOF
+}
+
+# Get given index within specified array
+get_index()
+{
+    shift "$1"
+
+    printf '%s' "${1:?Index out of bounds}"
+}
+
+while true; do
+    case "$1" in
+    -h | --help)
+        usage
+        exit 0
+        ;;
+    -l | --lockscreen) lockscreen=1 ;;
+    -w | --wallpaper) wallpaper=1 ;;
+    -wl | -lw)
+        lockscreen=1
+        wallpaper=1
+        ;;
+    --)
+        shift
+        break
+        ;;
+    *)
+        if [ $# -eq 0 ]; then
+            printf '%b\n' "${scriptname}: no files specified. See --help" >&2
+            exit 1
+        fi
+
+        if [ ${lockscreen} -eq 0 ] && [ ${wallpaper} -eq 0 ]; then
+            printf '%b\n' "${scriptname}: no operation specified. See \
+                --help" >&2
+            exit 2
+        fi
+
+        break
+        ;;
+    esac
+
+    shift
+done
+
+random=$(shuf -i 1-$# -n 1)
+relpath="$(get_index "${random}" "$@")"
+fullpath="$(realpath "$(get_index "${random}" "$@")")"
+
+if [ ! -e "${fullpath}" ]; then
+    printf '%b\n' "${scriptname}: ${relpath} does not \
+        exist" >&2
+    exit 3
+fi
+
+[ ${lockscreen} -eq 1 ] && betterlockscreen --update "${fullpath}"
+
+[ ${wallpaper} -eq 1 ] && feh --bg-fill "${fullpath}"
+
+printf '%b\n' "${scriptname}: ${relpath} set"

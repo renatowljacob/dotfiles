@@ -16,7 +16,6 @@ void
 togglemoveorplace(const Arg *arg)
 {
 	Workspace *ws = selws;
-
 	if (!ws || !ws->sel)
 		return;
 

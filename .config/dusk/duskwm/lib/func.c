@@ -1,4 +1,3 @@
-#include <stdint.h>
 #define compareNameToFunc(F) else if (!strcasecmp(name, #F)) return F;
 #define mapfunc(N,F) else if (!strcasecmp(name, N)) F(NULL);
 
@@ -103,6 +102,7 @@ getfuncbyname(const char *name)
 	compareNameToFunc(Xresources)
 	compareNameToFunc(AltWorkspaceIcons)
 	compareNameToFunc(GreedyMonitor)
+	compareNameToFunc(SmartLayoutConversion)
 	compareNameToFunc(SmartLayoutConvertion)
 	compareNameToFunc(AutoHideScratchpads)
 	compareNameToFunc(RioDrawIncludeBorders)

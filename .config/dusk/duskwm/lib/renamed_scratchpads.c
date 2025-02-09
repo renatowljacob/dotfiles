@@ -129,7 +129,6 @@ togglescratch(const Arg *arg)
 	for (c = monclients; c; c = next) {
 		next = c->next;
 		c->next = NULL;
-		clientmonresize(c, c->ws->mon, selws->mon);
 
 		/* Attach scratchpad clients from other monitors at the bottom of the stack */
 		if (SCRATCHPADSTAYONMON(c)) {

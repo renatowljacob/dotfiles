@@ -1,8 +1,7 @@
 local wezterm = require("wezterm")
 local config = {}
 
-local fonts = { "JetBrainsMono Nerd Font", "Iosevka Nerd Font", "FiraCode Nerd Font", "CodeNewRoman Nerd Font" }
-local font = fonts[1]
+local font = "JetBrainsMono Nerd Font"
 
 config.font = wezterm.font_with_fallback({
 	{
@@ -43,12 +42,7 @@ config.font_rules = {
 		}),
 	},
 }
-
-if font == fonts[2] then
-	config.font_size = 14
-else
-	config.font_size = 13
-end
+config.font_size = 13
 
 config.color_scheme = "Tokyo Night Storm"
 config.enable_tab_bar = false

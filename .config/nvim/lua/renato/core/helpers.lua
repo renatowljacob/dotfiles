@@ -3,10 +3,12 @@
 ---@class Helpers
 ---@field buf table Buffer functions
 ---@field fs table Filesystem functions
+---@field telescope table Telescope functions
 local M = {}
 
 M.buf = {}
 M.fs = {}
+M.telescope = {}
 
 ---Get line and buffer number from a quickfix list item
 ---@return integer? bufnr, integer? lnum Buffer and line number
@@ -76,6 +78,99 @@ function M.fs.find_root(cwd, bufpath)
             return dir
         end
     end
+end
+
+function M.telescope.dotbare(opts)
+    local config = require("telescope.config").values
+    local finders = require("telescope.finders")
+    local make_entry = require("telescope.make_entry")
+    local pickers = require("telescope.pickers")
+    local previewers = require("telescope.previewers")
+
+    opts = opts or {}
+    opts.git = opts.git or false
+    opts.cwd = opts.git and vim.fn.getcwd() or vim.fn.glob(vim.env.HOME)
+
+    local dotbare_opts = function(args, opt)
+        if args == "fadd" then
+            if opt == "entry" then
+                return make_entry.gen_from_git_status(opts)
+            elseif opt == "previewer" then
+                return previewers.git_file_diff()
+            elseif opt == "prompt" then
+                return "Git Add"
+            end
+        elseif args == "fedit" then
+            if opt == "entry" then
+                return make_entry.gen_from_file(opts)
+            elseif opt == "previewer" then
+                return ""
+            elseif opt == "prompt" then
+                return "Git Files"
+            end
+        elseif args == "fgrep" then
+            if opt == "entry" then
+                return make_entry.gen_from_vimgrep(opts)
+            elseif opt == "previewer" then
+                return ""
+            elseif opt == "prompt" then
+                return "Git Grep"
+            end
+        elseif args == "flog" then
+            if opt == "entry" then
+                return make_entry.gen_from_git_commits(opts)
+            elseif opt == "previewer" then
+                return ""
+            elseif opt == "prompt" then
+                return "Git Log"
+            end
+        elseif args == "fstatus" then
+            if opt == "entry" then
+                return make_entry.gen_from_git_status(opts)
+            elseif opt == "previewer" then
+                return ""
+            elseif opt == "prompt" then
+                return "Git Status"
+            end
+        elseif args == "fstash" then
+            if opt == "entry" then
+                return make_entry.gen_from_git_stash(opts)
+            elseif opt == "previewer" then
+                return ""
+            elseif opt == "prompt" then
+                return "Git Stash"
+            end
+        end
+    end
+
+    if not opts.args then
+        return
+    end
+
+    local finder = finders.new_async_job({
+        command_generator = function(prompt)
+            local args = { "dotbare" }
+
+            if opts.git then
+                table.insert(args, "--git")
+            end
+            table.insert(args, opts.args)
+
+            return args
+        end,
+        entry_maker = dotbare_opts(opts.args, "entry"),
+        cwd = opts.cwd,
+    })
+
+    pickers
+        .new(opts, {
+            debounce = 100,
+            prompt_title = dotbare_opts(opts.args, "prompt"),
+            finder = finder,
+            previewer = config.file_previewer(opts),
+            sorter = require("telescope.sorters").empty(),
+        })
+        :find()
 end
 
 return M
