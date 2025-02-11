@@ -60,7 +60,6 @@ vim.wo.list = true
 vim.opt.listchars = {
     trail = "·",
     tab = "» ",
-    eol = "↴",
     leadmultispace = "• ",
 }
 vim.o.showbreak = "↳"

@@ -9,6 +9,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 local helpers = require("renato.core.helpers")
+local dotbare = helpers.cmd.dotbare
 
 -- Useful keymaps for config testing and plugin development
 vim.keymap.set("n", "<leader>ns", "<cmd>source %<CR>", { desc = "Source file" })
@@ -95,12 +96,6 @@ end, { desc = "New terminal" })
 vim.keymap.set("n", "<C-t><C-t>", function()
     require("snacks").terminal()
 end)
-vim.keymap.set(
-    "t",
-    "<Esc><Esc>",
-    "<C-\\><C-n>",
-    { desc = "Exit terminal mode" }
-)
 
 -- Center screen after certain motions
 vim.keymap.set({ "n", "v" }, "<C-d>", "<C-d>zz")
@@ -118,13 +113,13 @@ vim.keymap.set("n", "N", "Nzz")
 
 -- Misc
 
--- Change diagraph key
+--   Change diagraph key
 vim.keymap.set("i", "<C-k>", "<C-b>")
--- Clear search highlight
+--   Clear search highlight
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
--- Command-line window
+--   Command-line window
 vim.keymap.set("n", "q;", "q:")
--- Toggle spellchecking
+--   Toggle spellchecking
 vim.keymap.set(
     "n",
     "<leader>dl",
@@ -142,37 +137,87 @@ vim.keymap.set(
 
 -- Plugins
 
--- Toggle highlight color
+--   Toggle highlight color
 vim.keymap.set(
     "n",
     "<leader>dh",
     "<cmd>HighlightColors Toggle<CR>",
     { desc = "Toggle Highlight Colors" }
 )
--- Go to Neorg index file
+--   Go to Neorg index file
 vim.keymap.set(
     "n",
     "<localleader>nx",
     "<cmd>Neorg index<CR>",
     { desc = "Go to index file" }
 )
--- Auto Session
+--   Auto Session
 vim.keymap.set(
     "n",
     "<leader>ps",
     "<cmd>SessionSave<CR>",
     { desc = "Save session" }
 )
+--   SessionLens
 vim.keymap.set(
     "n",
     "<leader>sS",
     "<cmd>SessionSearch<CR>",
     { desc = "Search session" }
 )
--- Baredot
-vim.keymap.set(
-    "n",
-    "gG",
-    "<cmd>Baredot toggle<CR>",
-    { desc = "Toggle dotfiles" }
-)
+
+-- Dotbare
+
+--   Dotfiles management
+
+--     Stage modified files
+vim.keymap.set("n", "<leader>fa", function()
+    dotbare("fadd")
+end, { desc = "Git Add" })
+--     Edit tracked files
+vim.keymap.set("n", "<leader>ff", function()
+    dotbare("fedit")
+end, { desc = "Search Tracked Files" })
+--     Grep tracked files
+vim.keymap.set("n", "<leader>fg", function()
+    dotbare("fgrep")
+end, { desc = "Search Tracked Files By Grep" })
+--     Select commit
+vim.keymap.set("n", "<leader>fl", function()
+    dotbare("flog")
+end, { desc = "Git Log" })
+--     Apply selected stash
+vim.keymap.set("n", "<leader>fS", function()
+    dotbare("fstash")
+end, { desc = "Git Stash" })
+--     (Un)stage modified files
+vim.keymap.set("n", "<leader>fs", function()
+    dotbare("fstat")
+end, { desc = "Git Status" })
+
+--   Git client
+
+--     Stage modified files
+vim.keymap.set("n", "<leader>ga", function()
+    dotbare("fadd", { git = true })
+end, { desc = "Git Add" })
+--     Edit tracked files
+vim.keymap.set("n", "<leader>gf", function()
+    dotbare("fedit", { git = true })
+end, { desc = "Search Tracked Files" })
+--     Grep tracked files
+vim.keymap.set("n", "<leader>gg", function()
+    dotbare("fgrep", { git = true })
+end, { desc = "Search Tracked Files By Grep" })
+--     Select commit
+vim.keymap.set("n", "<leader>gl", function()
+    dotbare("flog", { git = true })
+end, { desc = "Git Log" })
+--     Apply selected stash
+vim.keymap.set("n", "<leader>gS", function()
+    dotbare("fstash", { git = true })
+end, { desc = "Git Stash" })
+--     (Un)stage modified files
+vim.keymap.set("n", "<leader>gs", function()
+    dotbare("fstat", { git = true })
+end, { desc = "Git Status" })

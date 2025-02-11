@@ -72,6 +72,16 @@ return {
                 end
             end
 
+            local scroll_up = function(prompt_bufnr)
+                require("telescope.actions.set").scroll_results(
+                    prompt_bufnr,
+                    -1
+                )
+            end
+            local scroll_down = function(prompt_bufnr)
+                require("telescope.actions.set").scroll_results(prompt_bufnr, 1)
+            end
+
             -- [[ Configure Telescope ]]
             -- See `:help telescope` and `:help telescope.setup()`
             telescope.setup({
@@ -107,11 +117,15 @@ return {
                             ["<CR>"] = select_one_or_multi,
                             ["<C-Enter>"] = "file_vsplit",
                             ["<S-Enter>"] = "file_split",
+                            ["<C-B>"] = scroll_up,
+                            ["<C-F>"] = scroll_down,
                         },
                         n = {
                             ["<CR>"] = select_one_or_multi,
                             ["<C-Enter>"] = "file_vsplit",
                             ["<S-Enter>"] = "file_split",
+                            ["<C-B>"] = scroll_up,
+                            ["<C-F>"] = scroll_down,
                         },
                     },
                     path_display = { "smart" },
@@ -130,36 +144,36 @@ return {
 
             -- See `:help telescope.builtin`
             local builtin = require("telescope.builtin")
-            vim.keymap.set(
-                "n",
-                "<leader>gb",
-                builtin.git_bcommits,
-                { desc = "Search Git Buffer Commits" }
-            )
-            vim.keymap.set(
-                "n",
-                "<leader>gc",
-                builtin.git_commits,
-                { desc = "Search Git Commits" }
-            )
-            vim.keymap.set(
-                "n",
-                "<leader>gf",
-                builtin.git_files,
-                { desc = "Search Git Files" }
-            )
-            vim.keymap.set(
-                "n",
-                "<leader>gr",
-                builtin.git_branches,
-                { desc = "Search Git Branches" }
-            )
-            vim.keymap.set(
-                "n",
-                "<leader>gs",
-                builtin.git_status,
-                { desc = "Search Git Status" }
-            )
+            -- vim.keymap.set(
+            --     "n",
+            --     "<leader>gb",
+            --     builtin.git_bcommits,
+            --     { desc = "Search Git Buffer Commits" }
+            -- )
+            -- vim.keymap.set(
+            --     "n",
+            --     "<leader>gc",
+            --     builtin.git_commits,
+            --     { desc = "Search Git Commits" }
+            -- )
+            -- vim.keymap.set(
+            --     "n",
+            --     "<leader>gf",
+            --     builtin.git_files,
+            --     { desc = "Search Git Files" }
+            -- )
+            -- vim.keymap.set(
+            --     "n",
+            --     "<leader>gr",
+            --     builtin.git_branches,
+            --     { desc = "Search Git Branches" }
+            -- )
+            -- vim.keymap.set(
+            --     "n",
+            --     "<leader>gs",
+            --     builtin.git_status,
+            --     { desc = "Search Git Status" }
+            -- )
             vim.keymap.set(
                 "n",
                 "<leader><leader>",

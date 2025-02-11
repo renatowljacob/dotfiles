@@ -53,6 +53,7 @@ vim.api.nvim_create_autocmd("TermOpen", {
     desc = "Set local options for terminal buffer",
     group = vim.api.nvim_create_augroup("set-terminal-opts", { clear = true }),
     callback = function()
+        local bufnr = vim.api.nvim_get_current_buf()
         local winid = vim.api.nvim_get_current_win()
         local current_win_opt = vim.wo[winid][0]
 
@@ -60,6 +61,13 @@ vim.api.nvim_create_autocmd("TermOpen", {
         current_win_opt.relativenumber = false
         current_win_opt.signcolumn = "no"
         current_win_opt.winbar = ""
+
+        vim.keymap.set(
+            "t",
+            "<Esc><Esc>",
+            "<C-\\><C-n>",
+            { buffer = bufnr, desc = "Exit terminal mode" }
+        )
     end,
 })
 

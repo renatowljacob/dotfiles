@@ -2,13 +2,13 @@
 
 ---@class Helpers
 ---@field buf table Buffer functions
+---@field cmd table CLI command wrappers
 ---@field fs table Filesystem functions
----@field telescope table Telescope functions
 local M = {}
 
 M.buf = {}
+M.cmd = {}
 M.fs = {}
-M.telescope = {}
 
 ---Get line and buffer number from a quickfix list item
 ---@return integer? bufnr, integer? lnum Buffer and line number
@@ -32,8 +32,8 @@ end
 ---@param bufnr number Buffer that contains the line
 ---@param lnum number Line number to be highlighted
 ---@param opts? table Optional parameters
----              - higroup
----              - timeout in ms
+---                - higroup  highlight group (default "IncSearch")
+---                - timeout in ms  (default 150)
 ---@return nil
 function M.buf.highlight_line(bufnr, lnum, opts)
     opts = opts or {}
@@ -80,97 +80,70 @@ function M.fs.find_root(cwd, bufpath)
     end
 end
 
-function M.telescope.dotbare(opts)
-    local config = require("telescope.config").values
-    local finders = require("telescope.finders")
-    local make_entry = require("telescope.make_entry")
-    local pickers = require("telescope.pickers")
-    local previewers = require("telescope.previewers")
-
+---Use dotbare as dotfiles/git fuzzy client
+---@param args? string|string[] Command arguments
+---@param opts? table  Optional parameters:
+---                - git  Use dotbare as a generic git client (default false)
+function M.cmd.dotbare(args, opts)
+    args = args or {}
     opts = opts or {}
     opts.git = opts.git or false
-    opts.cwd = opts.git and vim.fn.getcwd() or vim.fn.glob(vim.env.HOME)
 
-    local dotbare_opts = function(args, opt)
-        if args == "fadd" then
-            if opt == "entry" then
-                return make_entry.gen_from_git_status(opts)
-            elseif opt == "previewer" then
-                return previewers.git_file_diff()
-            elseif opt == "prompt" then
-                return "Git Add"
-            end
-        elseif args == "fedit" then
-            if opt == "entry" then
-                return make_entry.gen_from_file(opts)
-            elseif opt == "previewer" then
-                return ""
-            elseif opt == "prompt" then
-                return "Git Files"
-            end
-        elseif args == "fgrep" then
-            if opt == "entry" then
-                return make_entry.gen_from_vimgrep(opts)
-            elseif opt == "previewer" then
-                return ""
-            elseif opt == "prompt" then
-                return "Git Grep"
-            end
-        elseif args == "flog" then
-            if opt == "entry" then
-                return make_entry.gen_from_git_commits(opts)
-            elseif opt == "previewer" then
-                return ""
-            elseif opt == "prompt" then
-                return "Git Log"
-            end
-        elseif args == "fstatus" then
-            if opt == "entry" then
-                return make_entry.gen_from_git_status(opts)
-            elseif opt == "previewer" then
-                return ""
-            elseif opt == "prompt" then
-                return "Git Status"
-            end
-        elseif args == "fstash" then
-            if opt == "entry" then
-                return make_entry.gen_from_git_stash(opts)
-            elseif opt == "previewer" then
-                return ""
-            elseif opt == "prompt" then
-                return "Git Stash"
-            end
-        end
+    local command = { "dotbare" }
+
+    if opts.git then
+        table.insert(command, "--git")
     end
 
-    if not opts.args then
-        return
-    end
+    command = vim.iter({ command, args }):flatten():totable()
 
-    local finder = finders.new_async_job({
-        command_generator = function(prompt)
-            local args = { "dotbare" }
+    local bufnr = vim.api.nvim_create_buf(false, true)
+    vim.bo[bufnr].bufhidden = "wipe"
+    vim.bo[bufnr].modifiable = false
 
-            if opts.git then
-                table.insert(args, "--git")
-            end
-            table.insert(args, opts.args)
+    local height = math.ceil(vim.o.lines * 0.85)
+    local width = math.ceil(vim.o.columns * 0.85)
 
-            return args
-        end,
-        entry_maker = dotbare_opts(opts.args, "entry"),
-        cwd = opts.cwd,
+    local window = vim.api.nvim_open_win(bufnr, true, {
+        relative = "editor",
+        -- style = "minimal",
+        height = height,
+        width = width,
+        border = "solid",
+        col = math.ceil((vim.o.columns - width) / 2),
+        row = math.ceil((vim.o.lines - height) / 2),
     })
 
-    pickers
-        .new(opts, {
-            debounce = 100,
-            prompt_title = dotbare_opts(opts.args, "prompt"),
-            finder = finder,
-            previewer = config.file_previewer(opts),
-            sorter = require("telescope.sorters").empty(),
-        })
-        :find()
+    vim.api.nvim_set_current_win(window)
+
+    vim.fn.termopen(command, {
+        cwd = opts.git and vim.fn.getcwd() or vim.env.HOME,
+        on_exit = function(_, status, _)
+            if vim.api.nvim_win_is_valid(window) then
+                vim.api.nvim_win_close(window, true)
+            end
+
+            -- If no files were selected or any other error
+            if status ~= 0 then
+                return nil
+            end
+
+            local buflist = vim.api.nvim_list_bufs()
+            local lastbuf = buflist[#buflist]
+
+            -- Necessary because list_bufs() includes unlisted buffers
+            if vim.api.nvim_buf_is_valid(lastbuf) then
+                vim.api.nvim_set_current_buf(lastbuf)
+            end
+        end,
+    })
+
+    -- Delete "leave terminal mode" buffer keymap since it's not modifiable anyway
+    vim.keymap.del("t", "<Esc><Esc>", {
+        buffer = bufnr,
+    })
+
+    vim.cmd.startinsert()
 end
 
 return M

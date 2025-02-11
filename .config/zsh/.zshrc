@@ -228,12 +228,12 @@ function zvm_after_lazy_keybindings()
 	zvm_bindkey vicmd ' sd' fzf-cd-widget # Search directories
 	zvm_bindkey vicmd ' sm' _fzf-man-widget # Search man pages
 	zvm_bindkey vicmd ' ss' _zoxide_cdi # Search zoxide directories
-	zvm_bindkey vicmd ' da' _widget_dotbare_fadd
-	zvm_bindkey vicmd ' df' _widget_dotbare_fedit
-	zvm_bindkey vicmd ' dg' _widget_dotbare_fgrep
-	zvm_bindkey vicmd ' dl' _widget_dotbare_flog
-	zvm_bindkey vicmd ' dS' _widget_dotbare_fstash
-	zvm_bindkey vicmd ' ds' _widget_dotbare_fstat
+	zvm_bindkey vicmd ' fa' _widget_dotbare_fadd
+	zvm_bindkey vicmd ' ff' _widget_dotbare_fedit
+	zvm_bindkey vicmd ' fg' _widget_dotbare_fgrep
+	zvm_bindkey vicmd ' fl' _widget_dotbare_flog
+	zvm_bindkey vicmd ' fS' _widget_dotbare_fstash
+	zvm_bindkey vicmd ' fs' _widget_dotbare_fstat
 	zvm_bindkey vicmd ' ga' _git_add
 	zvm_bindkey vicmd ' gf' _git_files
 	zvm_bindkey vicmd ' gg' _git_grep

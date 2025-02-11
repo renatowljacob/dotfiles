@@ -4,19 +4,26 @@
 
 print_packages()
 {
+    dunstrc="${XDG_CONFIG_HOME:-$HOME/.config}/dunst/dunstrc"
+    height="$(
+        sed -n 's/^ *height.* \([[:digit:]]\+\).*/\1/p' "${dunstrc}" \
+            | tr '\n' ' ' \
+            | cut -d ' ' -f 1
+    )"
     lines="$(wc -l "${cachefile}")"
     packages=
 
-    # Truncate if there are more than 27 packages listed
-    [ "${lines%% *}" -gt 27 ] \
-        && packages="$(printf '%b' "$(sed -n '1,26p' "${cachefile}")\n...")"
+    # Truncate if there are more packages than dunst's maximum height
+    [ "${lines%% *}" -gt $((height / 30)) ] \
+        && packages="$(printf '%s\n%s' "$(sed -n '1,25p' "${cachefile}")" \
+            '...')"
 
     printf '%b' "${packages:-$(cat "${cachefile}")}"
 }
 
 case $BLOCK_BUTTON in
 1)
-    cachefile=${XDG_RUNTIME_DIR:-/tmp}/"dusk-updatesclick"
+    cachefile="${XDG_RUNTIME_DIR:-/tmp}/dusk-updatesclick"
 
     if updates="$(checkupdates -c --nocolor)" || [ ! -e "${cachefile}" ]; then
         [ -n "${updates}" ] \
