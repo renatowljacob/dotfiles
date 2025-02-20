@@ -38,8 +38,6 @@ return {
                     },
                 },
                 { "<leader>l_", hidden = true },
-                { "<localleader>n", group = "Neorg", icon = "󰏫" },
-                { "<localleader>n_", hidden = true },
                 {
                     "<leader>n",
                     group = "Neovim",

@@ -51,9 +51,9 @@ alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 alias grep='grep --color=auto '
 alias locate='plocate '
 alias ls='eza --icons=auto --hyperlink --no-quotes '
-alias make="CFLAGS='-fmax-errors=1 -Werror -std=c11 -O0 -gdwarf -ggdb -Wall \
-	-Wextra -Wformat-overflow -Wuse-after-free=1 -Wstrict-prototypes -Wshadow \
-	-Wconversion' make "
+alias make="CFLAGS='-fsanitize=undefined,address -fmax-errors=1 -Werror \
+	-std=c11 -O0 -gdwarf -ggdb -Wall -Wextra -Wformat-overflow \
+	-Wuse-after-free=1 -Wstrict-prototypes -Wshadow -Wconversion' make "
 alias nvim-debug='$HOME/Repos/git/neovim/build/bin/nvim '
 alias nvim='nvim-remote '
 alias rm='trash '

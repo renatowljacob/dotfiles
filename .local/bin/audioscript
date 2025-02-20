@@ -34,6 +34,7 @@ Format conversion:
 
 Metadata edition:
   --album=ALBUM                   Set album tag
+  --album-artist=ALBUM_ARTIST     Set album artist tag
   --artist=ARTIST                 Set artist tag
   --comment=COMMENT               Set comment tag
   --date=DATE                     Set date tag
@@ -49,7 +50,7 @@ EOF
 
 opt_short='b::de:hv::'
 opt_long=('backup::' 'dryrun' 'extension:' 'help'
-    'verbose::' 'album:' 'artist:' 'comment:' 'date:' 'genre:' 'title:' 'track:'
+    'verbose::' 'album:' 'album-artist:' 'artist:' 'comment:' 'date:' 'genre:' 'title:' 'track:'
     'year:' 'clear')
 
 TEMP=$(getopt -n 'audioscript' -o "${opt_short}" -l "${opt_long[*]}" -- "$@" \
@@ -78,9 +79,11 @@ while true; do
         verbose="${2:-1}"
         shift
         ;;
-    --album | --artist | --comment | --date | --genre | --title | --track | \
-        --year)
-        metadata+=('-metadata' "${1##*-}=$2")
+    --album | --album-artist | --artist | --comment | --date | --genre | \
+        --title | --track | --year)
+        flag=${1##--}
+        flag=${flag/-/_}
+        metadata+=('-metadata' "${flag}=$2")
         shift
         ;;
     --clear) clear=1 ;;

@@ -32,5 +32,6 @@ bind-key ^D halfpagedown
 bind-key ^U halfpageup
 
 # Options
-text-width 80
+browser "zen-browser --new-tab %u"
 refresh-on-startup yes
+text-width 80

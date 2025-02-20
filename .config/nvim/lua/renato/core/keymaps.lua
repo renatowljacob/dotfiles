@@ -144,13 +144,6 @@ vim.keymap.set(
     "<cmd>HighlightColors Toggle<CR>",
     { desc = "Toggle Highlight Colors" }
 )
---   Go to Neorg index file
-vim.keymap.set(
-    "n",
-    "<localleader>nx",
-    "<cmd>Neorg index<CR>",
-    { desc = "Go to index file" }
-)
 --   Auto Session
 vim.keymap.set(
     "n",

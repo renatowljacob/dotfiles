@@ -5,16 +5,16 @@
 print_packages()
 {
     dunstrc="${XDG_CONFIG_HOME:-$HOME/.config}/dunst/dunstrc"
-    height="$(
+    lines="$(wc -l "${cachefile}")"
+    max_height="$(
         sed -n 's/^ *height.* \([[:digit:]]\+\).*/\1/p' "${dunstrc}" \
             | tr '\n' ' ' \
             | cut -d ' ' -f 1
     )"
-    lines="$(wc -l "${cachefile}")"
     packages=
 
     # Truncate if there are more packages than dunst's maximum height
-    [ "${lines%% *}" -gt $((height / 30)) ] \
+    [ "${lines%% *}" -gt $((max_height / 30)) ] \
         && packages="$(printf '%s\n%s' "$(sed -n '1,25p' "${cachefile}")" \
             '...')"
 

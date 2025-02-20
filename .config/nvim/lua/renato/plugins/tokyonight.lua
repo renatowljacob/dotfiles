@@ -27,9 +27,6 @@ return {
             vim.cmd.hi("DebugPC guibg=bg")
             vim.cmd.hi("BlinkCmpMenu guibg=bg")
             vim.cmd.hi("LineNr gui=bold")
-            vim.cmd.hi("@neorg.tags.ranged_verbatim.name.word guifg=#545C7E")
-            vim.cmd.hi("@neorg.tags.ranged_verbatim.begin guifg=#545C7E")
-            vim.cmd.hi("@neorg.tags.ranged_verbatim.end guifg=#545C7E")
         end,
     },
 }

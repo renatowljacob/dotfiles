@@ -281,10 +281,6 @@ return {
                     cwd = vim.fs.joinpath(vim.fn.stdpath("data"), "lazy"),
                 })
             end, { desc = "Search plugin files" })
-
-            vim.keymap.set("n", "<leader>sN", function()
-                builtin.find_files({ cwd = "~/Documents/notes/" })
-            end, { desc = "Search Notes" })
         end,
     },
 }
