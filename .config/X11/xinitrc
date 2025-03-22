@@ -60,7 +60,6 @@ case $session in
     udiskie -s &
     unclutter -b &
     st newsboat &
-    st nvim -c "Neorg index" &
     xidlehook --not-when-audio --not-when-fullscreen \
         --timer 600 'betterlockscreen --lock' '' &
     exec dusk

@@ -16,7 +16,7 @@ function plugin-load
 			mytheme="$HOME/.config/zsh/theme/tokyonight.ini"
 			themefile="$plugdir/themes/default.ini"
 
-			rm $themefile && ln -s $mytheme $themefile
+			rm $themefile > /dev/null 2>&1 && ln -s $mytheme $themefile
 		fi
 		if [[ ! -e $initfile ]]; then
 			initfiles=($plugdir/*.{plugin.zsh,zsh-theme,zsh,sh}(N))
@@ -91,8 +91,10 @@ export DOTBARE_TREE="$HOME"
 _dotbare_completion_cmd
 
 # Keybindings
-# Prevent typos (for some reason <S-Space> is bound to delete the entire line)
-bindkey -s "^[[32;2u" " "
+# Prevent typos (these escape sequences delete the entire line otherwise)
+bindkey -s "^[[32;2u" " " # <S-Space>
+bindkey -s "^[[13;2u" "\r" # <S-CR>
+bindkey -s "^[[13;5u" "\r" # <C-CR>
 
 # Functions
 

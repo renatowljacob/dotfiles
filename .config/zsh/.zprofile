@@ -1,6 +1,4 @@
-pgrep dusk >/dev/null || pgrep awesome >/dev/null
-
-if [ $? -ne 0 ]; then
+if ! pgrep dusk >/dev/null && ! pgrep awesome >/dev/null; then
     PS3='Please enter your choice: '
     list=("Dusk" "Awesome" "Shell")
     select item in "${list[@]}"

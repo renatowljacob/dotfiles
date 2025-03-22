@@ -72,7 +72,7 @@ return {
                 function()
                     require("dapui").toggle()
                 end,
-                desc = "Debug: See last session result.",
+                desc = "Debug: Toggle UI.",
             },
             {
                 "<F8>",
@@ -138,8 +138,6 @@ return {
                 -- online, please don't ask me how to install them :)
                 ensure_installed = {
                     -- Update this to ensure that you have the debuggers for the langs you want
-                    "cpptools", -- GDB setup
-                    "java-debug-adapter",
                 },
             })
 
@@ -175,9 +173,9 @@ return {
                 vim.fn.sign_define(tp, { text = icon, texthl = hl, numhl = hl })
             end
 
-            -- dap.listeners.after.event_initialized["dapui_config"] = dapui.open
-            -- dap.listeners.before.event_terminated["dapui_config"] = dapui.close
-            -- dap.listeners.before.event_exited["dapui_config"] = dapui.close
+            dap.listeners.after.event_initialized["dapui_config"] = dapui.open
+            dap.listeners.before.event_terminated["dapui_config"] = dapui.close
+            dap.listeners.before.event_exited["dapui_config"] = dapui.close
 
             -- GDB setup
             dap.configurations.c = {
@@ -193,6 +191,7 @@ return {
                         )
                     end,
                     cwd = "${workspaceFolder}",
+                    stopAtEntry = true,
                 },
                 {
                     name = "Launch file with arguments",

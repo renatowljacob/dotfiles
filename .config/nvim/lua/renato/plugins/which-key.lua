@@ -19,6 +19,7 @@ return {
         "folke/which-key.nvim",
         event = "VimEnter", -- Sets the loading event to 'VimEnter'
         opts = {
+            delay = 300,
             preset = "helix",
             spec = {
                 { "<leader>c", group = "Code" },

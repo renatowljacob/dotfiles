@@ -1,5 +1,5 @@
 -- From https://github.com/bcampolo/nvim-starter-kit/tree/java
---
+
 -- JDTLS (Java LSP) configuration
 local jdtls = require("jdtls")
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
@@ -32,7 +32,7 @@ local config = {
     -- The command that starts the language server
     -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
     cmd = {
-        "java",
+        "/usr/lib/jvm/java-21-openjdk/bin/java",
         "-Declipse.application=org.eclipse.jdt.ls.core.id1",
         "-Dosgi.bundles.defaultStartLevel=4",
         "-Declipse.product=org.eclipse.jdt.ls.core.product",
@@ -129,7 +129,6 @@ local config = {
                 "org",
             },
         },
-        extendedClientCapabilities = jdtls.extendedClientCapabilities,
         sources = {
             organizeImports = {
                 starThreshold = 9999,
@@ -144,13 +143,14 @@ local config = {
         },
     },
     -- Needed for auto-completion with method signatures and placeholders
-    capabilities = require("cmp_nvim_lsp").default_capabilities(),
+    capabilities = require("blink-cmp").get_lsp_capabilities(),
     flags = {
         allow_incremental_sync = true,
     },
     init_options = {
         -- References the bundles defined above to support Debugging and Unit Testing
         bundles = bundles,
+        extendedClientCapabilities = jdtls.extendedClientCapabilities,
     },
 }
 

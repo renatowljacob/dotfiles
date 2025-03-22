@@ -6,13 +6,13 @@ return {
         cmd = { "LspInfo", "LspStart", "Mason" },
         dependencies = {
             -- Automatically install LSPs and related tools to stdpath for Neovim
-            { "williamboman/mason.nvim", opts = {} }, -- NOTE: Must be loaded before dependants
+            -- Mason must be loaded before its dependents so we need to set it up here.
+            -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
+            { "williamboman/mason.nvim", opts = {} },
             "williamboman/mason-lspconfig.nvim",
             "WhoIsSethDaniel/mason-tool-installer.nvim",
 
-            -- Useful status updates for LSP.
-            -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-            -- { "j-hui/fidget.nvim", opts = {} },
+            "saghen/blink.cmp",
 
             -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
             -- used for completion, annotations and signatures of Neovim APIs
@@ -91,23 +91,23 @@ return {
                     --  This is where a variable was first declared, or where a function is defined, etc.
                     --  To jump back, press <C-t>.
                     map(
-                        "gd",
-                        require("telescope.builtin").lsp_definitions,
+                        "grd",
+                        require("snacks.picker").lsp_definitions,
                         "Goto Definition"
                     )
 
                     -- Find references for the word under your cursor.
                     map(
-                        "gr",
-                        require("telescope.builtin").lsp_references,
+                        "grr",
+                        require("snacks.picker").lsp_references,
                         "Goto References"
                     )
 
                     -- Jump to the implementation of the word under your cursor.
                     --  Useful when your language has ways of declaring types without an actual implementation.
                     map(
-                        "gI",
-                        require("telescope.builtin").lsp_implementations,
+                        "gri",
+                        require("snacks.picker").lsp_implementations,
                         "Goto Implementation"
                     )
 
@@ -115,24 +115,69 @@ return {
                     --  Useful when you're not sure what type a variable is and you want to see
                     --  the definition of its *type*, not where it was *defined*.
                     map(
-                        "<leader>dt",
-                        require("telescope.builtin").lsp_type_definitions,
+                        "grt",
+                        require("snacks.picker").lsp_type_definitions,
                         "Type Definition"
                     )
 
                     -- Fuzzy find all the symbols in your current document.
                     --  Symbols are things like variables, functions, types, etc.
-                    map(
-                        "<leader>ds",
-                        require("telescope.builtin").lsp_document_symbols,
-                        "Document Symbols"
-                    )
+                    map("<leader>ds", function()
+                        local kinds = {
+                            -- "Array",
+                            -- "Boolean",
+                            "Class",
+                            "Constant",
+                            "Constructor",
+                            "Enum",
+                            "EnumMember",
+                            "Event",
+                            "Field",
+                            -- "File",
+                            "Function",
+                            "Interface",
+                            "Key",
+                            "Method",
+                            "Module",
+                            "Namespace",
+                            "Null",
+                            -- "Number",
+                            "Object",
+                            "Operator",
+                            "Package",
+                            "Property",
+                            "Struct",
+                            "TypeParameter",
+                            "Variable",
+                        }
+                        require("snacks.picker").lsp_symbols({
+                            filter = {
+                                default = kinds,
+                                lua = {
+                                    "Class",
+                                    "Constructor",
+                                    "Enum",
+                                    "Field",
+                                    "Function",
+                                    "Interface",
+                                    "Method",
+                                    "Module",
+                                    "Namespace",
+                                    -- "Package", -- remove package since luals uses it for control flow structures
+                                    "Property",
+                                    "Struct",
+                                    "Trait",
+                                    "Variable",
+                                },
+                            },
+                        })
+                    end, "Document Symbols")
 
                     -- Fuzzy find all the symbols in your current workspace.
                     --  Similar to document symbols, except searches over your entire project.
                     map(
                         "<leader>dS",
-                        require("telescope.builtin").lsp_dynamic_workspace_symbols,
+                        require("snacks.picker").lsp_workspace_symbols,
                         "Workspace Symbols"
                     )
 
@@ -150,7 +195,7 @@ return {
 
                     -- WARN: This is not Goto Definition, this is Goto Declaration.
                     --  For example, in C this would take you to the header.
-                    map("gD", vim.lsp.buf.declaration, "Goto Declaration")
+                    map("grD", vim.lsp.buf.declaration, "Goto Declaration")
 
                     -- The following two autocommands are used to highlight references of the
                     -- word under your cursor when your cursor rests there for a little while.
@@ -222,27 +267,11 @@ return {
                 end,
             })
 
-            -- Change diagnostic symbols in the sign column (gutter)
-            if vim.g.have_nerd_font then
-                local signs =
-                    { ERROR = "", WARN = "", INFO = "", HINT = "" }
-                local diagnostic_signs = {}
-                for type, icon in pairs(signs) do
-                    diagnostic_signs[vim.diagnostic.severity[type]] = icon
-                end
-                vim.diagnostic.config({ signs = { text = diagnostic_signs } })
-            end
-
             -- LSP servers and clients are able to communicate to each other what features they support.
             --  By default, Neovim doesn't support everything that is in the LSP specification.
-            --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
-            --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
-            local capabilities = vim.lsp.protocol.make_client_capabilities()
-            capabilities = vim.tbl_deep_extend(
-                "force",
-                capabilities,
-                require("cmp_nvim_lsp").default_capabilities()
-            )
+            --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
+            --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
+            local capabilities = require("blink.cmp").get_lsp_capabilities()
 
             -- Enable the following language servers
             --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -311,6 +340,9 @@ return {
             -- for you, so that they are available from within Neovim.
             local ensure_installed = vim.tbl_keys(servers or {})
             vim.list_extend(ensure_installed, {
+                -- Debuggers
+                "cpptools", -- GDB setup
+                "java-debug-adapter",
                 -- Formatters
                 "clang-format",
                 "prettier",
@@ -326,21 +358,25 @@ return {
             })
 
             require("mason-lspconfig").setup({
+                ensure_installed = {},
+                automatic_installation = false,
                 handlers = {
                     function(server_name)
-                        if server_name ~= "jdtls" then
-                            local server = servers[server_name] or {}
-                            -- This handles overriding only values explicitly passed
-                            -- by the server configuration above. Useful when disabling
-                            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-                            server.capabilities = vim.tbl_deep_extend(
-                                "force",
-                                {},
-                                capabilities,
-                                server.capabilities or {}
-                            )
-                            require("lspconfig")[server_name].setup(server)
+                        if server_name == "jdtls" then
+                            return
                         end
+
+                        local server = servers[server_name] or {}
+                        -- This handles overriding only values explicitly passed
+                        -- by the server configuration above. Useful when disabling
+                        -- certain features of an LSP (for example, turning off formatting for ts_ls)
+                        server.capabilities = vim.tbl_deep_extend(
+                            "force",
+                            {},
+                            capabilities,
+                            server.capabilities or {}
+                        )
+                        require("lspconfig")[server_name].setup(server)
                     end,
                 },
             })
