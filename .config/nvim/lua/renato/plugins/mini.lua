@@ -3,6 +3,9 @@ return {
         -- Collection of various small independent plugins/modules
         "echasnovski/mini.nvim",
         config = function()
+            require("mini.tabline").setup()
+            require("mini.splitjoin").setup()
+
             -- Better Around/Inside textobjects
             --
             -- Examples:
@@ -10,10 +13,6 @@ return {
             --  - yinq - [Y]ank [I]nside [N]ext [']quote
             --  - ci'  - [C]hange [I]nside [']quote
             require("mini.ai").setup({ n_lines = 500 })
-
-            require("mini.bufremove").setup()
-            require("mini.tabline").setup()
-            require("mini.splitjoin").setup()
 
             -- Add/delete/replace surroundings (brackets, quotes, etc.)
             --

@@ -22,8 +22,8 @@ return {
             delay = 300,
             preset = "helix",
             spec = {
-                { "<leader>c", group = "Code" },
-                { "<leader>c_", hidden = true },
+                { "gr", group = "Code" },
+                { "gr_", hidden = true },
                 { "<leader>d", group = "Document", icon = "󰈔" },
                 { "<leader>d_", hidden = true },
                 { "<leader>g", group = "Git" },

@@ -10,18 +10,35 @@ M.buf = {}
 M.cmd = {}
 M.fs = {}
 
+function M.buf.document_symbols(opts)
+    if
+        not vim.tbl_isempty(
+            vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf() })
+        )
+    then
+        return Snacks.picker.lsp_symbols(opts)
+    end
+
+    return Snacks.picker.treesitter()
+end
+
 ---Get line and buffer number from a quickfix list item
 ---@return integer? bufnr, integer? lnum Buffer and line number
 ---If no quickfix list is found, nil is returned instead
 function M.buf.get_qfline()
     ---@type table
     local qflist = vim.fn.getqflist()
+    local index = vim.fn.getqflist({ idx = 0 }).idx
+
+    if vim.tbl_isempty(qflist) then
+        qflist = vim.fn.getloclist(0)
+        index = vim.fn.getloclist(0, { idx = 0 }).idx
+    end
 
     if vim.tbl_isempty(qflist) then
         return nil
     end
 
-    local index = vim.fn.getqflist({ idx = 0 }).idx
     local line = qflist[index]
     local bufnr, lnum = line.bufnr, line.lnum - 1
 
@@ -41,31 +58,18 @@ function M.buf.highlight_line(bufnr, lnum, opts)
     local higroup = opts.higroup or "IncSearch"
     local namespace = vim.api.nvim_create_namespace("highlight_quickfix")
     local timeout = opts.timeout or 150
-    local timer ---@type uv.uv_timer_t
-    local winid = vim.fn.bufwinid(bufnr)
+    local winid =
+        vim.fn.bufwinid(bufnr and bufnr or vim.api.nvim_get_current_buf())
 
-    local clear_hl = function()
-        pcall(vim.api.nvim_buf_clear_namespace, bufnr, namespace, 0, -1)
-        pcall(vim.api.nvim__win_del_ns, vim.fn.bufwinid(bufnr), namespace)
-    end
-
-    vim.api.nvim__win_add_ns(winid, namespace)
-
-    vim.highlight.range(
+    vim.api.nvim_win_set_hl_ns(winid, namespace)
+    vim.hl.range(
         bufnr,
         namespace,
         higroup,
         { lnum, 0 },
-        { lnum, vim.fn.col("$") }
+        { lnum, -1 },
+        { timeout = timeout }
     )
-
-    if timer then
-        timer:close()
-        assert(clear_hl)
-        clear_hl()
-    end
-
-    timer = vim.defer_fn(clear_hl, timeout)
 end
 
 ---Find root directory between two directories
@@ -116,7 +120,7 @@ function M.cmd.dotbare(args, opts)
 
     vim.api.nvim_set_current_win(window)
 
-    vim.fn.termopen(command, {
+    vim.fn.jobstart(command, {
         cwd = opts.git and vim.fn.getcwd() or vim.env.HOME,
         on_exit = function(_, status, _)
             if vim.api.nvim_win_is_valid(window) then
@@ -124,11 +128,12 @@ function M.cmd.dotbare(args, opts)
             end
 
             -- If no files were selected or any other error
-            if status ~= 0 then
+            if args == "fstat" or status ~= 0 then
                 return nil
             end
 
             local buflist = vim.api.nvim_list_bufs()
+
             local lastbuf = buflist[#buflist]
 
             -- Necessary because list_bufs() includes unlisted buffers
@@ -136,6 +141,7 @@ function M.cmd.dotbare(args, opts)
                 vim.api.nvim_set_current_buf(lastbuf)
             end
         end,
+        term = true,
     })
 
     -- Delete "leave terminal mode" buffer keymap since it's not modifiable anyway

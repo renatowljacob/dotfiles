@@ -1,3 +1,5 @@
+---@module 'snacks'
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -35,7 +37,13 @@ vim.keymap.set(
 
 -- Open/delete operations
 vim.keymap.set("n", "<leader>obd", function()
-    require("mini.bufremove").delete()
+    Snacks.bufdelete()
+end, { desc = "Delete buffer" })
+vim.keymap.set("n", "<leader>oba", function()
+    Snacks.bufdelete.all()
+end, { desc = "Delete buffer" })
+vim.keymap.set("n", "<leader>obo", function()
+    Snacks.bufdelete.other()
 end, { desc = "Delete buffer" })
 vim.keymap.set("n", "<leader>otn", "<cmd>tabnew<CR>", { desc = "New Tab" })
 vim.keymap.set("n", "<leader>otd", "<cmd>tabclose<CR>", { desc = "Delete Tab" })
@@ -59,9 +67,7 @@ vim.keymap.set("n", "<leader>ocd", function()
     vim.notify("Changed to " .. bufpath:sub(#rootdir + 2) .. " directory")
 end, { desc = "Change to current buffer directory" })
 
--- Buffer, windows and tabs navigation
-vim.keymap.set("n", "[b", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
-vim.keymap.set("n", "]b", "<cmd>bnext<CR>", { desc = "Next buffer" })
+-- Windows and tabs navigation
 vim.keymap.set("n", "[t", "<cmd>tabprevious<CR>", { desc = "Previous Tab" })
 vim.keymap.set("n", "]t", "<cmd>tabNext<CR>", { desc = "Next Tab" })
 vim.keymap.set(
@@ -90,12 +96,9 @@ vim.keymap.set(
 )
 
 -- Terminal keymaps
-vim.keymap.set("n", "<C-t><C-n>", function()
-    vim.cmd.terminal()
-end, { desc = "New terminal" })
 vim.keymap.set("n", "<C-t><C-t>", function()
-    require("snacks").terminal()
-end)
+    Snacks.terminal()
+end, { desc = "Toggle terminal" })
 
 -- Center screen after certain motions
 vim.keymap.set({ "n", "v" }, "<C-d>", "<C-d>zz")

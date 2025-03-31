@@ -1,5 +1,6 @@
 -- Set to true if you have a Nerd Font installed
 vim.g.have_nerd_font = true
+vim.g.health = { style = "float" }
 
 --  GLOBAL OPTIONS
 vim.o.autoread = true
@@ -19,7 +20,7 @@ vim.o.inccommand = "split"
 vim.o.laststatus = 3
 --      Enable mouse
 vim.o.mouse = "a"
---      Don't show the mode, since it's already in the status line
+--      Don't show mode, since it's already in the status line
 vim.o.showmode = false
 --      Identation
 vim.o.tabstop = 4
@@ -28,6 +29,8 @@ vim.o.shiftwidth = 0
 vim.o.expandtab = true
 --      Save history
 vim.o.undofile = true
+--      Window border
+vim.o.winborder = "rounded"
 --      Without noinsert, omnifunc breaks rainbow-delimiters :P idk
 vim.opt.completeopt = {
     "menuone",
@@ -48,6 +51,8 @@ vim.opt.sessionoptions = {
     "terminal",
     "winsize",
 }
+--      Misc
+vim.o.switchbuf = "useopen"
 
 --  WINDOW OPTIONS
 --      Folding
@@ -55,6 +60,7 @@ vim.wo.foldenable = false
 vim.wo.foldtext = ""
 vim.wo.foldmethod = "expr"
 vim.wo.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.fillchars:append({ fold = " " })
 --      Virtual chars
 vim.wo.list = true
 vim.opt.listchars = {
@@ -79,7 +85,7 @@ vim.wo.colorcolumn = "80"
 --       See :help vim.diagnostic.Opts
 vim.diagnostic.config({
     severity_sort = true,
-    float = { border = "rounded", source = "if_many" },
+    float = { source = "if_many" },
     underline = { severity = vim.diagnostic.severity.ERROR },
     signs = vim.g.have_nerd_font and {
         text = {
@@ -102,9 +108,6 @@ vim.diagnostic.config({
             return diagnostic_message[diagnostic.severity]
         end,
     },
-})
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-    border = "single",
 })
 
 --       Netrw settings

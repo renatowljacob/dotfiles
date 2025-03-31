@@ -41,7 +41,6 @@ return {
             --
             -- See the full "keymap" documentation for information on defining your own keymap.
             --
-            -- NOTE: No support for multi-choice snippets yet
             keymap = {
                 preset = "default",
                 ["<C-j>"] = { "snippet_forward" },
@@ -139,6 +138,9 @@ return {
             require("luasnip.loaders.from_lua").lazy_load({
                 paths = { vim.fn.stdpath("config") .. "/lua/renato/snippets" },
             })
+
+            vim.keymap.set({ "i", "s" }, "<C-,>", "<Plug>luasnip-prev-choice")
+            vim.keymap.set({ "i", "s" }, "<C-;>", "<Plug>luasnip-next-choice")
         end,
         opts_extend = { "sources.default" },
     },

@@ -1,11 +1,19 @@
+local helpers = require("renato.core.helpers")
+
 return {
+    ---@module 'snacks'
+
     {
         "folke/snacks.nvim",
+        priority = 1000,
+        lazy = false,
         dependencies = {
             { "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
         },
         opts = {
-            terminal = { enabled = true },
+            bufdelete = {
+                enabled = true,
+            },
             notifier = {
                 style = "fancy",
             },
@@ -83,9 +91,11 @@ return {
                     },
                 },
             },
+            terminal = {
+                enabled = true,
+            },
         },
         keys = {
-            -- Snacks.picker
             {
                 "<leader><leader>",
                 function()
@@ -175,9 +185,7 @@ return {
             {
                 "<leader>sp",
                 function()
-                    Snacks.picker.files({
-                        rtp = true,
-                    })
+                    Snacks.picker.files({ rtp = true })
                 end,
                 desc = "Search Plugins",
             },
@@ -215,6 +223,60 @@ return {
                     Snacks.picker.grep_word()
                 end,
                 desc = "Search For Word",
+            },
+            {
+                "gro",
+                function()
+                    local kinds = {
+                        -- "Array",
+                        -- "Boolean",
+                        "Class",
+                        "Constant",
+                        "Constructor",
+                        "Enum",
+                        "EnumMember",
+                        "Event",
+                        "Field",
+                        -- "File",
+                        "Function",
+                        "Interface",
+                        "Key",
+                        "Method",
+                        "Module",
+                        "Namespace",
+                        "Null",
+                        -- "Number",
+                        "Object",
+                        "Operator",
+                        "Package",
+                        "Property",
+                        "Struct",
+                        "TypeParameter",
+                        "Variable",
+                    }
+                    helpers.buf.document_symbols({
+                        filter = {
+                            default = kinds,
+                            lua = {
+                                "Class",
+                                "Constructor",
+                                "Enum",
+                                "Field",
+                                "Function",
+                                "Interface",
+                                "Method",
+                                "Module",
+                                "Namespace",
+                                -- "Package", -- remove package since luals uses it for control flow structures
+                                "Property",
+                                "Struct",
+                                "Trait",
+                                "Variable",
+                            },
+                        },
+                    })
+                end,
+                desc = "Document Symbols",
             },
         },
     },
