@@ -95,7 +95,7 @@ end
 ---@param count? number
 ---@param opts? snacks.terminal.Opts
 function MyApi.buf.toggle_nth_terminal(count, opts)
-    MyApi.count = count or MyApi.count
+    State.Snacks_terminal.count = count or State.Snacks_terminal.count
     opts = opts
         or {
             auto_insert = false,
@@ -107,7 +107,7 @@ function MyApi.buf.toggle_nth_terminal(count, opts)
             },
         }
 
-    vim.cmd("normal! " .. MyApi.count)
+    vim.cmd("normal! " .. State.Snacks_terminal.count)
     Snacks.terminal.toggle(nil, opts)
 end
 
