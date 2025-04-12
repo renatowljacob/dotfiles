@@ -21,8 +21,8 @@ ls.add_snippets("c", {
         fmta(
             [[
 /**
-* <>
-*/
+ * <>
+ */
 ]],
             { i(1, "docstring") }
         )

@@ -1,31 +1,50 @@
--- Functions used in my config
+---@module "snacks"
 
----@class Helpers
----@field buf table Buffer functions
+---@class MyApi Functions that I use throughout my config
+---@field buf table Buffer related functions
 ---@field cmd table CLI command wrappers
 ---@field fs table Filesystem functions
-local M = {}
+local MyApi = {}
 
-M.buf = {}
-M.cmd = {}
-M.fs = {}
+MyApi.buf = {}
+MyApi.cmd = {}
+MyApi.fs = {}
 
-function M.buf.document_symbols(opts)
+---@class State
+---@field Snacks_terminal table snacks_terminal state
+local State = {
+    ---@class Snacks_terminal
+    ---@field count number The count given for the last normal mode command
+    ---@field keys string[] Mapped keys
+    Snacks_terminal = {
+        count = 1,
+        keys = {
+            "H",
+            "J",
+            "K",
+            "L",
+        },
+    },
+}
+
+---Use LSP to document symbols if there is a server, otherwise use Treesitter
+---@param opts? snacks.picker.lsp.symbols.Config
+function MyApi.buf.document_symbols(opts)
     if
         not vim.tbl_isempty(
             vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf() })
         )
     then
-        return Snacks.picker.lsp_symbols(opts)
+        Snacks.picker.lsp_symbols(opts)
     end
 
-    return Snacks.picker.treesitter()
+    Snacks.picker.treesitter()
 end
 
 ---Get line and buffer number from a quickfix list item
 ---@return integer? bufnr, integer? lnum Buffer and line number
 ---If no quickfix list is found, nil is returned instead
-function M.buf.get_qfline()
+function MyApi.buf.get_qfline()
     ---@type table
     local qflist = vim.fn.getqflist()
     local index = vim.fn.getqflist({ idx = 0 }).idx
@@ -52,7 +71,7 @@ end
 ---                - higroup  highlight group (default "IncSearch")
 ---                - timeout in ms  (default 150)
 ---@return nil
-function M.buf.highlight_line(bufnr, lnum, opts)
+function MyApi.buf.highlight_line(bufnr, lnum, opts)
     opts = opts or {}
 
     local higroup = opts.higroup or "IncSearch"
@@ -72,11 +91,31 @@ function M.buf.highlight_line(bufnr, lnum, opts)
     )
 end
 
+---Toggle different snack terminals
+---@param count? number
+---@param opts? snacks.terminal.Opts
+function MyApi.buf.toggle_nth_terminal(count, opts)
+    MyApi.count = count or MyApi.count
+    opts = opts
+        or {
+            auto_insert = false,
+            win = {
+                wo = {
+                    winbar = "Terminal "
+                        .. State.Snacks_terminal.keys[State.Snacks_terminal.count],
+                },
+            },
+        }
+
+    vim.cmd("normal! " .. MyApi.count)
+    Snacks.terminal.toggle(nil, opts)
+end
+
 ---Find root directory between two directories
 ---@param cwd string Cwd path
 ---@param bufpath string Buffer directory path
 ---@return string? root_dir Root directory shared between two paths
-function M.fs.find_root(cwd, bufpath)
+function MyApi.fs.find_root(cwd, bufpath)
     for dir in vim.fs.parents(bufpath) do
         if cwd:match(dir) then
             return dir
@@ -88,7 +127,7 @@ end
 ---@param args? string|string[] Command arguments
 ---@param opts? table  Optional parameters:
 ---                - git  Use dotbare as a generic git client (default false)
-function M.cmd.dotbare(args, opts)
+function MyApi.cmd.dotbare(args, opts)
     args = args or {}
     opts = opts or {}
     opts.git = opts.git or false
@@ -152,4 +191,4 @@ function M.cmd.dotbare(args, opts)
     vim.cmd.startinsert()
 end
 
-return M
+return MyApi

@@ -43,6 +43,8 @@ return {
             --
             keymap = {
                 preset = "default",
+                ["<Tab>"] = {},
+                ["<S-Tab>"] = {},
                 ["<C-j>"] = { "snippet_forward" },
                 ["<C-k>"] = { "snippet_backward" },
                 ["<C-s>"] = { "show_signature", "hide_signature" },
@@ -58,7 +60,56 @@ return {
                 nerd_font_variant = "normal",
             },
             completion = {
-                menu = { border = "single" },
+                menu = {
+                    border = "single",
+                    draw = {
+                        components = {
+                            -- customize the drawing of kind icons
+                            kind_icon = {
+                                text = function(ctx)
+                                    -- default kind icon
+                                    local icon = ctx.kind_icon
+                                    -- if LSP source, check for color derived from documentation
+                                    if ctx.item.source_name == "LSP" then
+                                        local color_item = require(
+                                            "nvim-highlight-colors"
+                                        ).format(
+                                            ctx.item.documentation,
+                                            { kind = ctx.kind }
+                                        )
+                                        if
+                                            color_item
+                                            and color_item.abbr ~= ""
+                                        then
+                                            icon = color_item.abbr
+                                        end
+                                    end
+                                    return icon .. ctx.icon_gap
+                                end,
+                                highlight = function(ctx)
+                                    -- default highlight group
+                                    local highlight = "BlinkCmpKind" .. ctx.kind
+                                    -- if LSP source, check for color derived from documentation
+                                    if ctx.item.source_name == "LSP" then
+                                        local color_item = require(
+                                            "nvim-highlight-colors"
+                                        ).format(
+                                            ctx.item.documentation,
+                                            { kind = ctx.kind }
+                                        )
+                                        if
+                                            color_item
+                                            and color_item.abbr_hl_group
+                                        then
+                                            highlight = color_item.abbr_hl_group
+                                        end
+                                    end
+                                    return highlight
+                                end,
+                            },
+                        },
+                    },
+                },
                 documentation = {
                     auto_show = true,
                     auto_show_delay_ms = 300,
@@ -130,6 +181,12 @@ return {
         },
         config = function(_, opts)
             require("blink.cmp").setup(opts)
+
+            require("luasnip").setup({
+                load_ft_func = require("luasnip.extras.filetype_functions").extend_load_ft({
+                    h = { "c" },
+                }),
+            })
 
             require("luasnip.config").setup({
                 update_events = { "TextChanged", "TextChangedI" },

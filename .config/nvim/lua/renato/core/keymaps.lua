@@ -10,13 +10,20 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
-local helpers = require("renato.core.helpers")
-local dotbare = helpers.cmd.dotbare
+local MyApi = require("renato.core.myapi")
+local dotbare = MyApi.cmd.dotbare
+local toggle_nth_terminal = MyApi.buf.toggle_nth_terminal
 
 -- Useful keymaps for config testing and plugin development
 vim.keymap.set("n", "<leader>ns", "<cmd>source %<CR>", { desc = "Source file" })
 vim.keymap.set("n", "<leader>nx", ":.lua<CR>", { desc = "Execute lua line" })
 vim.keymap.set("v", "<leader>nx", ":lua<CR>", { desc = "Execute lua lines" })
+vim.keymap.set(
+    "n",
+    "<leader>tm",
+    "<cmd>messages<CR>",
+    { desc = "Show messages" }
+)
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "<leader>dd", function()
@@ -51,17 +58,20 @@ vim.keymap.set("n", "<leader>otd", "<cmd>tabclose<CR>", { desc = "Delete Tab" })
 -- CD to buffer directory
 vim.keymap.set("n", "<leader>ocd", function()
     local bufpath = vim.fs.dirname(vim.api.nvim_buf_get_name(0)) or nil
-    if bufpath == nil then
-        return nil
+    if not bufpath then
+        return
     end
 
     local cwd = vim.fn.getcwd()
     if cwd == bufpath then
         vim.notify("Already in buffer directory")
-        return nil
+        return
     end
 
-    local rootdir = helpers.fs.find_root(cwd, bufpath)
+    local rootdir = MyApi.fs.find_root(cwd, bufpath)
+    if not rootdir then
+        return
+    end
 
     vim.fn.chdir(bufpath)
     vim.notify("Changed to " .. bufpath:sub(#rootdir + 2) .. " directory")
@@ -95,9 +105,26 @@ vim.keymap.set(
     { desc = "Move focus to the upper window" }
 )
 
--- Terminal keymaps
+-- Toggle last terminal
 vim.keymap.set("n", "<C-t><C-t>", function()
-    Snacks.terminal()
+    toggle_nth_terminal()
+end, { desc = "Toggle terminal" })
+
+-- Toggle 1st, 2nd, 3rd or 4th terminal
+vim.keymap.set("n", "<C-t><C-h>", function()
+    toggle_nth_terminal(1)
+end, { desc = "Toggle terminal" })
+
+vim.keymap.set("n", "<C-t><C-j>", function()
+    toggle_nth_terminal(2)
+end, { desc = "Toggle terminal" })
+
+vim.keymap.set("n", "<C-t><C-k>", function()
+    toggle_nth_terminal(3)
+end, { desc = "Toggle terminal" })
+
+vim.keymap.set("n", "<C-t><C-l>", function()
+    toggle_nth_terminal(4)
 end, { desc = "Toggle terminal" })
 
 -- Center screen after certain motions
@@ -130,14 +157,6 @@ vim.keymap.set(
     { desc = "Toggle Spellchecking" }
 )
 
--- Debugging
-vim.keymap.set(
-    "n",
-    "<leader>tm",
-    "<cmd>messages<CR>",
-    { desc = "Show messages" }
-)
-
 -- Plugins
 
 --   Toggle highlight color
@@ -146,20 +165,6 @@ vim.keymap.set(
     "<leader>dh",
     "<cmd>HighlightColors Toggle<CR>",
     { desc = "Toggle Highlight Colors" }
-)
---   Auto Session
-vim.keymap.set(
-    "n",
-    "<leader>ps",
-    "<cmd>SessionSave<CR>",
-    { desc = "Save session" }
-)
---   SessionLens
-vim.keymap.set(
-    "n",
-    "<leader>sS",
-    "<cmd>SessionSearch<CR>",
-    { desc = "Search session" }
 )
 
 -- Dotbare

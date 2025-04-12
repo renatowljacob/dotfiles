@@ -66,7 +66,6 @@ vim.wo.list = true
 vim.opt.listchars = {
     trail = "·",
     tab = "» ",
-    leadmultispace = "• ",
 }
 vim.o.showbreak = "↳"
 --      Relative numbering

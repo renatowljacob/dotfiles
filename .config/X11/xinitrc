@@ -52,7 +52,7 @@ case $session in
 "dusk")
     /usr/lib/polkit-kde-authentication-agent-1 &
     ~/.fehbg &
-    clipmenud &
+    CM_IGNORE_WINDOW="[Kk]ee[Pp]ass[Xx][Cc]" clipmenud &
     numlockx &
     picom -b &
     qbittorrent &

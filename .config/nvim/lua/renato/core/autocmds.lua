@@ -5,7 +5,7 @@
 --  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
 
-local helpers = require("renato.core.helpers")
+local MyApi = require("renato.core.myapi")
 
 vim.api.nvim_create_autocmd("BufWritePost", {
     desc = "Update rainbow delimiters highlighting",
@@ -36,7 +36,7 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = "qf",
     callback = function()
         local opts = { silent = true }
-        local buffer = helpers.buf
+        local buffer = MyApi.buf
 
         vim.keymap.set("n", "]q", function()
             vim.cmd("silent! lnext | silent! cn")
@@ -255,7 +255,10 @@ vim.api.nvim_create_autocmd("TermOpen", {
         current_win_opt.number = false
         current_win_opt.relativenumber = false
         current_win_opt.signcolumn = "no"
-        current_win_opt.winbar = ""
+
+        if vim.bo[bufnr].filetype ~= "snacks_terminal" then
+            current_win_opt.winbar = ""
+        end
 
         vim.keymap.set(
             "t",

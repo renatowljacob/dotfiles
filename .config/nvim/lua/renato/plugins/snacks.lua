@@ -1,4 +1,4 @@
-local helpers = require("renato.core.helpers")
+local MyApi = require("renato.core.myapi")
 
 return {
     ---@module 'snacks'
@@ -10,8 +10,26 @@ return {
         dependencies = {
             { "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
         },
+        ---@type snacks.Config
         opts = {
             bufdelete = {
+                enabled = true,
+            },
+            dashboard = {
+                enabled = true,
+                sections = {
+                    {
+                        action = "q",
+                        key = "<ESC>",
+                        icon = " ",
+                        title = "Recent Files",
+                        section = "recent_files",
+                        ["limit"] = 10,
+                    },
+                },
+                width = 80,
+            },
+            indent = {
                 enabled = true,
             },
             notifier = {
@@ -211,9 +229,34 @@ return {
                 desc = "Resume Search",
             },
             {
+                "<leader>st",
+                function()
+                    Snacks.picker.buffers({
+                        items = Snacks.terminal.list(),
+                        title = "Open Terminals",
+                    })
+                end,
+                desc = "Search Terminal",
+            },
+            {
                 "<leader>su",
                 function()
-                    Snacks.picker.undo()
+                    Snacks.picker.undo({
+                        win = {
+                            input = {
+                                keys = {
+                                    ["<c-y>"] = {
+                                        "yank_add",
+                                        mode = { "n", "i" },
+                                    },
+                                    ["<M-y>"] = {
+                                        "yank_del",
+                                        mode = { "n", "i" },
+                                    },
+                                },
+                            },
+                        },
+                    })
                 end,
                 desc = "Search Undo Tree",
             },
@@ -254,7 +297,7 @@ return {
                         "TypeParameter",
                         "Variable",
                     }
-                    helpers.buf.document_symbols({
+                    MyApi.buf.document_symbols({
                         filter = {
                             default = kinds,
                             lua = {
@@ -277,6 +320,13 @@ return {
                     })
                 end,
                 desc = "Document Symbols",
+            },
+            {
+                "grN",
+                function()
+                    Snacks.rename.rename_file()
+                end,
+                desc = "Rename File",
             },
         },
     },

@@ -1,6 +1,6 @@
 require("renato.core.autocmds")
 require("renato.core.debug")
-require("renato.core.helpers")
+require("renato.core.myapi")
 require("renato.core.keymaps")
 require("renato.core.options")
 
