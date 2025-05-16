@@ -1,14 +1,20 @@
 ---@module "snacks"
 
 ---@class MyApi Functions that I use throughout my config
----@field buf table Buffer related functions
----@field cmd table CLI command wrappers
----@field fs table Filesystem functions
+---@field buf table Buffer-related functions
+---@field cli table CLI command wrappers
+---@field fs table Filesystem-related functions
+---@field ft table Filetype-related functions
+---@field treesitter table Treesitter-related functions
 local MyApi = {}
 
 MyApi.buf = {}
-MyApi.cmd = {}
+MyApi.cli = {}
 MyApi.fs = {}
+MyApi.ft = {}
+MyApi.ft.c = {}
+MyApi.ft.javascript = {}
+MyApi.treesitter = {}
 
 ---@class State
 ---@field Snacks_terminal table snacks_terminal state
@@ -27,7 +33,7 @@ local State = {
     },
 }
 
----Use LSP to document symbols if there is a server, otherwise use Treesitter
+---Document symbols using a language server if present, otherwise use Treesitter
 ---@param opts? snacks.picker.lsp.symbols.Config
 function MyApi.buf.document_symbols(opts)
     if
@@ -70,7 +76,6 @@ end
 ---@param opts? table Optional parameters
 ---                - higroup  highlight group (default "IncSearch")
 ---                - timeout in ms  (default 150)
----@return nil
 function MyApi.buf.highlight_line(bufnr, lnum, opts)
     opts = opts or {}
 
@@ -111,23 +116,11 @@ function MyApi.buf.toggle_nth_terminal(count, opts)
     Snacks.terminal.toggle(nil, opts)
 end
 
----Find root directory between two directories
----@param cwd string Cwd path
----@param bufpath string Buffer directory path
----@return string? root_dir Root directory shared between two paths
-function MyApi.fs.find_root(cwd, bufpath)
-    for dir in vim.fs.parents(bufpath) do
-        if cwd:match(dir) then
-            return dir
-        end
-    end
-end
-
 ---Use dotbare as dotfiles/git fuzzy client
 ---@param args? string|string[] Command arguments
 ---@param opts? table  Optional parameters:
 ---                - git  Use dotbare as a generic git client (default false)
-function MyApi.cmd.dotbare(args, opts)
+function MyApi.cli.dotbare(args, opts)
     args = args or {}
     opts = opts or {}
     opts.git = opts.git or false
@@ -149,7 +142,6 @@ function MyApi.cmd.dotbare(args, opts)
 
     local window = vim.api.nvim_open_win(bufnr, true, {
         relative = "editor",
-        -- style = "minimal",
         height = height,
         width = width,
         border = "solid",
@@ -189,6 +181,156 @@ function MyApi.cmd.dotbare(args, opts)
     })
 
     vim.cmd.startinsert()
+end
+
+---Find root directory between two directories
+---@param cwd string Cwd path
+---@param bufpath string Buffer directory path
+---@return string? root_dir Root directory shared between two paths
+function MyApi.fs.find_root(cwd, bufpath)
+    for dir in vim.fs.parents(bufpath) do
+        if cwd:match(dir) then
+            return dir
+        end
+    end
+end
+
+---Gets a C/C++ header file's source file equivalent or vice versa (e.g file.c returns file.h if it exists, file.h returns file.c)
+---@param c_file string C/C++ file
+---@return string? header Header file
+function MyApi.ft.c.get_source_or_header(c_file)
+    local basename = vim.fs.basename(c_file)
+
+    local extension = basename:match(".*%.(%w+)")
+    if extension ~= "c" and extension ~= "h" then
+        return
+    end
+
+    local stem = basename:match("(.*)%.%w+")
+    local files = vim.fs.find(function(file, _)
+        return stem == file:match("(.*)%.%w+")
+    end, {
+        limit = math.huge,
+        type = "file",
+        path = vim.fs.dirname(basename),
+    })
+
+    if vim.tbl_isempty(files) then
+        return
+    end
+
+    for _, file in ipairs(files) do
+        if file:match(".*%.(%w+)") ~= extension then
+            return file
+        end
+    end
+end
+
+---Gets a C/C++ source file's header file (e.g file.c returns file.h)
+---@param source string C/C++ file
+---@return string? header Header file
+function MyApi.ft.c.get_header(source)
+    local basename = vim.fs.basename(source)
+    local extension = basename:match(".*%.(%w+)")
+
+    if extension ~= "c" then
+        return
+    end
+
+    return MyApi.ft.c.get_source_or_header(source)
+end
+
+---Gets a C/C++ header file's source file (e.g file.h returns file.c)
+---@param header string C/C++ file
+---@return string? source Source file
+function MyApi.ft.c.get_source(header)
+    local basename = vim.fs.basename(header)
+    local extension = basename:match(".*%.(%w+)")
+
+    if extension ~= "h" then
+        return
+    end
+
+    return MyApi.ft.c.get_source_or_header(header)
+end
+
+function MyApi.ft.c.set_function_declaration()
+    local buffers = vim.api.nvim_list_bufs()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local current_file = vim.api.nvim_buf_get_name(bufnr)
+    local header = MyApi.ft.c.get_header(current_file)
+
+    if not vim.tbl_contains(buffers, header) then
+        vim.cmd(
+            "edit "
+                .. header
+                .. " | setlocal nobuflisted | setlocal bufhidden hide"
+        )
+    end
+end
+
+-- NOTE: Taken from https://github.com/JoosepAlviste/dotfiles/blob/master/config/nvim/lua/j/javascript.lua
+
+---Turns a function into an async one if "await" is typed inside its body
+function MyApi.ft.javascript.set_async()
+    local node_types = {
+        "function_declaration",
+        "function_expression",
+        "arrow_function",
+    }
+
+    local success, node =
+        pcall(vim.treesitter.get_node, { ignore_injections = false })
+    if not success or not node then
+        return
+    end
+
+    local node_type = node:type()
+    if node_type == "comment" then
+        return
+    end
+
+    local cursor_col = vim.fn.col(".")
+    local text = vim.fn.getline("."):sub(cursor_col - 4, cursor_col - 1)
+    if text ~= "awai" then
+        return
+    end
+
+    local node_ancestor = MyApi.treesitter.get_node_ancestor(node, node_types)
+    if not node_ancestor then
+        return
+    end
+
+    local bufnr = vim.api.nvim_get_current_buf()
+    if
+        vim.startswith(
+            vim.treesitter.get_node_text(node_ancestor, bufnr),
+            "async"
+        )
+    then
+        return
+    end
+
+    local row, col = node_ancestor:start()
+    vim.api.nvim_buf_set_text(bufnr, row, col, row, col, { "async " })
+end
+
+---
+---@param node TSNode
+---@param types string[]
+---@return TSNode? ancestor_node
+function MyApi.treesitter.get_node_ancestor(node, types)
+    local parent_node = node:parent()
+
+    if not parent_node then
+        return
+    end
+
+    if vim.tbl_contains(types, parent_node:type()) then
+        return parent_node
+    end
+
+    return MyApi.treesitter.get_node_ancestor(parent_node, types)
 end
 
 return MyApi

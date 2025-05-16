@@ -9,8 +9,8 @@ vim.api.nvim_create_autocmd("TextChanged", {
         local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
         local ns = vim.api.nvim_create_namespace("checkhealth-hl")
         local patterns = {
-            ["- WARNING"] = "DiagnosticVirtualTextWarn",
-            ["- ERROR"] = "DiagnosticVirtualTextError",
+            ["- ⚠️ WARNING"] = "DiagnosticVirtualTextWarn",
+            ["- ❌ ERROR"] = "DiagnosticVirtualTextError",
         }
 
         for index, line in ipairs(lines) do

@@ -15,12 +15,15 @@ prepend_keymap = [
 					image/*) feh --bg-fill $0 ;;
 					*) false ;;
 				esac' --confirm
-	'''], desc = "Set desktop background" },
+	''' ], desc = "Set desktop background" },
 	{ on = [ "b", "l" ], run = [ '''
 		shell 'case $(file --mime-type -Lb $0) in
 				image/*) betterlockscreen -u $0 ;;
 				*) false ;;
 				esac' --confirm
-		'''], desc = "Set lockscreen background" },
-	{ on = [ "g", "n" ], run = "cd ~/Documents/notes", desc = "Go to notes directory" },
+		''' ], desc = "Set lockscreen background" },
+	{ on = [ "s", "d" ], run = "plugin fzf", desc = "Jump to a file/directory via fzf" },
+	{ on = [ "s", "s" ], run = "plugin zoxide", desc = "Jump to a directory via zoxide" },
+	{ on = [ "s", "f" ], run = "search --via=fd", desc = "Search files by name via fd" },
+	{ on = [ "s", "g" ], run = "search --via=rg", desc = "Search files by content via ripgrep" },
 ]

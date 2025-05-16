@@ -11,7 +11,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 local MyApi = require("renato.core.myapi")
-local dotbare = MyApi.cmd.dotbare
+local dotbare = MyApi.cli.dotbare
 local toggle_nth_terminal = MyApi.buf.toggle_nth_terminal
 
 -- Useful keymaps for config testing and plugin development
@@ -144,7 +144,7 @@ vim.keymap.set("n", "N", "Nzz")
 -- Misc
 
 --   Change diagraph key
-vim.keymap.set("i", "<C-k>", "<C-b>")
+-- vim.keymap.set("i", "<C-k>", "<C-b>")
 --   Clear search highlight
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 --   Command-line window

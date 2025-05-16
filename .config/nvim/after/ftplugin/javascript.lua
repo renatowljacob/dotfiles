@@ -3,3 +3,10 @@ local current_win_opt = vim.wo[winid][0]
 
 current_win_opt.colorcolumn = "120"
 current_win_opt.foldenable = true
+
+local myapi = require("renato.core.myapi")
+
+vim.keymap.set("i", "t", function()
+    vim.api.nvim_feedkeys("t", "n", true)
+    myapi.ft.javascript.set_async()
+end, { desc = "Add async to function declaration" })

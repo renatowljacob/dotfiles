@@ -41,23 +41,30 @@ plugin-load $repos
 # CONFIG
 
 # Aliases
-alias cat='bat '
+which bat > /dev/null 2>&1 \
+	&& alias cat='bat '
 alias cs50="CC='clang' CFLAGS='-ferror-limit=1 -gdwarf-4 -ggdb3 -O0 -std=c11 \
 	-Wall -Werror -Wextra -Wno-gnu-folding-constant -Wno-sign-compare \
 	-Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable \
 	-Wshadow' LDLIBS='-lcrypt -lcs50 -lm' make "
-alias du='gdu '
+which gdu > /dev/null 2>&1 \
+	&& alias du='gdu '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 alias grep='grep --color=auto '
 alias locate='plocate '
-alias ls='eza --icons=auto --hyperlink --no-quotes '
+which eza > /dev/null 2>&1 \
+	&& alias ls='eza --icons=auto --hyperlink --no-quotes '
 alias make="CFLAGS='-fsanitize=undefined,address -fmax-errors=1 -Werror \
 	-std=c11 -O0 -gdwarf -ggdb -Wall -Wextra -Wformat-overflow \
 	-Wuse-after-free=1 -Wstrict-prototypes -Wshadow -Wconversion' make "
-alias nvim-debug='$HOME/Repos/git/neovim/build/bin/nvim '
-alias nvim='nvim-remote '
-alias rm='trash '
+which trash > /dev/null 2>&1 \
+	&& alias rm='trash '
 alias siv='nsxiv-rifle '
+
+# Neovim aliases
+alias firenvim='NVIM_APPNAME=firenvim nvim'
+alias nvim-git='NVIM_APPNAME=nvim-git $HOME/Repos/git/neovim/build/bin/nvim '
+alias nvim='nvim-remote '
 
 # Autosuggestions
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
@@ -183,12 +190,15 @@ function _pacman_aur()
 # Yazi
 function yy()
 {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	local tmp
+	local cwd
 
+	tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
 	yazi "$@" --cwd-file="$tmp"
 
-	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] &&
-		[ "$cwd" != "$PWD" ]; then
+	if cwd="$(command cat -- "$tmp")" \
+		&& [ -n "$cwd" ] \
+		&& [ "$cwd" != "$PWD" ]; then
 		builtin cd "$cwd"
 	fi
 

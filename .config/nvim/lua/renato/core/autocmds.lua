@@ -39,12 +39,12 @@ vim.api.nvim_create_autocmd("FileType", {
         local buffer = MyApi.buf
 
         vim.keymap.set("n", "]q", function()
-            vim.cmd("silent! lnext | silent! cn")
+            vim.cmd("silent! lnext | silent! cn | silent! foldopen!")
 
             buffer.highlight_line(buffer.get_qfline())
         end, opts)
         vim.keymap.set("n", "[q", function()
-            vim.cmd("silent! lprev | silent! cp")
+            vim.cmd("silent! lprev | silent! cp | silent! foldopen!")
 
             buffer.highlight_line(buffer.get_qfline())
         end, opts)
