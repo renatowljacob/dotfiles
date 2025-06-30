@@ -63,19 +63,6 @@ return {
             -- If you're wondering about lsp vs treesitter, you can check out the wonderfully
             -- and elegantly composed help section, `:help lsp-vs-treesitter`
 
-            -- LSP servers and clients are able to communicate to each other what features they support.
-            --  By default, Neovim doesn't support everything that is in the LSP specification.
-            --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
-            --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
-            vim.lsp.config("*", {
-                capabilities = vim.tbl_deep_extend(
-                    "force",
-                    {},
-                    vim.lsp.protocol.make_client_capabilities(),
-                    require("blink.cmp").get_lsp_capabilities() or {}
-                ),
-            })
-
             -- Enable the following language servers
             --  Feel free to add/remove any LSPs that you want in RUNTIME_PATH/lsp. They will automatically be installed.
             --
@@ -87,8 +74,9 @@ return {
             --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
             local ensure_installed = {}
 
-            for key, _ in vim.fs.dir(vim.env.XDG_CONFIG_HOME .. "/nvim/lsp") do
-                table.insert(ensure_installed, key:match("(.*)%.%w+"))
+            for server, _ in vim.fs.dir(vim.env.XDG_CONFIG_HOME .. "/nvim/lsp") do
+                local server_name = vim.fn.fnamemodify(server, ":t:r")
+                table.insert(ensure_installed, server_name)
             end
 
             -- You can add other tools here that you want Mason to install

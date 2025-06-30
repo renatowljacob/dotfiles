@@ -2,7 +2,7 @@
 dark = "tokyo-night-storm"
 light = "tokyo-night-day"
 
-[manager]
+[mgr]
 
 # Hovered
 hovered         = { reversed = true, bold = true }

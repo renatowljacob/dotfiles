@@ -1,4 +1,4 @@
-[manager]
+[mgr]
 prepend_keymap = [
 	# relative-motions keymaps
 	{ on = [ "1" ], run = "plugin relative-motions 1", desc = "Move in relative steps" },

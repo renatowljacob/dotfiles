@@ -1,0 +1,103 @@
+#!/usr/bin/bash
+
+# Options
+declare -a opts=('-M') metadata=()
+declare -i quiet=0
+declare scriptname="${0##*/}" jqfilter=""
+
+# Functions
+usage()
+{
+    cat << EOF
+${scriptname}
+
+Usage: ${scriptname} [OPTS] FILE...
+
+ffmpeg and jq wrapper to get specific tag metadata
+
+General options:
+  -h, --help        Print this message
+  -q, --quiet       Print only the tag data
+
+Metadata query:
+  --album           Get album tag
+  --album-artist    Get album artist tag
+  --artist          Get artist tag
+  --comment         Get comment tag
+  --date            Get date tag
+  --genre           Get genre tag
+  --title           Get title tag
+  --track           Get track tag
+  --year            Get year tag
+
+To get all tags, do not use any options (${scriptname} FILE)
+EOF
+}
+
+opt_short='hq'
+opt_long=('help' 'quiet' 'album' 'album-artist' 'artist' 'comment' 'date' 'genre'
+    'title' 'track' 'year')
+
+TEMP=$(getopt -n "${scriptname}" -o "${opt_short}" -l "${opt_long[*]}" -- "$@" \
+    || exit 1)
+
+eval set -- "$TEMP"
+unset TEMP
+
+while true; do
+    case "$1" in
+    -h | --help)
+        usage
+        exit 0
+        ;;
+    -q | --quiet)
+        quiet=1
+        ;;
+    --album | --album-artist | --artist | --comment | --date | --discnumber | \
+        --genre | --title | --track | --year)
+        flag=${1##--}
+        flag=${flag/-/_}
+        metadata+=(".${flag}")
+        ;;
+    --)
+        shift
+        break
+        ;;
+    *)
+        if [[ $# == 0 ]]; then
+            printf '%b\n' "${scriptname}: no files specified. See --help" >&2
+            exit 3
+        fi
+
+        break
+        ;;
+    esac
+
+    shift
+done
+
+if [[ ${#metadata} == 0 ]]; then
+    if [[ ${quiet} == 1 ]]; then
+        jqfilter=".format.tags[]"
+    else
+        jqfilter=".format.tags"
+    fi
+else
+    if [[ ${quiet} == 1 ]]; then
+        jqfilter=".format.tags | $(printf '%s\n' "${metadata[*]}" | sed 's/ /,/g')"
+    else
+        jqfilter=".format.tags | pick($(printf '%s\n' "${metadata[*]}" | sed 's/ /,/g'))"
+    fi
+fi
+
+for file in "$@"; do
+    if [[ ! -f ${file} ]]; then
+        printf '%b\n' "${scriptname}: Invalid path ${file}. Skipping..." >&2
+        continue
+    fi
+
+    if [[ ${quiet} == 0 ]]; then
+        printf '%b\n' "${file}"
+    fi
+    ffprobe -loglevel quiet -print_format json -show_format "${file}" | jq "${opts[*]}" "${jqfilter}"
+done

@@ -15,9 +15,7 @@ ${scriptname}
 
 Usage: ${scriptname} [OPTS] FILE...
 
-Perform operations on FILE using FFMPEG
-
-FILE: File to be converted
+ffmpeg wrapper to edit file format or tag metadata
 
 General options:
   -b, --backup [DIR]              Make backup of each file
@@ -44,16 +42,16 @@ Metadata edition:
   --year=YEAR                     Set year tag
   --clear                         Clear all tags
 
-To clear a specific tag, pass an empty string (example: --album "")
+To clear a specific tag, pass an empty string (${scriptname} --album "")
 EOF
 }
 
 opt_short='b::de:hv::'
-opt_long=('backup::' 'dryrun' 'extension:' 'help'
-    'verbose::' 'album:' 'album-artist:' 'artist:' 'comment:' 'date:' 'genre:' 'title:' 'track:'
+opt_long=('backup::' 'dryrun' 'extension:' 'help' 'verbose::' 'album:'
+    'album-artist:' 'artist:' 'comment:' 'date:' 'genre:' 'title:' 'track:'
     'year:' 'clear')
 
-TEMP=$(getopt -n 'audioscript' -o "${opt_short}" -l "${opt_long[*]}" -- "$@" \
+TEMP=$(getopt -n "${scriptname}" -o "${opt_short}" -l "${opt_long[*]}" -- "$@" \
     || exit 1)
 
 eval set -- "$TEMP"
