@@ -35,7 +35,7 @@ super + control + {h, l, r}
 # Spawning
 
 # spawn dmenu
-ISO_Level3_Shift
+super + space
 	dmenu_run -fn "JetBrainsMono:weight=100:pixelsize=16:antialias=true" -nb "#24283b" -nf "#C0CAF5" -sb "#364a82" -sf "#C0CAF5"
 
 # spawn terminals
@@ -43,7 +43,7 @@ super + Return
 	st
 
 super + alt + Return
-	wezterm
+	ghostty
 
 # Misc
 
@@ -92,7 +92,7 @@ super + control + s
 	duskc run_command setlayout 3
 
 # toggles between current and previous layout
-super + space
+super + control + space
 	duskc run_command setlayout -1
 
 # flip between horizontal and vertical layout
@@ -139,6 +139,9 @@ super + shift + Tab
 
 # Mute volume
 super + {XF86AudioLowerVolume, XF86AudioRaiseVolume}
+	volume mute
+
+@XF86AudioMute
 	volume mute
 
 # Fullscreen screenshot

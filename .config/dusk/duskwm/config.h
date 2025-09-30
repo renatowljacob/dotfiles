@@ -1,46 +1,46 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx       = 3;   /* border pixel of windows */
-static const unsigned int snap           = 32;  /* snap pixel */
-static const unsigned int gappih         = 6;   /* horiz inner gap between windows */
-static const unsigned int gappiv         = 6;   /* vert inner gap between windows */
-static const unsigned int gappoh         = 6;   /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov         = 6;   /* vert outer gap between windows and screen edge */
-static const unsigned int gappfl         = 6;   /* gap between floating windows (when relevant) */
-static const unsigned int smartgaps_fact = 0;   /* smartgaps factor when there is only one client; 0 = no gaps, 3 = 3x outer gaps */
+static unsigned int borderpx       = 3;   /* border pixel of windows */
+static unsigned int snap           = 32;  /* snap pixel */
+static unsigned int gappih         = 6;   /* horiz inner gap between windows */
+static unsigned int gappiv         = 6;   /* vert inner gap between windows */
+static unsigned int gappoh         = 6;   /* horiz outer gap between windows and screen edge */
+static unsigned int gappov         = 6;   /* vert outer gap between windows and screen edge */
+static unsigned int gappfl         = 6;   /* gap between floating windows (when relevant) */
+static unsigned int smartgaps_fact = 0;   /* smartgaps factor when there is only one client; 0 = no gaps, 3 = 3x outer gaps */
 
 static unsigned int attachdefault        = AttachMaster; // AttachMaster, AttachAbove, AttachAside, AttachBelow, AttachBottom
 
-static const int initshowbar             = 1;   /* 0 means no bar */
+static int initshowbar             = 1;   /* 0 means no bar */
 
-static const int bar_height              = 0;   /* 0 means derive from font, >= 1 explicit height */
-static const int vertpad                 = 6;  /* vertical (outer) padding of bar */
-static const int sidepad                 = 6;  /* horizontal (outer) padding of bar */
+static int bar_height              = 0;   /* 0 means derive from font, >= 1 explicit height */
+static int vertpad                 = 6;  /* vertical (outer) padding of bar */
+static int sidepad                 = 6;  /* horizontal (outer) padding of bar */
 
-static const int iconsize                = 16;  /* icon size */
-static const int iconspacing             = 5;   /* space between icon and title */
+static int iconsize                = 16;  /* icon size */
+static int iconspacing             = 5;   /* space between icon and title */
 
-static const float pfact                 = 0.25; /* size of workspace previews relative to monitor size */
+static float pfact                 = 0.25; /* size of workspace previews relative to monitor size */
 
 static int floatposgrid_x                = 5;   /* float grid columns */
 static int floatposgrid_y                = 5;   /* float grid rows */
 
-static const int horizpadbar             = 6;   /* horizontal (inner) padding for statusbar (increases lrpad) */
-static const int vertpadbar              = 10;   /* vertical (inner) padding for statusbar (increases bh, overridden by bar_height) */
+static int horizpadbar             = 6;   /* horizontal (inner) padding for statusbar (increases lrpad) */
+static int vertpadbar              = 10;   /* vertical (inner) padding for statusbar (increases bh, overridden by bar_height) */
 
 static const char slopspawnstyle[]       = "-t 0 -c 0.92,0.85,0.69,0.3 -o"; /* do NOT define -f (format) here */
 static const char slopresizestyle[]      = "-t 0 -c 0.92,0.85,0.69,0.3"; /* do NOT define -f (format) here */
-static const unsigned int systrayspacing = 10;   /* systray spacing */
+static unsigned int systrayspacing = 10;   /* systray spacing */
 static const char *toggle_float_pos      = "50% 50% 80% 80%"; // default floating position when triggering togglefloating
-static const double defaultopacity       = 0;   /* client default opacity, e.g. 0.75. 0 means don't apply opacity */
-static const double moveopacity          = 0;   /* client opacity when being moved, 0 means don't apply opacity */
-static const double resizeopacity        = 0;   /* client opacity when being resized, 0 means don't apply opacity */
-static const double placeopacity         = 0;   /* client opacity when being placed, 0 means don't apply opacity */
+static double defaultopacity       = 0;   /* client default opacity, e.g. 0.75. 0 means don't apply opacity */
+static double moveopacity          = 0;   /* client opacity when being moved, 0 means don't apply opacity */
+static double resizeopacity        = 0;   /* client opacity when being resized, 0 means don't apply opacity */
+static double placeopacity         = 0;   /* client opacity when being placed, 0 means don't apply opacity */
 
 /* Indicators: see lib/bar_indicators.h for options */
 static int indicators[IndicatorLast] = {
-	[IndicatorWs] = INDICATOR_NONE,
+	[IndicatorWsOcc] = INDICATOR_NONE,
 	[IndicatorPinnedWs] = INDICATOR_NONE,
 	[IndicatorFakeFullScreen] = INDICATOR_PLUS,
 	[IndicatorFakeFullScreenActive] = INDICATOR_PLUS_AND_LARGER_SQUARE,
@@ -66,19 +66,19 @@ static int prefer_window_icons_over_workspace_labels = 0;    /* whether to use w
 static int swap_occupied_workspace_label_format_strings = 0; /* 0 gives "icon: label", 1 gives "label: icon" */
 
 /* This determines what happens with pinned workspaces on a monitor when that monitor is removed.
- *   0 - the workspaces becomes unpinned and is moved to another monitor or
+ *   0 - the workspaces become unpinned and are moved to another monitor or
  *   1 - the workspace clients are moved to the selected workspace on the first monitor, but
  *       the workspace itself is hidden
  *
  * Non-pinned workspaces are always redistributed among the remaining monitors.
  */
-static const int workspaces_per_mon = 0;
+static int workspaces_per_mon = 0;
 
 /* See util.h for options */
 static uint64_t functionality = 0
 //	|AutoReduceNmaster // automatically reduce the number of master clients if one is closed
 //	|BanishMouseCursor // like xbanish, hides mouse cursor when using the keyboard
-//	|BanishMouseCursorToCorner // makes BanishMouseCursor move the cursor to the top right corner of the screen
+//	|BanishMouseCursorToCorner // makes BanishMouseCursor move the cursor to one of the corners of the focused window
 //	|SmartGaps // enables no or increased gaps if there is only one visible window
 	|SmartGapsMonocle // enforces no gaps in monocle layout
 	|Systray // enables a systray in the bar
@@ -93,6 +93,7 @@ static uint64_t functionality = 0
 	|ColorEmoji // enables color emoji support (removes Xft workaround)
 //	|Status2DNoAlpha // option to not use alpha when drawing status2d status
 //	|BarBorder // draw a border around the bar
+//	|BarBorderColBg // optionally use the bar background colour for the bar border (rather than border colour)
 	|BarPadding // add vertical and side padding as per vertpad and sidepad variables above
 	|NoBorders // as per the noborder patch, show no border when only one client in tiled mode
 	|Warp // warp cursor to currently focused window
@@ -110,11 +111,11 @@ static uint64_t functionality = 0
 //	|SortScreens // monitors are numbered from left to right
 	|ViewOnWs // follow a window to the workspace it is being moved to
 //	|Xresources // add support for changing colours via Xresources
-//	|Debug // enables additional debug output
+	|Debug // enables additional debug output
 //	|AltWindowTitles // show alternate window titles, if present
 //	|AltWorkspaceIcons // show the workspace name instead of the icons
 //	|GreedyMonitor // disables swap of workspaces between monitors
-	|SmartLayoutConvertion // automatically adjust layout based on monitor orientation when moving a workspace from one monitor to another
+	|SmartLayoutConversion // automatically adjust layout based on monitor orientation when moving a workspace from one monitor to another
 //	|AutoHideScratchpads // automatically hide open scratchpads when moving to another workspace
 //	|RioDrawIncludeBorders // indicates whether the area drawn using slop includes the window borders
 //	|RioDrawSpawnAsync // spawn the application alongside rather than after drawing area using slop
@@ -131,9 +132,10 @@ static int flexwintitle_hiddenweight     = 0;  // hidden window title weight
 static int flexwintitle_floatweight      = 0;  // floating window title weight, set to 0 to not show floating windows
 static int flexwintitle_separator        = 0;  // width of client separator
 
-// static const char *fonts[]               = { "Fira Code:weight=100:pixelsize=14:antialias=true:autohint=true", "Font Awesome 6 Free:style=Solid:pixelsize=16" };
-// static const char *fonts[]               = { "Iosevka Etoile:weight=100:pixelsize=14:antialias=true:autohint=true", "Font Awesome 6 Free:style=Solid:pixelsize=16" };
-static const char *fonts[]               = { "JetBrainsMono:weight=100:pixelsize=14:antialias=true:autohint=true", "Font Awesome 6 Free:style=Solid:pixelsize=16" };
+static const char *fonts[] = {
+	"JetBrainsMono:weight=100:pixelsize=14:antialias=true:autohint=true",
+	"Font Awesome 7 Free:style=Solid:pixelsize=16"
+};
 
 static char bgdark[] = "#24283B";
 static char bgmid[] = "#292E42";
@@ -252,7 +254,7 @@ static const char *const autorestart[] = {
  *
  * Refer to the Rule struct definition for the list of available fields.
  */
-static const Rule clientrules[] = {
+static Rule clientrules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
@@ -260,7 +262,7 @@ static const Rule clientrules[] = {
 	 *	_NET_WM_WINDOW_TYPE(ATOM) = wintype
 	 */
 	{ .class = "DesktopEditors", .flags = 0 },
-	{ .class = "ONLYOFFICE Desktop Editors", .flags = 0 },
+	{ .class = "ONLYOFFICE", .flags = 0 },
 	{ .wintype = "_KDE_NET_WM_WINDOW_TYPE_OVERRIDE", .flags = Unmanaged },
 	{ .wintype = WTYPE "DESKTOP", .flags = Unmanaged|Lower },
 	{ .wintype = WTYPE "DOCK", .flags = Unmanaged|Raise },
@@ -269,20 +271,15 @@ static const Rule clientrules[] = {
 	{ .wintype = WTYPE "TOOLBAR", .flags = AlwaysOnTop|Centered|Floating },
 	{ .wintype = WTYPE "SPLASH", .flags = AlwaysOnTop|Centered|Floating },
 	{ .role = "pop-up", .flags = AlwaysOnTop|Floating|Centered },
-	// { .instance = "spterm (w)", .scratchkey = 'w', .flags = Floating },
-	// { .instance = "spterm (e)", .scratchkey = 'e', .flags = Floating },
-	// { .instance = "spfm (r)", .scratchkey = 'r', .flags = Floating },
 	// Terminals
 	{ .class = "org.wezfurlong.wezterm", .flags = Terminal|NoSwallow },
 	{ .class = "st-256color", .flags = Terminal|NoSwallow },
 	// General
-	{ .class = "steam_app_", .flags = SteamGame, .workspace = "5" },
-	{ .class = "steam", .flags = Floating|Centered, .workspace = "4" },
-	{ .class = "zen-uni", .flags = NoSwallow, .workspace = "3" },
-	{ .class = "vesktop", .workspace = "4" },
-	{ .class = "zen-def", .flags = NoSwallow, .workspace = "1" },
-	{ .class = "Spotify", .workspace = "6" },
-	{ .class = "zen-alpha", .flags = NoSwallow },
+	{ .instance = "Navigator", .class = "zen-default", .flags = NoSwallow|SwitchWorkspace, .workspace = "1" },
+	{ .instance = "Navigator", .class = "zen-personal", .flags = NoSwallow|SwitchWorkspace, .workspace = "4" },
+	{ .instance = "steamwebhelper", .class = "steam", .flags = Floating|Centered|SwitchWorkspace, .workspace = "6" },
+	{ .class = "steam_app_", .flags = SteamGame|SwitchWorkspace, .workspace = "6" },
+	{ .instance = "vesktop", .class = "vesktop", .flags = SwitchWorkspace, .workspace = "6" },
 	{ .title = "Event Tester", .flags = NoSwallow },
 };
 
@@ -335,7 +332,7 @@ static const Rule clientrules[] = {
  *    Note that vertical and horizontal side padding are controlled by the
  *    vertpad and sidepad variables towards the top of this configuration file.
  */
-static const BarDef bars[] = {
+static BarDef bars[] = {
 	/* monitor idx  vert   x     y      w     h     name            ext class  ext inst  ext name */
 	{  0,      0,   0,    "0%    0%     100% -1h ", "Primary top" },
 	{  0,      1,   0,    "0%    100%   100% -1h ", "Primary bottom" },
@@ -351,7 +348,7 @@ static const BarDef bars[] = {
  *    monitor:
  *      -1  show on all monitors
  *       0  show on monitor 0
- *      'A' show on active monitor (i.e. focused / selected) (or just -1 for active?)
+ *      'A' show on active monitor (i.e. follow focused monitor)
  *    bar - bar index, 0 is default, 1 is extrabar
  *    scheme - defines the default scheme for the bar module
  *    lpad - adds artificial spacing on the left hand side of the module
@@ -362,7 +359,7 @@ static const BarDef bars[] = {
  *    name - does nothing, intended for visual clue and for logging / debugging
  */
 #define PWRL PwrlNone
-static const BarRule barrules[] = {
+static BarRule barrules[] = {
 /* monitor bar scheme lpad rpad  value     alignment              sizefunc                drawfunc                clickfunc                hoverfunc         name */
 { -1,      0,  0,      0,   0,   PWRL, BAR_ALIGN_LEFT,        size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
 { -1,      0,  0,      0,   0,   PWRL, BAR_ALIGN_LEFT,        size_workspaces,        draw_workspaces,        click_workspaces,        hover_workspaces, "workspaces" },
@@ -417,24 +414,24 @@ static const BarRule barrules[] = {
  *       occ   - the occupied icon shows if the workspace has clients
  *
  */
-static const WorkspaceRule wsrules[] = {
+static WorkspaceRule wsrules[] = {
 	/*                                                                     ------------------------------- schemes ------------------------------- ------ icons ------
 	   name,  monitor,  pinned,  layout,  mfact,  nmaster,  nstack,  gaps, default,          visible,          selected,         occupied,         def,   vac,  occ,  */
 	{  "1",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
 	{  "2",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
-	{  "3",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
-	{  "4",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
-	{  "5",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
-	{  "6",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
+	{  "3",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
+	{  "4",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
+	{  "5",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
+	{  "6",   -1,       0,       0,       -1,    -1,       -1,      -1,    SchemeWsNorm,     SchemeWsVisible,  SchemeWsSel,      SchemeWsOcc,      "",   "",   "", },
 };
 
-static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
-static const int nmaster     = 1;    /* number of clients in master area */
-static const int nstack      = 0;    /* number of clients in primary stack area */
-static const int enablegaps  = 1;    /* whether gaps are enabled by default or not */
+static float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
+static int nmaster     = 1;    /* number of clients in master area */
+static int nstack      = 0;    /* number of clients in primary stack area */
+static int enablegaps  = 1;    /* whether gaps are enabled by default or not */
 
 /* layout(s) */
-static const Layout layouts[] = {
+static Layout layouts[] = {
 	/* symbol     arrange function, { nmaster, nstack, layout, master axis, stack axis, secondary stack axis, symbol func }, name */
 	{ " []= ",      flextile,         { -1, -1, SPLIT_VERTICAL, TOP_TO_BOTTOM, TOP_TO_BOTTOM, 0, NULL }, "tile" },
 	{ " [M] ",      flextile,         { -1, -1, NO_SPLIT, MONOCLE, MONOCLE, 0, NULL }, "monocle" },
@@ -444,10 +441,10 @@ static const Layout layouts[] = {
 	{ " ||| ",      flextile,         { -1, -1, NO_SPLIT, LEFT_TO_RIGHT, LEFT_TO_RIGHT, 0, NULL }, "columns" },
 	{ " === ",      flextile,         { -1, -1, NO_SPLIT, TOP_TO_BOTTOM, TOP_TO_BOTTOM, 0, NULL }, "rows" },
 	{ " ||= ",      flextile,         { -1, -1, SPLIT_VERTICAL, LEFT_TO_RIGHT, TOP_TO_BOTTOM, 0, NULL }, "col" },
-	{ " ::: ",      flextile,         { -1, -1, NO_SPLIT, GAPPLESSGRID_CFACTS, GAPPLESSGRID_CFACTS, 0, NULL }, "gappless grid" },
+	{ " ::: ",      flextile,         { -1, -1, NO_SPLIT, GAPLESSGRID_CFACTS, GAPLESSGRID_CFACTS, 0, NULL }, "gapless grid" },
 	{ " TTT ",      flextile,         { -1, -1, SPLIT_HORIZONTAL, LEFT_TO_RIGHT, LEFT_TO_RIGHT, 0, NULL }, "bstack" },
 	{ " === ",      flextile,         { -1, -1, SPLIT_HORIZONTAL, LEFT_TO_RIGHT, TOP_TO_BOTTOM, 0, NULL }, "bstackhoriz" },
-	{ " ==# ",      flextile,         { -1, -1, SPLIT_HORIZONTAL, TOP_TO_BOTTOM, GAPPLESSGRID_CFACTS, 0, NULL }, "bstackgrid" },
+	{ " ==# ",      flextile,         { -1, -1, SPLIT_HORIZONTAL, TOP_TO_BOTTOM, GAPLESSGRID_CFACTS, 0, NULL }, "bstackgrid" },
 	{ " >M> ",      flextile,         { -1, -1, FLOATING_MASTER, LEFT_TO_RIGHT, LEFT_TO_RIGHT, 0, NULL }, "floating master" },
 	{ " |M| ",      flextile,         { -1, -1, SPLIT_CENTERED_VERTICAL, LEFT_TO_RIGHT, TOP_TO_BOTTOM, TOP_TO_BOTTOM, NULL }, "centeredmaster" },
 	{ " -M- ",      flextile,         { -1, -1, SPLIT_CENTERED_HORIZONTAL, TOP_TO_BOTTOM, LEFT_TO_RIGHT, LEFT_TO_RIGHT, NULL }, "centeredmaster horiz" },
@@ -489,7 +486,7 @@ static const Layout layouts[] = {
 	{ KeyPress,   MOD, XK_z, ACTION, {.i = LASTTILED } },
 
 /* This relates to the StackerIcons functionality and should mirror the STACKKEYS list above. */
-static const StackerIcon stackericons[] = {
+static StackerIcon stackericons[] = {
 	{ "[j]", {.i = INC(+1) } },
 	{ "[k]", {.i = INC(-1) } },
 	{ "[s]", {.i = PREVSEL } },
@@ -568,113 +565,3 @@ static Button buttons[] = {
 	{ ClkWorkspaceBar,           0,                       Button5,        viewwsdir,        {.i = -2 } }, // view the next workspace left of current workspace that has clients (on the current monitor)
 	{ ClkWorkspaceBar,           MODKEY,                  Button2,        togglepinnedws,   {0} }, // toggles the pinning of a workspace to the current monitor
 };
-
-// static const char *ipcsockpath = "/tmp/dusk.sock";
-// static IPCCommand ipccommands[] = {
-// 	IPCCOMMANDS( customlayout, 8, ARG_TYPE_SINT, ARG_TYPE_STR, ARG_TYPE_SINT, ARG_TYPE_SINT, ARG_TYPE_SINT, ARG_TYPE_SINT, ARG_TYPE_SINT, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( changeopacity, ARG_TYPE_FLOAT ),
-// 	IPCCOMMAND( clienttomon, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( clientstomon, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( cyclelayout, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( enable, ARG_TYPE_STR ),
-// 	IPCCOMMAND( enablewsbyindex, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( enablewsbyname, ARG_TYPE_STR ),
-// 	IPCCOMMAND( defaultgaps, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( disable, ARG_TYPE_STR ),
-// 	IPCCOMMAND( floatpos, ARG_TYPE_STR ),
-// 	IPCCOMMAND( focusdir, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( focushidden, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( focusmaster, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( focusmon, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( focusstack, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( focusurgent, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( hidebar, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( incrgaps, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( incrigaps, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( incrogaps, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( incrihgaps, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( incrivgaps, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( incrohgaps, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( incrovgaps, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( incnmaster, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( incnstack, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( inplacerotate, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( killclient, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( killunsel, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( layoutconvert, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( mark, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( markall, ARG_TYPE_SINT ), // 0 = mark all, 1 = mark floating, 2 = mark hidden
-// 	IPCCOMMAND( maximize, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( maximizevert, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( maximizehorz, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( mirrorlayout, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( movetowsbyindex, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( movetowsbyname, ARG_TYPE_STR ),
-// 	IPCCOMMAND( sendtowsbyindex, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( sendtowsbyname, ARG_TYPE_STR ),
-// 	IPCCOMMAND( movealltowsbyindex, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( movealltowsbyname, ARG_TYPE_STR ),
-// 	IPCCOMMAND( moveallfromwsbyindex, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( moveallfromwsbyname, ARG_TYPE_STR ),
-// 	IPCCOMMAND( movewsdir, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( rotatelayoutaxis, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( rotatestack, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( placedir, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( pushdown, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( pushup, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( quit, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( restart, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( rioresize, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( setattachdefault, ARG_TYPE_STR),
-// 	IPCCOMMAND( setborderpx, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( setclientborderpx, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( setlayoutaxisex, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( setlayout, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( setcfact, ARG_TYPE_FLOAT ),
-// 	IPCCOMMAND( setmfact, ARG_TYPE_FLOAT ),
-// 	IPCCOMMAND( setwfact, ARG_TYPE_FLOAT ),
-// 	IPCCOMMAND( setgapsex, ARG_TYPE_SINT ),
-// 	IPCCOMMANDS( setstatus, 2, ARG_TYPE_UINT, ARG_TYPE_STR ),
-// 	IPCCOMMAND( settitle, ARG_TYPE_STR ),
-// 	IPCCOMMANDS( setwintitle, 2, ARG_TYPE_UINT, ARG_TYPE_STR ),
-// 	IPCCOMMAND( showbar, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( showhideclient, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( stackfocus, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( stackpush, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( stackswap, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( swallow, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( switchcol, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( swapwsbyindex, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( swapwsbyname, ARG_TYPE_STR ),
-// 	IPCCOMMAND( toggle, ARG_TYPE_STR ), // toggle functionality on and off
-// 	IPCCOMMAND( togglebar, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( togglebarpadding, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( togglecompact, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( toggleclientflag, ARG_TYPE_STR ),
-// 	IPCCOMMAND( togglefakefullscreen, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( togglefloating, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( togglefullscreen, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( togglegaps, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( togglekeybindings, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( togglemark, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( togglenomodbuttons, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( togglepinnedws, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( togglesticky, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( togglews, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( transfer, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( transferall, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( unfloatvisible, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( unhideall, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( unhidepop, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( unmark, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( unmarkall, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( unswallow, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( viewallwsonmon, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( viewalloccwsonmon, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( viewselws, ARG_TYPE_NONE ),
-// 	IPCCOMMAND( viewwsbyindex, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( viewwsbyname, ARG_TYPE_STR ),
-// 	IPCCOMMAND( viewwsdir, ARG_TYPE_SINT ),
-// 	IPCCOMMAND( xrdb, ARG_TYPE_NONE ), // reload xrdb / Xresources
-// 	IPCCOMMAND( zoom, ARG_TYPE_NONE ),
-// };

@@ -1,10 +1,30 @@
 return {
     {
         -- Collection of various small independent plugins/modules
-        "echasnovski/mini.nvim",
+        "nvim-mini/mini.nvim",
         config = function()
-            require("mini.tabline").setup()
+            require("mini.pairs").setup()
             require("mini.splitjoin").setup()
+            require("mini.tabline").setup()
+
+            local map_bs = function(lhs, rhs)
+                vim.keymap.set(
+                    "i",
+                    lhs,
+                    rhs,
+                    { expr = true, replace_keycodes = false }
+                )
+            end
+
+            map_bs("<C-h>", function()
+                return MiniPairs.bs()
+            end)
+            map_bs("<C-w>", function()
+                return MiniPairs.bs("\23")
+            end)
+            map_bs("<C-u>", function()
+                return MiniPairs.bs("\21")
+            end)
 
             -- Better Around/Inside textobjects
             --

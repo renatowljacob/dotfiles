@@ -130,6 +130,14 @@ for file in "$@"; do
     # Input file extension
     extension="${file##*.}"
 
+    case "${extension}" in
+    "flac" | "m4a" | "mp3" | "mp4") ;;
+    *)
+        printf '%b\n' "${scriptname}: ${file} is not a song. Skipping..." >&2
+        continue
+        ;;
+    esac
+
     # Format to convert to. If no format is specified, the file extension will
     # be used instead, i.e. no conversion occurs
     format=${format:-$extension}
@@ -144,7 +152,7 @@ for file in "$@"; do
     if [[ ${dryrun} == 0 ]]; then
         [[ ${backup} == 1 ]] && cp "${file}" "${backupdir}"
 
-        if [[ ${extension} == "${format}" ]]; then
+        if [[ "${extension}" == "${format}" ]]; then
             tmp="tmp.${RANDOM}.${extension}"
             ffmpeg -i "${file}" "${opts[@]}" "${metadata[@]}" -c copy "${tmp}" \
                 && mv "${tmp}" "${file}"

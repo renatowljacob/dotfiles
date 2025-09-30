@@ -117,6 +117,7 @@ return {
         config = function()
             local dap = require("dap")
             local dapui = require("dapui")
+            local dapvirt = require("nvim-dap-virtual-text")
             local colors = require("tokyonight.colors").setup()
 
             require("mason-nvim-dap").setup({
@@ -167,9 +168,24 @@ return {
                 vim.fn.sign_define(tp, { text = icon, texthl = hl, numhl = hl })
             end
 
-            dap.listeners.after.event_initialized["dapui_config"] = dapui.open
-            dap.listeners.before.event_terminated["dapui_config"] = dapui.close
-            dap.listeners.before.event_exited["dapui_config"] = dapui.close
+            -- Bruh, these virtual texts do not go away
+            dap.listeners.after.event_initialized["dapui_config"] = function()
+                vim.o.switchbuf = "uselast"
+                dapui.open()
+                dapvirt.enable()
+            end
+            dap.listeners.after.event_terminated["dapui_config"] = function()
+                vim.o.switchbuf = "useopen"
+                dapui.close()
+                dapvirt.disable()
+                dapvirt.refresh()
+            end
+            dap.listeners.after.event_exited["dapui_config"] = function()
+                vim.o.switchbuf = "useopen"
+                dapui.close()
+                dapvirt.disable()
+                dapvirt.refresh()
+            end
 
             -- GDB setup
             dap.configurations.c = {

@@ -36,9 +36,10 @@ secs=0
 while true; do
     $SETSTATUS 2 "$(sb-memory)" &
 
-    if ! $SETSTATUS 5 "$(sb-spotify)" & then
-        wait_for_ipc_handler 30
-    fi
+    # TODO: rewrite this script
+    # if ! $SETSTATUS 5 "$(sb-spotify)" & then
+    #     wait_for_ipc_handler 5 &
+    # fi
 
     if [ $((secs % 60)) = 0 ]; then
         $SETSTATUS 0 "$(sb-calendar)" &
@@ -56,6 +57,6 @@ while true; do
         exec ${BASH_SOURCE[0]}
     fi
 
-    ((secs += 2))
-    sleep 2
+    ((secs += 1))
+    sleep 1
 done

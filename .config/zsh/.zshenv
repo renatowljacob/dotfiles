@@ -28,6 +28,7 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
   --info=inline-right \
   --layout=reverse \
   --scroll-off=10 \
+  --style=full \
   --bind 'ctrl-d:half-page-down' \
   --bind 'ctrl-u:half-page-up' \
   --bind 'ctrl-f:preview-half-page-down' \

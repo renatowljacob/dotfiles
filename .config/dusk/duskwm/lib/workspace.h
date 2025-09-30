@@ -5,6 +5,8 @@ enum {
 	OCCUPIED,
 };
 
+Workspace *stickyws = NULL;
+
 static void attachws(Workspace *ws, Workspace *target);
 static void detachws(Workspace *ws);
 static void attachmon(Monitor *m, Monitor *target);
@@ -55,7 +57,7 @@ static void movewsdir(const Arg *arg);
 static void movetows(Client *c, Workspace *ws, int view_workspace);
 static void movetowsbyindex(const Arg *arg);
 static void movetowsbyname(const Arg *arg);
-static unsigned int numtiled(Workspace *ws);
+static int numtiled(Workspace *ws);
 static void sendtowsbyindex(const Arg *arg);
 static void sendtowsbyname(const Arg *arg);
 static void moveallclientstows(Workspace *from, Workspace *to, int view_workspace);

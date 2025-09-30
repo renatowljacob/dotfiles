@@ -1,4 +1,4 @@
-#define BUFFERSIZE 20
+#define BUFFERSIZE 60
 
 int
 loadxrdbcolor(XrmDatabase xrdb, char **dest, unsigned int *alpha, char *resource)
@@ -43,7 +43,7 @@ loadxrdbalpha(XrmDatabase xrdb, unsigned int *alpha, char *resource)
 }
 
 void
-loadxrdbconfig(XrmDatabase xrdb, char *name, enum resource_type rtype, void *dst)
+loadxrdbconfig(XrmDatabase xrdb, char *name, enum resource_type rtype, void *dst, int dst_size)
 {
 	char *sdst = NULL;
 	int *idst = NULL;
@@ -56,12 +56,16 @@ loadxrdbconfig(XrmDatabase xrdb, char *name, enum resource_type rtype, void *dst
 	char *type;
 	XrmValue ret;
 
+	if (!dst_size) {
+		dst_size = BUFFERSIZE;
+	}
+
 	XrmGetResource(xrdb, name, "*", &type, &ret);
 	if (!(ret.addr == NULL || strncmp("String", type, 64)))
 	{
 		switch (rtype) {
 		case STRING:
-			strlcpy(sdst, ret.addr, BUFFERSIZE);
+			strlcpy(sdst, ret.addr, dst_size);
 			break;
 		case INTEGER:
 			*idst = strtoul(ret.addr, NULL, 10);
@@ -116,7 +120,7 @@ loadxrdb(void)
 
 			if (xrdb != NULL) {
 				for (s = 0; s < SchemeLast; s++) {
-					resource_prefix = colors[s][ColCount] ? colors[s][ColCount] : default_resource_prefixes[s];
+					resource_prefix = _cfg_colors[s][ColCount] ? _cfg_colors[s][ColCount] : default_resource_prefixes[s];
 					/* Skip schemes that do not specify a resource string */
 					if (!resource_prefix || resource_prefix[0] == '\0') {
 						continue;
@@ -129,7 +133,7 @@ loadxrdb(void)
 						if (!loadxrdbcolor(xrdb, &clrnames[c], &alpha[c], resource)) {
 							colorscheme = s;
 							/* Fall back to SchemeTitleNorm / Sel for SchemeFlex colors if not defined. */
-							if (!colors[s][0]) {
+							if (!_cfg_colors[s][0]) {
 								colorscheme = (s >= SchemeFlexSelTTB ? SchemeTitleSel : SchemeTitleNorm);
 							}
 							if (colorscheme == SchemeTitleNorm && titlenorm[0][0]) {
@@ -137,7 +141,7 @@ loadxrdb(void)
 							} else if (colorscheme == SchemeTitleSel && titlesel[0][0]) {
 								strlcpy(clrnames[c], titlesel[c], BUFFERSIZE);
 							} else {
-								strlcpy(clrnames[c], colors[colorscheme][c], BUFFERSIZE);
+								strlcpy(clrnames[c], _cfg_colors[colorscheme][c], BUFFERSIZE);
 							}
 						}
 					}
@@ -164,7 +168,7 @@ loadxrdb(void)
 
 				/* other preferences */
 				for (p = resources; p < resources + LENGTH(resources); p++)
-					loadxrdbconfig(xrdb, p->name, p->type, p->dst);
+					loadxrdbconfig(xrdb, p->name, p->type, p->dst, p->dst_size);
 			}
 		}
 	}

@@ -9,6 +9,8 @@
 #endif
 #define BETWEEN(X, A, B)        ((A) <= (X) && (X) <= (B))
 #define NVL(A, B)               ((A) == NULL ? (B) : (A))
+#define CLAMP(A, MIN, MAX)      ((A) < (MIN) ? (MIN) : ((A) > (MAX) ? (MAX) : (A)))
+#define WRAP(A, MIN, MAX)       ((A) < (MIN) ? (MAX) : ((A) > (MAX) ? (MIN) : (A)))
 
 #ifdef _DEBUG
 #define DEBUG(...) fprintf(stderr, __VA_ARGS__)
@@ -26,8 +28,8 @@ static const uint64_t
 	Swallow = 0x4, // enables swallowing of clients
 	SwallowFloating = 0x8, // allow floating windows to swallow the terminal by default
 	CenteredWindowName = 0x10,
-	BarActiveGroupBorderColor = 0x20, // use border color of active group, otherwise title scheme is used
-	BarMasterGroupBorderColor = 0x40, // use border color of master group, otherwise title scheme is used
+	BarActiveGroupBorderColor = 0x20, // use border color of active group, otherwise normal scheme is used
+	BarMasterGroupBorderColor = 0x40, // use border color of master group, otherwise normal scheme is used
 	ColorEmoji = 0x80,
 	Status2DNoAlpha = 0x100, // option to not use alpha when drawing status2d status
 	Systray = 0x200, // enables systray
@@ -68,7 +70,7 @@ static const uint64_t
 	BanishMouseCursorToCorner = 0x80000000000, // makes BanishMouseCursor also move the cursor to top right corner of the screen
 	StackerIcons = 0x100000000000, // adds a stacker icon hints in window titles
 	AltWindowTitles = 0x200000000000, // show alternate window titles, if present
-	FuncPlaceholder70368744177664 = 0x400000000000,
+	BarBorderColBg = 0x400000000000, // optionally use the background colour of the bar for the border as well, rather than border colur
 	FuncPlaceholder140737488355328 = 0x800000000000,
 	FuncPlaceholder281474976710656 = 0x1000000000000,
 	FuncPlaceholder562949953421312 = 0x2000000000000,
@@ -87,6 +89,67 @@ static const uint64_t
 	FuncPlaceholder4611686018427387904 = 0x4000000000000000,
 	FuncPlaceholder9223372036854775808 = 0x8000000000000000;
 
+struct nv {
+    const char *name;
+    uint64_t value;
+};
+
+#define map(F) { #F, F }
+
+static const struct nv functionality_names[] = {
+	map(AllowNoModifierButtons),
+	map(AltWindowTitles),
+	map(AltWorkspaceIcons),
+	map(AutoHideScratchpads),
+	map(AutoReduceNmaster),
+	map(BanishMouseCursor),
+	map(BanishMouseCursorToCorner),
+	map(BarActiveGroupBorderColor),
+	map(BarBorder),
+	map(BarBorderColBg),
+	map(BarMasterGroupBorderColor),
+	map(BarPadding),
+	map(CenteredWindowName),
+	map(CenterSizeHintsClients),
+	map(ColorEmoji),
+	map(Debug),
+	map(DecorationHints),
+	map(FlexWinBorders),
+	map(FocusedOnTop),
+	map(FocusedOnTopTiled),
+	map(FocusFollowMouse),
+	map(FocusOnClick),
+	map(FocusOnNetActive),
+	map(GreedyMonitor),
+	map(NoBorders),
+	map(ResizeHints),
+	map(RestrictFocusstackToMonitor),
+	map(RioDrawIncludeBorders),
+	map(RioDrawSpawnAsync),
+	map(SmartGaps),
+	map(SmartGapsMonocle),
+	map(SmartLayoutConversion),
+	map(SnapToGaps),
+	map(SnapToWindows),
+	map(SortScreens),
+	map(SpawnCwd),
+	map(StackerIcons),
+	map(Status2DNoAlpha),
+	map(Swallow),
+	map(SwallowFloating),
+	map(Systray),
+	map(SystrayNoAlpha),
+	map(ViewOnWs),
+	map(Warp),
+	map(WinTitleIcons),
+	map(WorkspaceLabels),
+	map(WorkspacePreview),
+	map(Xresources),
+	{ NULL, 0 }
+};
+
+#undef map
+
 void die(const char *fmt, ...);
 void *ecalloc(size_t nmemb, size_t size);
 int enabled(const uint64_t functionality);
@@ -94,5 +157,12 @@ int disabled(const uint64_t functionality);
 void enablefunc(const uint64_t functionality);
 void disablefunc(const uint64_t functionality);
 void togglefunc(const uint64_t functionality);
+void setenabled(const uint64_t functionality, int enabled);
+void freestrdup(char **dest, const char *src);
+int freesprintf(char **dest, const char *format, ...);
+int startswith(const char *needle, const char *haystack);
+
+#ifdef __linux__
 size_t strlcpy(char * __restrict dst, const char * __restrict src, size_t dsize);
 size_t strlcat(char *dst, const char *src, size_t siz);
+#endif /* __linux__ */

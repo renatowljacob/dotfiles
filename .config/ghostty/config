@@ -1,0 +1,23 @@
+# vim: set filetype=config
+
+font-family = "JetBrainsMono Nerd Font"
+font-style = "Medium"
+font-feature = zero
+font-feature = ss02
+font-feature = cv03
+font-feature = cv04
+font-size = 13
+
+theme = "TokyoNight Storm"
+
+cursor-style-blink = false
+
+window-decoration = false
+window-padding-x = 10
+window-padding-y = 10,4
+
+confirm-close-surface = false
+
+keybind = ctrl+enter=unbind
+
+gtk-single-instance = true

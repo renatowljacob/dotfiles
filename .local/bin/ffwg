@@ -17,7 +17,7 @@ ffmpeg and jq wrapper to get specific tag metadata
 
 General options:
   -h, --help        Print this message
-  -q, --quiet       Print only the tag data
+  -q, --quiet       Print only tag data
 
 Metadata query:
   --album           Get album tag

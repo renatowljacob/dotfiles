@@ -1,5 +1,7 @@
 ---@module "snacks"
 
+-- TODO: Create a simple session manager for convenience
+
 ---@class MyApi Functions that I use throughout my config
 ---@field buf table Buffer-related functions
 ---@field cli table CLI command wrappers
@@ -41,10 +43,10 @@ function MyApi.buf.document_symbols(opts)
             vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf() })
         )
     then
-        Snacks.picker.lsp_symbols(opts)
+        return Snacks.picker.lsp_symbols(opts)
     end
 
-    Snacks.picker.treesitter()
+    return Snacks.picker.treesitter()
 end
 
 ---Get line and buffer number from a quickfix list item
@@ -254,6 +256,7 @@ function MyApi.ft.c.get_source(header)
     return MyApi.ft.c.get_source_or_header(header)
 end
 
+-- TODO: finish this :P
 function MyApi.ft.c.set_function_declaration()
     local buffers = vim.api.nvim_list_bufs()
     local bufnr = vim.api.nvim_get_current_buf()
@@ -296,7 +299,8 @@ function MyApi.ft.javascript.set_async()
         return
     end
 
-    local node_ancestor = MyApi.treesitter.get_node_ancestor(node, node_types)
+    local node_ancestor =
+        MyApi.treesitter.get_node_ancestor_by_type(node, node_types)
     if not node_ancestor then
         return
     end
@@ -315,22 +319,21 @@ function MyApi.ft.javascript.set_async()
     vim.api.nvim_buf_set_text(bufnr, row, col, row, col, { "async " })
 end
 
----
 ---@param node TSNode
 ---@param types string[]
 ---@return TSNode? ancestor_node
-function MyApi.treesitter.get_node_ancestor(node, types)
-    local parent_node = node:parent()
+function MyApi.treesitter.get_node_ancestor_by_type(node, types)
+    local parent_node = node:tree():root():child_with_descendant(node)
 
-    if not parent_node then
-        return
+    while parent_node do
+        if vim.tbl_contains(types, parent_node:type()) then
+            return parent_node
+        end
+
+        parent_node = parent_node:child_with_descendant(node)
     end
 
-    if vim.tbl_contains(types, parent_node:type()) then
-        return parent_node
-    end
-
-    return MyApi.treesitter.get_node_ancestor(parent_node, types)
+    return nil
 end
 
 return MyApi

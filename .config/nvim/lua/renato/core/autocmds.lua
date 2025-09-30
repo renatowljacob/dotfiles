@@ -14,14 +14,11 @@ vim.api.nvim_create_autocmd("BufWritePost", {
         { clear = true }
     ),
     callback = function()
-        local plugins = require("lazy").plugins()
+        local rainbow_delimiters = require("rainbow-delimiters")
 
-        for _, plugin in ipairs(plugins) do
-            if plugin.name == "rainbow-delimiters.nvim" and plugin._.loaded then
-                local rainbow_delimiters = require("rainbow-delimiters")
-
-                rainbow_delimiters.disable(0)
-                rainbow_delimiters.enable(0)
+        if rainbow_delimiters.is_enabled(0) then
+            for _ = 1, 2 do
+                rainbow_delimiters.toggle(0)
             end
         end
     end,
@@ -40,12 +37,10 @@ vim.api.nvim_create_autocmd("FileType", {
 
         vim.keymap.set("n", "]q", function()
             vim.cmd("silent! lnext | silent! cn | silent! foldopen!")
-
             buffer.highlight_line(buffer.get_qfline())
         end, opts)
         vim.keymap.set("n", "[q", function()
             vim.cmd("silent! lprev | silent! cp | silent! foldopen!")
-
             buffer.highlight_line(buffer.get_qfline())
         end, opts)
     end,

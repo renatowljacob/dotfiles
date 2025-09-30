@@ -84,7 +84,7 @@ static const int THUMB_SIZE = 3;
 
 char nsxiv_xid[64]; /* will be set to nsxiv's xid when dmenu_search is invoked */
 const char *const dmenu_cmd[] = {
-	"dmenu", "-l", "16", "-w", nsxiv_xid, NULL
+	"dmenu", "-fn", "\"JetBrainsMono:weight=100:pixelsize=16:antialias=true\"", "-nb", "#24283b", "-nf", "#C0CAF5", "-sb", "#364a82", "-sf", "#C0CAF5", "-w", nsxiv_xid, NULL
 };
 
 /* these modifiers will be used when processing keybindings */

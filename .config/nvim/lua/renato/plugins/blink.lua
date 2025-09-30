@@ -1,24 +1,6 @@
 return {
     {
         "saghen/blink.cmp",
-        dependencies = {
-            {
-                "L3MON4D3/LuaSnip",
-                version = "v2.*",
-                build = (function()
-                    -- Build Step is needed for regex support in snippets.
-                    -- This step is not supported in many windows environments.
-                    -- Remove the below condition to re-enable on windows.
-                    if
-                        vim.fn.has("win32") == 1
-                        or vim.fn.executable("make") == 0
-                    then
-                        return
-                    end
-                    return "make install_jsregexp"
-                end)(),
-            },
-        },
 
         -- use a release tag to download pre-built binaries
         version = "*",
@@ -133,7 +115,6 @@ return {
                 },
                 ghost_text = { show_with_menu = false },
             },
-            snippets = { preset = "luasnip" },
 
             -- Default list of enabled providers defined so that you can extend
             -- it elsewhere in your config, without redefining it, due
@@ -142,18 +123,18 @@ return {
                 default = function()
                     local success, node = pcall(vim.treesitter.get_node)
 
-                    if
-                        success
-                        and node
-                        and vim.tbl_contains(
-                            { "comment", "line_comment", "block_comment" },
-                            node:type()
-                        )
-                    then
-                        return { "buffer" }
-                    else
-                        return { "snippets", "lsp", "path", "buffer" }
+                    if success and node then
+                        if
+                            vim.tbl_contains(
+                                { "comment", "line_comment", "block_comment" },
+                                node:type()
+                            )
+                        then
+                            return { "buffer" }
+                        end
                     end
+
+                    return { "lsp", "snippets", "path", "buffer" }
                 end,
                 per_filetype = { sql = { "dadbod" } },
                 providers = {
@@ -179,50 +160,6 @@ return {
             fuzzy = {
                 implementation = "prefer_rust_with_warning",
                 sorts = {
-                    -- If in a declaration, expression or specifying a field,
-                    -- sort LSP source first, otherwise sort snippets source
-                    -- first by default.
-                    function(a, b)
-                        local success, node = pcall(vim.treesitter.get_node)
-                        local source_priority = {
-                            snippets = 4,
-                            lsp = 3,
-                            path = 2,
-                            buffer = 1,
-                        }
-                        local node_types = {
-                            "field",
-                            "declaration",
-                            "expression",
-                            "attribute",
-                            "member",
-                            "declarator",
-                        }
-
-                        if not success or not node or not node:parent() then
-                            source_priority.lsp = 3
-                            source_priority.snippets = 4
-                        else
-                            local parent = node:parent():type()
-
-                            for _, node_type in ipairs(node_types) do
-                                -- If any node_types string is a substring of
-                                -- parent
-                                if parent:find(node_type) then
-                                    source_priority.lsp = 4
-                                    source_priority.snippets = 3
-                                    break
-                                end
-                            end
-                        end
-
-                        local a_priority = source_priority[a.source_id]
-                        local b_priority = source_priority[b.source_id]
-
-                        if a_priority ~= b_priority then
-                            return a_priority > b_priority
-                        end
-                    end,
                     "score",
                     "sort_text",
                 },
@@ -230,23 +167,6 @@ return {
         },
         config = function(_, opts)
             require("blink.cmp").setup(opts)
-
-            require("luasnip").setup({
-                load_ft_func = require("luasnip.extras.filetype_functions").extend_load_ft({
-                    h = { "c" },
-                }),
-            })
-
-            require("luasnip.config").setup({
-                update_events = { "TextChanged", "TextChangedI" },
-            })
-
-            require("luasnip.loaders.from_lua").lazy_load({
-                paths = { vim.fn.stdpath("config") .. "/lua/renato/snippets" },
-            })
-
-            vim.keymap.set({ "i", "s" }, "<C-,>", "<Plug>luasnip-prev-choice")
-            vim.keymap.set({ "i", "s" }, "<C-;>", "<Plug>luasnip-next-choice")
         end,
         opts_extend = { "sources.default" },
     },

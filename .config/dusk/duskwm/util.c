@@ -32,6 +32,7 @@ ecalloc(size_t nmemb, size_t size)
 {
 	void *p;
 
+	/* calloc allocates memory for an array of n elements and initializes all bits to zero */
 	if (!(p = calloc(nmemb, size)))
 		die("calloc:");
 	return p;
@@ -67,6 +68,55 @@ togglefunc(const uint64_t functionality)
 	settings ^= functionality;
 }
 
+void
+setenabled(const uint64_t functionality, int enabled)
+{
+	if (enabled) {
+		enablefunc(functionality);
+	} else {
+		disablefunc(functionality);
+	}
+}
+
+void
+freestrdup(char **dest, const char *src)
+{
+	if (dest == NULL)
+		return;
+
+	free(*dest);
+
+	*dest = src ? strdup(src) : NULL;
+}
+
+int
+freesprintf(char **dest, const char *format, ...)
+{
+	va_list args;
+	int result;
+	size_t size;
+
+	free(*dest);
+
+	va_start(args, format);
+	size = vsnprintf(NULL, 0, format, args);
+	va_end(args);
+
+	*dest = ecalloc(size + 1, sizeof(char));
+
+	va_start(args, format);
+	result = vsnprintf(*dest, size + 1, format, args);
+	va_end(args);
+
+	return result;
+}
+
+int startswith(const char *needle, const char *haystack)
+{
+	return !strncmp(haystack, needle, strlen(needle));
+}
+
+#ifdef __linux__
 /*
  * Copy string src to buffer dst of size dsize.  At most dsize-1
  * chars will be copied.  Always NUL terminates (unless dsize == 0).
@@ -134,3 +184,4 @@ strlcat(char *dst, const char *src, size_t siz)
 
 	return(dlen + (s - src));   /* count does not include NUL */
 }
+#endif /* __linux__ */

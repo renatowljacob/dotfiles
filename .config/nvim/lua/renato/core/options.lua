@@ -31,6 +31,8 @@ vim.o.expandtab = true
 vim.o.undofile = true
 --      Window border
 vim.o.winborder = "rounded"
+--      Allow moving past the last character in the line in visual block mode
+vim.o.virtualedit = "block"
 --      Without noinsert, omnifunc breaks rainbow-delimiters :P idk
 vim.opt.completeopt = {
     "menuone",
@@ -55,12 +57,6 @@ vim.opt.sessionoptions = {
 vim.o.switchbuf = "useopen"
 
 --  WINDOW OPTIONS
---      Folding
-vim.wo.foldenable = false
-vim.wo.foldtext = ""
-vim.wo.foldmethod = "expr"
-vim.wo.foldexpr = "nvim_treesitter#foldexpr()"
-vim.opt.fillchars:append({ fold = " " })
 --      Virtual chars
 vim.wo.list = true
 vim.opt.listchars = {
@@ -77,7 +73,7 @@ vim.wo.wrap = true
 vim.wo.linebreak = true
 vim.wo.breakindent = true
 --       Misc
-vim.wo.colorcolumn = "80"
+vim.wo.colorcolumn = "81"
 
 --  MISC
 --       Diagnostic Config

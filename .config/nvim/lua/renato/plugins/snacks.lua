@@ -15,23 +15,6 @@ return {
             bufdelete = {
                 enabled = true,
             },
-            dashboard = {
-                enabled = true,
-                sections = {
-                    {
-                        action = "q",
-                        key = "<ESC>",
-                        icon = " ",
-                        title = "Recent Files",
-                        section = "recent_files",
-                        ["limit"] = 10,
-                    },
-                },
-                width = 80,
-            },
-            indent = {
-                enabled = true,
-            },
             notifier = {
                 style = "fancy",
             },

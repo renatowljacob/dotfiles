@@ -51,7 +51,6 @@ which gdu > /dev/null 2>&1 \
 	&& alias du='gdu '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 alias grep='grep --color=auto '
-alias locate='plocate '
 which eza > /dev/null 2>&1 \
 	&& alias ls='eza --icons=auto --hyperlink --no-quotes '
 alias make="CFLAGS='-fsanitize=undefined,address -fmax-errors=1 -Werror \
@@ -126,7 +125,7 @@ function _fzf-man-widget()
 		--ansi \
 		--tiebreak=begin \
 		--prompt=' Man > '  \
-		--preview-window '50%,rounded,<70(up,85%,border-bottom)' \
+		--preview-window '50%,rounded,<70(up,75%,border-bottom)' \
 		--preview "${batman}" \
 		--bind "enter:execute(${manpage} | xargs -r man)" \
 }
@@ -210,8 +209,9 @@ function _zoxide_cdi()
 	zle reset-prompt
 }
 
-# ZVM keybindings. ' ' at the start of some of them is meant to simulate a
-# leader key
+# ZVM keybindings
+leader=' ' # leader key
+
 function zvm_after_lazy_keybindings()
 {
 	zvm_define_widget _fzf-man-widget
@@ -232,28 +232,28 @@ function zvm_after_lazy_keybindings()
 	zvm_define_widget _widget_dotbare_fstat
 	zvm_define_widget _zoxide_cdi
 
-	zvm_bindkey vicmd ' pa' _pacman_aur # Search AUR packages
-	zvm_bindkey vicmd ' ps' _pacman_sync # Search Arch packages
-	zvm_bindkey vicmd ' pq' _pacman_query # Search local packages
-	zvm_bindkey vicmd ' sf' fzf-file-widget # Search files
-	zvm_bindkey vicmd ' sh' fzf-history-widget # Search history
-	zvm_bindkey vicmd ' sd' fzf-cd-widget # Search directories
-	zvm_bindkey vicmd ' sm' _fzf-man-widget # Search man pages
-	zvm_bindkey vicmd ' ss' _zoxide_cdi # Search zoxide directories
-	zvm_bindkey vicmd ' fa' _widget_dotbare_fadd
-	zvm_bindkey vicmd ' ff' _widget_dotbare_fedit
-	zvm_bindkey vicmd ' fg' _widget_dotbare_fgrep
-	zvm_bindkey vicmd ' fl' _widget_dotbare_flog
-	zvm_bindkey vicmd ' fS' _widget_dotbare_fstash
-	zvm_bindkey vicmd ' fs' _widget_dotbare_fstat
-	zvm_bindkey vicmd ' ga' _git_add
-	zvm_bindkey vicmd ' gf' _git_files
-	zvm_bindkey vicmd ' gg' _git_grep
-	zvm_bindkey vicmd ' gl' _git_log
-	zvm_bindkey vicmd ' gS' _git_stash
-	zvm_bindkey vicmd ' gs' _git_status
-	zvm_bindkey vicmd 'k' history-substring-search-up
-	zvm_bindkey vicmd 'j' history-substring-search-down
+	zvm_bindkey vicmd "${leader}pa" _pacman_aur # Search AUR packages
+	zvm_bindkey vicmd "${leader}ps" _pacman_sync # Search Arch packages
+	zvm_bindkey vicmd "${leader}pq" _pacman_query # Search local packages
+	zvm_bindkey vicmd "${leader}sf" fzf-file-widget # Search files
+	zvm_bindkey vicmd "${leader}sh" fzf-history-widget # Search history
+	zvm_bindkey vicmd "${leader}sd" fzf-cd-widget # Search directories
+	zvm_bindkey vicmd "${leader}sm" _fzf-man-widget # Search man pages
+	zvm_bindkey vicmd "${leader}ss" _zoxide_cdi # Search zoxide directories
+	zvm_bindkey vicmd "${leader}fa" _widget_dotbare_fadd
+	zvm_bindkey vicmd "${leader}ff" _widget_dotbare_fedit
+	zvm_bindkey vicmd "${leader}fg" _widget_dotbare_fgrep
+	zvm_bindkey vicmd "${leader}fl" _widget_dotbare_flog
+	zvm_bindkey vicmd "${leader}fS" _widget_dotbare_fstash
+	zvm_bindkey vicmd "${leader}fs" _widget_dotbare_fstat
+	zvm_bindkey vicmd "${leader}ga" _git_add
+	zvm_bindkey vicmd "${leader}gf" _git_files
+	zvm_bindkey vicmd "${leader}gg" _git_grep
+	zvm_bindkey vicmd "${leader}gl" _git_log
+	zvm_bindkey vicmd "${leader}gS" _git_stash
+	zvm_bindkey vicmd "${leader}gs" _git_status
+	zvm_bindkey vicmd "k" history-substring-search-up
+	zvm_bindkey vicmd "j" history-substring-search-down
 }
 
 # Visual selection highlighting
