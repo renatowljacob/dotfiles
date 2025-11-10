@@ -38,8 +38,9 @@ opt_short='hq'
 opt_long=('help' 'quiet' 'album' 'album-artist' 'artist' 'comment' 'date' 'genre'
     'title' 'track' 'year')
 
-TEMP=$(getopt -n "${scriptname}" -o "${opt_short}" -l "${opt_long[*]}" -- "$@" \
-    || exit 1)
+if ! TEMP=$(getopt -n "${scriptname}" -o "${opt_short}" -l "${opt_long[*]}" -- "$@"); then
+    exit 1
+fi
 
 eval set -- "$TEMP"
 unset TEMP
@@ -60,16 +61,17 @@ while true; do
         metadata+=(".${flag}")
         ;;
     --)
+        if [[ $# == 1 ]]; then
+            printf '%b\n' "${scriptname}: no files specified. See --help" >&2
+            exit 2
+        fi
+
         shift
         break
         ;;
     *)
-        if [[ $# == 0 ]]; then
-            printf '%b\n' "${scriptname}: no files specified. See --help" >&2
-            exit 3
-        fi
-
-        break
+        usage
+        exit 3
         ;;
     esac
 
