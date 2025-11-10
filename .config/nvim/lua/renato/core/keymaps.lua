@@ -141,10 +141,13 @@ vim.keymap.set("n", ")", ")zz")
 vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
 
+vim.keymap.set("i", "<M-h>", "<Left>")
+vim.keymap.set("i", "<M-j>", "<Down>")
+vim.keymap.set("i", "<M-k>", "<Up>")
+vim.keymap.set("i", "<M-l>", "<Right>")
+
 -- Misc
 
---   Change diagraph key
--- vim.keymap.set("i", "<C-k>", "<C-b>")
 --   Clear search highlight
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 --   Command-line window

@@ -20,7 +20,8 @@ function plugin-load
 		fi
 		if [[ ! -e $initfile ]]; then
 			initfiles=($plugdir/*.{plugin.zsh,zsh-theme,zsh,sh}(N))
-			(( $#initfiles )) || { echo >&2 "No init file '$repo'." && continue }
+			(( $#initfiles )) || { echo >&2 "No init file '$repo'." \
+				&& continue }
 			ln -sf $initfiles[1] $initfile
 		fi
 		fpath+=$plugdir
@@ -43,19 +44,19 @@ plugin-load $repos
 # Aliases
 which bat > /dev/null 2>&1 \
 	&& alias cat='bat '
-alias cs50="CC='clang' CFLAGS='-ferror-limit=1 -gdwarf-4 -ggdb3 -O0 -std=c11 \
-	-Wall -Werror -Wextra -Wno-gnu-folding-constant -Wno-sign-compare \
-	-Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable \
-	-Wshadow' LDLIBS='-lcrypt -lcs50 -lm' make "
 which gdu > /dev/null 2>&1 \
 	&& alias du='gdu '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
+alias gcc-sanitizer='gcc -std=c11 -Wall -Wextra -Wformat-overflow \
+	-Wuse-after-free=1 -Wstrict-prototypes -Wshadow -Wconversion \
+	-Wno-override-init -Werror -fmax-errors=1 -fsanitize=address,undefined -O0 \
+	-g3'
+alias gcc-analyzer='gcc -std=c11 -Wall -Wextra -Wformat-overflow \
+	-Wuse-after-free=1 -Wstrict-prototypes -Wshadow -Wconversion \
+	-Wno-override-init -Werror -fmax-errors=1 -fanalyzer -O0 -g3'
 alias grep='grep --color=auto '
 which eza > /dev/null 2>&1 \
 	&& alias ls='eza --icons=auto --hyperlink --no-quotes '
-alias make="CFLAGS='-fsanitize=undefined,address -fmax-errors=1 -Werror \
-	-std=c11 -O0 -gdwarf -ggdb -Wall -Wextra -Wformat-overflow \
-	-Wuse-after-free=1 -Wstrict-prototypes -Wshadow -Wconversion' make "
 which trash > /dev/null 2>&1 \
 	&& alias rm='trash '
 alias siv='nsxiv-rifle '
@@ -104,6 +105,12 @@ bindkey -s "^[[13;5u" "\r" # <C-CR>
 
 # Functions
 
+ # Jump through prompts
+ precmd()
+ {
+	 print -Pn "\033]133;A\007"
+ }
+
 # Some keybindings bugs the prompt so they must be reseted afterwards (using
 # zle reset-prompt)
 function _fzf-man-widget()
@@ -119,7 +126,7 @@ function _fzf-man-widget()
 		| sort \
 		| awk -v blue=$(tput setaf 4) -v cyan=$(tput setaf 6) \
 		-v res=$(tput sgr0) -v bld=$(tput bold) \
-			'{ $1=blue bld $1; $2=res cyan $2; $3=res $3; } 1' \
+		'{ $1=blue bld $1; $2=res cyan $2; $3=res $3; } 1' \
 		| fzf \
 		-q "$1" \
 		--ansi \
@@ -128,7 +135,7 @@ function _fzf-man-widget()
 		--preview-window '50%,rounded,<70(up,75%,border-bottom)' \
 		--preview "${batman}" \
 		--bind "enter:execute(${manpage} | xargs -r man)" \
-}
+	}
 function _git_add()
 {
 	if ! dotbare --git fadd; then
@@ -198,7 +205,7 @@ function yy()
 	if cwd="$(command cat -- "$tmp")" \
 		&& [ -n "$cwd" ] \
 		&& [ "$cwd" != "$PWD" ]; then
-		builtin cd "$cwd"
+	builtin cd "$cwd"
 	fi
 
 	rm -f -- "$tmp"
@@ -259,6 +266,9 @@ function zvm_after_lazy_keybindings()
 # Visual selection highlighting
 ZVM_VI_HIGHLIGHT_BACKGROUND=#2E3C64
 ZVM_VI_HIGHLIGHT_FOREGROUND=white
+
+# Surround mode
+ZVM_VI_SURROUND_BINDKEY=s-prefix
 
 # Man
 export MANWIDTH=80

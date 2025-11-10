@@ -8,9 +8,9 @@ local file =
 
 if file then
     local extension = file:match(".*%.(%w+)")
-    if extension == "c" then
-        vim.bo[bufnr].filetype = "c"
-    elseif extension == "cpp" then
+    if extension == "cpp" then
         vim.bo[bufnr].filetype = "cpp"
+    else
+        vim.bo[bufnr].filetype = "c"
     end
 end
