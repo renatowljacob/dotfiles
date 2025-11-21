@@ -136,13 +136,6 @@ return {
 
                     return { "lsp", "snippets", "path", "buffer" }
                 end,
-                per_filetype = { sql = { "dadbod" } },
-                providers = {
-                    dadbod = {
-                        name = "Dadbod",
-                        module = "vim_dadbod_completion.blink",
-                    },
-                },
             },
             signature = {
                 enabled = true,

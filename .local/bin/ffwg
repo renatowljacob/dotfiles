@@ -25,6 +25,7 @@ Metadata query:
   --artist          Get artist tag
   --comment         Get comment tag
   --date            Get date tag
+  --disc            Get disc tag
   --genre           Get genre tag
   --title           Get title tag
   --track           Get track tag
@@ -35,8 +36,8 @@ EOF
 }
 
 opt_short='hq'
-opt_long=('help' 'quiet' 'album' 'album-artist' 'artist' 'comment' 'date' 'genre'
-    'title' 'track' 'year')
+opt_long=('help' 'quiet' 'album' 'album-artist' 'artist' 'comment' 'date' 'disc'
+    'genre' 'title' 'track' 'year')
 
 if ! TEMP=$(getopt -n "${scriptname}" -o "${opt_short}" -l "${opt_long[*]}" -- "$@"); then
     exit 1
@@ -54,7 +55,7 @@ while true; do
     -q | --quiet)
         quiet=1
         ;;
-    --album | --album-artist | --artist | --comment | --date | --discnumber | \
+    --album | --album-artist | --artist | --comment | --date | --disc | \
         --genre | --title | --track | --year)
         flag=${1##--}
         flag=${flag/-/_}
@@ -87,6 +88,7 @@ if [[ ${#metadata} == 0 ]]; then
 else
     if [[ ${quiet} == 1 ]]; then
         jqfilter=".format.tags | $(printf '%s\n' "${metadata[*]}" | sed 's/ /,/g')"
+        opts+=('-r')
     else
         jqfilter=".format.tags | pick($(printf '%s\n' "${metadata[*]}" | sed 's/ /,/g'))"
     fi
@@ -101,5 +103,5 @@ for file in "$@"; do
     if [[ ${quiet} == 0 ]]; then
         printf '%b\n' "${file}"
     fi
-    ffprobe -loglevel quiet -print_format json -show_format "${file}" | jq "${opts[*]}" "${jqfilter}"
+    ffprobe -loglevel quiet -print_format json -show_format "${file}" | jq "${opts[@]}" "${jqfilter}"
 done

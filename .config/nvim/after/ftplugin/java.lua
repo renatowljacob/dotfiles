@@ -1,3 +1,5 @@
+vim.wo[vim.api.nvim_get_current_win()][0].colorcolumn = "120"
+
 -- From https://github.com/bcampolo/nvim-starter-kit/tree/java
 
 -- JDTLS (Java LSP) configuration
@@ -21,7 +23,7 @@ vim.list_extend(
     vim.split(
         vim.fn.glob(
             vim.env.HOME .. "/.local/share/nvim/mason/share/java-test/*.jar",
-            1
+            true
         ),
         "\n"
     )
@@ -60,18 +62,19 @@ local config = {
 
     -- This is the default if not provided, you can remove it. Or adjust as needed.
     -- One dedicated LSP server & client will be started per unique root_dir
-    root_dir = require("jdtls.setup").find_root({
+    root_dir = vim.fs.root(0, {
         ".git",
+        "build.gradle",
+        "gradlew",
         "mvnw",
         "pom.xml",
-        "build.gradle",
     }),
 
     -- Here you can configure eclipse.jdt.ls specific settings
     -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
     settings = {
         java = {
-            home = "/usr/lib/jvm/java-17-openjdk",
+            home = "/usr/lib/jvm/java-21-openjdk",
             eclipse = {
                 downloadSources = true,
             },
@@ -82,6 +85,10 @@ local config = {
                     {
                         name = "JavaSE-17",
                         path = "/usr/lib/jvm/java-17-openjdk",
+                    },
+                    {
+                        name = "JavaSE-21",
+                        path = "/usr/lib/jvm/java-21-openjdk",
                     },
                 },
             },
@@ -152,16 +159,11 @@ local config = {
         bundles = bundles,
         extendedClientCapabilities = jdtls.extendedClientCapabilities,
     },
+    on_attach = function(client, bufnr)
+        jdtls.setup_dap({ hotcodereplace = "auto" })
+        require("jdtls.dap").setup_dap_main_class_configs()
+    end,
 }
-
--- Needed for debugging
-config["on_attach"] = function(client, bufnr)
-    jdtls.setup_dap({ hotcodereplace = "auto" })
-    require("jdtls.dap").setup_dap_main_class_configs()
-end
 
 -- This starts a new client & server, or attaches to an existing client & server based on the `root_dir`.
 jdtls.start_or_attach(config)
-
-vim.wo[vim.api.nvim_get_current_win()][0].foldenable = true
-vim.wo[vim.api.nvim_get_current_win()][0].colorcolumn = "120"

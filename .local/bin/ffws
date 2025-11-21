@@ -36,6 +36,7 @@ Metadata edition:
   --artist=ARTIST                 Set artist tag
   --comment=COMMENT               Set comment tag
   --date=DATE                     Set date tag
+  --disc=DISC                     Set disc tag
   --genre=GENRE                   Set genre tag
   --title=TITLE                   Set title tag
   --track=TRACK                   Set track tag
@@ -48,8 +49,8 @@ EOF
 
 opt_short='b::de:hv::'
 opt_long=('backup::' 'dryrun' 'extension:' 'help' 'verbose::' 'album:'
-    'album-artist:' 'artist:' 'comment:' 'date:' 'genre:' 'title:' 'track:'
-    'year:' 'clear')
+    'album-artist:' 'artist:' 'comment:' 'date:' 'disc:' 'genre:' 'title:'
+    'track:' 'year:' 'clear')
 
 if ! TEMP=$(getopt -n "${scriptname}" -o "${opt_short}" -l "${opt_long[*]}" -- "$@"); then
     exit 1
@@ -78,8 +79,8 @@ while true; do
         verbose="${2:-1}"
         shift
         ;;
-    --album | --album-artist | --artist | --comment | --date | --genre | \
-        --title | --track | --year)
+    --album | --album-artist | --artist | --comment | --date | --disc | \
+        --genre | --title | --track | --year)
         flag=${1##--}
         flag=${flag/-/_}
         metadata+=('-metadata' "${flag}=$2")

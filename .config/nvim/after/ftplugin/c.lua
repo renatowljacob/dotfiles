@@ -1,5 +1,3 @@
-vim.wo[vim.api.nvim_get_current_win()][0].foldenable = true
-
 local myapi = require("renato.core.myapi")
 local bufnr = vim.api.nvim_get_current_buf()
 
