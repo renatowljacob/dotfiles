@@ -63,7 +63,7 @@ alias siv='nsxiv-rifle '
 
 # Neovim aliases
 alias firenvim='NVIM_APPNAME=firenvim nvim'
-alias nvim-git='NVIM_APPNAME=nvim-git $HOME/Repos/git/neovim/build/bin/nvim '
+alias nvim-git="NVIM_APPNAME=nvim-git ${HOME}/Repos/git/neovim/build/bin/nvim "
 alias nvim='nvim-remote '
 
 # Autosuggestions
@@ -92,8 +92,8 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # Dotbare
-export DOTBARE_DIR="$HOME/.dotfiles"
-export DOTBARE_TREE="$HOME"
+export DOTBARE_DIR="${HOME}/.dotfiles"
+export DOTBARE_TREE="${HOME}"
 
 _dotbare_completion_cmd
 
@@ -136,42 +136,20 @@ function _fzf-man-widget()
 		--preview "${batman}" \
 		--bind "enter:execute(${manpage} | xargs -r man)" \
 	}
-function _git_add()
+
+function _git_reset_prompt_after_cmd()
 {
-	if ! dotbare --git fadd; then
+	if ! dotbare --git ${@}; then
 		zle reset-prompt
 	fi
 }
-function _git_files()
-{
-	if ! dotbare --git fedit; then
-		zle reset-prompt
-	fi
-}
-function _git_grep()
-{
-	if ! dotbare --git fgrep; then
-		zle reset-prompt
-	fi
-}
-function _git_log()
-{
-	if ! dotbare --git flog; then
-		zle reset-prompt
-	fi
-}
-function _git_stash()
-{
-	if ! dotbare --git fstash; then
-		zle reset-prompt
-	fi
-}
-function _git_status()
-{
-	if ! dotbare --git fstat; then
-		zle reset-prompt
-	fi
-}
+function _git_add()    { _git_reset_prompt_after_cmd fadd   }
+function _git_files()  { _git_reset_prompt_after_cmd fedit  }
+function _git_grep()   { _git_reset_prompt_after_cmd fgrep  }
+function _git_log()    { _git_reset_prompt_after_cmd flog   }
+function _git_stash()  { _git_reset_prompt_after_cmd fstash }
+function _git_status() { _git_reset_prompt_after_cmd fstat  }
+
 function _pacman_sync()
 {
 	local packages="$(pacman -Slq \
@@ -272,11 +250,11 @@ ZVM_VI_SURROUND_BINDKEY=s-prefix
 
 # Man
 export MANWIDTH=80
-if [ $TERM != "linux" ]; then
+if [ "${TERM}" != "linux" ]; then
 	export MANROFFOPT=-P-i
 fi
 
-export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent.socket
+export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(starship init zsh)"
