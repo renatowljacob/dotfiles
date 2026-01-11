@@ -980,6 +980,11 @@ xloadalpha(void)
 	dc.col[defaultbg].color.alpha = (unsigned short)(0xffff * usedAlpha);
 	dc.col[defaultbg].pixel &= 0x00FFFFFF;
 	dc.col[defaultbg].pixel |= (unsigned char)(0xff * usedAlpha) << 24;
+	#if SELECTION_COLORS_PATCH && SELECTIONBG_ALPHA_PATCH
+	dc.col[selectionbg].color.alpha = (unsigned short)(0xffff * usedAlpha);
+	dc.col[selectionbg].pixel &= 0x00FFFFFF;
+	dc.col[selectionbg].pixel |= (unsigned char)(0xff * usedAlpha) << 24;
+	#endif // SELECTION_COLORS_PATCH && SELECTIONBG_ALPHA_PATCH
 }
 #endif // ALPHA_FOCUS_HIGHLIGHT_PATCH
 
@@ -1041,6 +1046,18 @@ xloadcols(void)
 	dc.col[defaultbg].color.red   *= alpha;
 	dc.col[defaultbg].color.green *= alpha;
 	dc.col[defaultbg].color.blue  *= alpha;
+	#if SELECTION_COLORS_PATCH && SELECTIONBG_ALPHA_PATCH
+	/* set alpha value of selbg color */
+	dc.col[selectionbg].color.alpha = (unsigned short)(0xffff * alpha);
+	dc.col[selectionbg].pixel &= 0x00FFFFFF;
+	dc.col[selectionbg].pixel |= (unsigned char)(0xff * alpha) << 24;
+	dc.col[selectionbg].color.red =
+		((unsigned short)(dc.col[selectionbg].color.red * alpha)) & 0xff00;
+	dc.col[selectionbg].color.green =
+		((unsigned short)(dc.col[selectionbg].color.green * alpha)) & 0xff00;
+	dc.col[selectionbg].color.blue =
+		((unsigned short)(dc.col[selectionbg].color.blue * alpha)) & 0xff00;
+	#endif // SELECTION_COLORS_PATCH && SELECTIONBG_ALPHA_PATCH
 	#endif // ALPHA_PATCH
 	loaded = 1;
 }
@@ -1137,7 +1154,7 @@ xhints(void)
 	sizeh->flags = PSize | PResizeInc | PBaseSize | PMinSize;
 	sizeh->height = win.h;
 	sizeh->width = win.w;
-	#if ANYSIZE_PATCH || ANYSIZE_SIMPLE_PATCH
+	#if ANYSIZE_PATCH && !DYNAMIC_PADDING_PATCH || ANYSIZE_SIMPLE_PATCH
 	sizeh->height_inc = 1;
 	sizeh->width_inc = 1;
 	#else
@@ -2234,20 +2251,9 @@ xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len, int x, i
 	else
 	#endif // BACKGROUND_IMAGE_PATCH
 
-	#if !WIDE_GLYPHS_PATCH
-	XftDrawRect(xw.draw, bg, winx, winy, width, win.ch);
-	#endif // WIDE_GLYPHS_PATCH
-
-	/* Set the clip region because Xft is sometimes dirty. */
-	r.x = 0;
-	r.y = 0;
-	r.height = win.ch;
-	r.width = width;
-	XftDrawSetClipRectangles(xw.draw, winx, winy, &r, 1);
-
-	#if WIDE_GLYPHS_PATCH
 	/* Fill the background */
 	XftDrawRect(xw.draw, bg, winx, winy, width, win.ch);
+	#if WIDE_GLYPHS_PATCH
 	}
 	#endif // WIDE_GLYPHS_PATCH
 
@@ -2258,12 +2264,27 @@ xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len, int x, i
 	if (base.mode & ATTR_BOXDRAW) {
 		drawboxes(winx, winy, width / len, win.ch, fg, bg, specs, len);
 	} else {
-		/* Render the glyphs. */
-		XftDrawGlyphFontSpec(xw.draw, fg, specs, len);
-	}
+	#endif // BOXDRAW_PATCH
+	/* Set the clip region because Xft is sometimes dirty. */
+	#if WIDE_GLYPHS_PATCH
+	r.x = 0;
+	r.y = 0;
+	r.height = win.ch;
+	r.width = win.w;
+	XftDrawSetClipRectangles(xw.draw, 0, winy, &r, 1);
 	#else
+	r.x = 0;
+	r.y = 0;
+	r.height = win.ch;
+	r.width = width;
+	XftDrawSetClipRectangles(xw.draw, winx, winy, &r, 1);
+	#endif // WIDE_GLYPHS_PATCH
+
 	/* Render the glyphs. */
 	XftDrawGlyphFontSpec(xw.draw, fg, specs, len);
+
+	#if BOXDRAW_PATCH
+	}
 	#endif // BOXDRAW_PATCH
 
 	/* Render underline and strikethrough. */
@@ -2700,21 +2721,19 @@ xdrawcursor(int cx, int cy, Glyph g, int ox, int oy, Glyph og)
 	XRenderColor colbg;
 	#endif // DYNAMIC_CURSOR_COLOR_PATCH
 
-	#if !DYNAMIC_CURSOR_COLOR_PATCH
-	/* remove the old cursor */
+	#if LIGATURES_PATCH
+	/* Redraw the line where cursor was previously.
+	 * It will restore the ligatures broken by the cursor. */
+	xdrawline(line, 0, oy, len);
+	#else
+	/* Remove the old cursor */
 	if (selected(ox, oy))
 		#if SELECTION_COLORS_PATCH
 		og.mode |= ATTR_SELECTED;
 		#else
 		og.mode ^= ATTR_REVERSE;
 		#endif // SELECTION_COLORS_PATCH
-	#endif // DYNAMIC_CURSOR_COLOR_PATCH
 
-	#if LIGATURES_PATCH
-	/* Redraw the line where cursor was previously.
-	 * It will restore the ligatures broken by the cursor. */
-	xdrawline(line, 0, oy, len);
-	#else
 	xdrawglyph(og, ox, oy);
 	#endif // LIGATURES_PATCH
 
@@ -2757,7 +2776,7 @@ xdrawcursor(int cx, int cy, Glyph g, int ox, int oy, Glyph og)
 		}
 		#endif // SELECTION_COLORS_PATCH
 	} else {
-		#if SELECTION_COLORS_PATCH
+		#if SELECTION_COLORS_PATCH && !DYNAMIC_CURSOR_COLOR_PATCH
 		g.fg = defaultbg;
 		g.bg = defaultcs;
 		drawcol = dc.col[defaultcs];
@@ -3806,8 +3825,12 @@ run(void)
 
 		xev = 0;
 		while (XPending(xw.dpy)) {
-			xev = 1;
 			XNextEvent(xw.dpy, &ev);
+			#if BLINKING_CURSOR_PATCH
+			xev = (!xev || xev == SelectionRequest) ? ev.type : xev;
+			#else
+			xev = 1;
+			#endif // BLINKING_CURSOR_PATCH
 			if (XFilterEvent(&ev, None))
 				continue;
 			if (handler[ev.type])
@@ -3834,10 +3857,10 @@ run(void)
 			if (!drawing) {
 				trigger = now;
 				#if BLINKING_CURSOR_PATCH
-				if (IS_SET(MODE_BLINK)) {
-					win.mode ^= MODE_BLINK;
+				if (xev != SelectionRequest) {
+					win.mode &= ~MODE_BLINK;
+					lastblink = now;
 				}
-				lastblink = now;
 				#endif // BLINKING_CURSOR_PATCH
 				drawing = 1;
 			}

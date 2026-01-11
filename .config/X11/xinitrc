@@ -46,30 +46,15 @@ fi
 export XDG_RUNTIME_DIR="/run/user/$UID"
 export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 
-session=${1:-"dusk"}
-
-case $session in
-"dusk")
-    /usr/lib/polkit-kde-authentication-agent-1 &
-    ~/.fehbg &
-    CM_IGNORE_WINDOW="[Kk]ee[Pp]ass[Xx][Cc]" clipmenud &
-    numlockx &
-    picom -b &
-    qbittorrent &
-    sxhkd -m 1 &
-    udiskie -s &
-    unclutter -b &
-    st newsboat &
-    xidlehook --not-when-audio --not-when-fullscreen \
-        --timer 600 'betterlockscreen --lock' '' &
-    exec dusk
-    ;;
-"awesome")
-    /usr/lib/polkit-kde-authentication-agent-1 &
-    clipmenud &
-    numlockx &
-    xidlehook --not-when-audio --not-when-fullscreen \
-        --timer 600 'betterlockscreen --lock' '' &
-    exec awesome
-    ;;
-esac
+/usr/lib/polkit-kde-authentication-agent-1 &
+numlockx &
+~/.fehbg &
+picom -b &
+sxhkd -m 1 &
+udiskie -s &
+unclutter -b &
+st newsboat &
+xidlehook --not-when-audio --not-when-fullscreen \
+    --timer 600 'betterlockscreen --lock' '' &
+qbittorrent &
+exec dusk

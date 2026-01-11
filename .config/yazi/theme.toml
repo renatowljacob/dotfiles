@@ -3,13 +3,27 @@ dark = "tokyo-night-storm"
 light = "tokyo-night-day"
 
 [mgr]
-
-# Hovered
-hovered         = { reversed = true, bold = true }
-preview_hovered = { reversed = true, bold = true }
-
-# Find
 find_keyword  = { fg = "#24283b", bg = "#ff9e64", bold = true }
-
-# Border
 border_symbol = " "
+
+[indicator]
+parent  = { reversed = true, bold = true }
+current = { reversed = true, bold = true }
+preview = { underline = false, reversed = true, bold = true }
+padding = { open = "█", close = "█" }
+
+[status]
+overall   = { fg = "#c0caf5", bg = "#292E42" }
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+[filetype]
+rules = [
+	# Special files
+	{ url = "*", is = "orphan", bg = "#f7768e" },
+	{ url = "*", is = "exec"  , fg = "#9ece6a" },
+
+	# Fallback
+	{ url = "*/", fg = "#7aa2f7" },
+	{ url = "*", fg = "#c0caf5" }
+]

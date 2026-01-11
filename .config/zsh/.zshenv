@@ -11,6 +11,8 @@ export SAVEHIST=9000
 
 export EDITOR=nvim-remote
 
+export GPG_TTY="$(tty)"
+
 # fzf-zsh integration
 
 # Navigate through directories displayed in tree-like format

@@ -1837,7 +1837,7 @@ tsetattr(const int *attr, int l)
 				term.c.attr.fg = idx;
 				#endif // MONOCHROME_PATCH
 			break;
-		case 39:
+		case 39: /* set foreground color to default */
 			term.c.attr.fg = defaultfg;
 			break;
 		case 48:
@@ -1848,7 +1848,7 @@ tsetattr(const int *attr, int l)
 				term.c.attr.bg = idx;
 				#endif // MONOCHROME_PATCH
 			break;
-		case 49:
+		case 49: /* set background color to default */
 			term.c.attr.bg = defaultbg;
 			break;
 		#if UNDERCURL_PATCH
@@ -1863,6 +1863,13 @@ tsetattr(const int *attr, int l)
 			term.c.attr.ucolor[1] = -1;
 			term.c.attr.ucolor[2] = -1;
 			term.c.attr.mode ^= ATTR_DIRTYUNDERLINE;
+			break;
+		#else
+		case 58:
+			/* This starts a sequence to change the color of
+			 * "underline" pixels. We don't support that and
+			 * instead eat up a following "5;n" or "2;r;g;b". */
+			tdefcolor(attr, &i, l);
 			break;
 		#endif // UNDERCURL_PATCH
 		default:
@@ -1978,7 +1985,7 @@ tsetmode(int priv, int set, const int *args, int narg)
 			case 1006: /* 1006: extended reporting mode */
 				xsetmode(set, MODE_MOUSESGR);
 				break;
-			case 1034:
+			case 1034: /* 1034: enable 8-bit mode for keyboard input */
 				xsetmode(set, MODE_8BIT);
 				break;
 			case 1049: /* swap screen & set/restore cursor as xterm */
@@ -1986,8 +1993,8 @@ tsetmode(int priv, int set, const int *args, int narg)
 					break;
 				tcursor((set) ? CURSOR_SAVE : CURSOR_LOAD);
 				/* FALLTHROUGH */
-			case 47: /* swap screen */
-			case 1047:
+			case 47: /* swap screen buffer */
+			case 1047: /* swap screen buffer */
 				if (!allowaltscreen)
 					break;
 				#if REFLOW_PATCH
@@ -2011,7 +2018,7 @@ tsetmode(int priv, int set, const int *args, int narg)
 					break;
 				/* FALLTHROUGH */
 				#endif // REFLOW_PATCH
-			case 1048:
+			case 1048: /* save/restore cursor (like DECSC/DECRC) */
 				#if REFLOW_PATCH
 				if (!allowaltscreen)
 					break;
@@ -2039,6 +2046,15 @@ tsetmode(int priv, int set, const int *args, int narg)
 				MODBIT(term.mode, set, MODE_SIXEL_CUR_RT);
 				break;
 			#endif // SIXEL_PATCH
+			#if SYNC_PATCH
+			case 2026:
+				if (set) {
+					tsync_begin();
+				} else {
+					tsync_end();
+				}
+				break;
+			#endif // SYNC_PATCH
 			default:
 				fprintf(stderr,
 					"erresc: unknown private set/reset mode %d\n",
@@ -2435,6 +2451,35 @@ csihandle(void)
 			goto unknown;
 		}
 		break;
+	#if SYNC_PATCH || SIXEL_PATCH
+	case '$': /* DECRQM -- DEC Request Mode (private) */
+		if (csiescseq.mode[1] == 'p' && csiescseq.priv) {
+			switch (csiescseq.arg[0]) {
+			#if SIXEL_PATCH
+			case 80:
+				/* Sixel Display Mode  */
+				ttywrite(IS_SET(MODE_SIXEL_SDM) ? "\033[?80;1$y"
+				                                : "\033[?80;2$y", 9, 0);
+				break;
+			case 8452:
+				/* Sixel scrolling leaves cursor to right of graphic */
+				ttywrite(IS_SET(MODE_SIXEL_CUR_RT) ? "\033[?8452;1$y"
+				                                   : "\033[?8452;2$y", 11, 0);
+				break;
+			#endif // SIXEL_PATCH
+			#if SYNC_PATCH
+			case 2026:
+				/* https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036 */
+				ttywrite(su ? "\033[?2026;1$y" : "\033[?2026;2$y", 11, 0);
+				break;
+			#endif // SYNC_PATCH
+			default:
+				goto unknown;
+			}
+			break;
+		}
+		goto unknown;
+	#endif // SYNC_PATCH | SIXEL_PATCH
 	case 'r': /* DECSTBM -- Set Scrolling Region */
 		if (csiescseq.priv) {
 			goto unknown;
@@ -2498,7 +2543,11 @@ csihandle(void)
 		break;
 	#endif // CSI_22_23_PATCH | SIXEL_PATCH
 	case 'u': /* DECRC -- Restore cursor position (ANSI.SYS) */
-		tcursor(CURSOR_LOAD);
+		if (csiescseq.priv) {
+			goto unknown;
+		} else {
+			tcursor(CURSOR_LOAD);
+		}
 		break;
 	case ' ':
 		switch (csiescseq.mode[1]) {
@@ -2619,7 +2668,7 @@ strhandle(void)
 				xsettitle(strescseq.args[1]);
 				#endif // CSI_22_23_PATCH
 			return;
-		case 52:
+		case 52: /* manipulate selection data */
 			if (narg > 2 && allowwindowops) {
 				dec = base64dec(strescseq.args[2]);
 				if (dec) {
@@ -2637,9 +2686,9 @@ strhandle(void)
 		#endif // OSC7_PATCH
 		case 8: /* Clear Hyperlinks */
 			return;
-		case 10:
-		case 11:
-		case 12:
+		case 10: /* set dynamic VT100 text foreground color */
+		case 11: /* set dynamic VT100 text background color */
+		case 12: /* set dynamic text cursor color */
 			if (narg < 2)
 				break;
 			p = strescseq.args[1];
@@ -2677,6 +2726,19 @@ strhandle(void)
 				 * TODO if defaultbg color is changed, borders
 				 * are dirty
 				 */
+				tfulldirt();
+			}
+			return;
+		case 110: /* reset dynamic VT100 text foreground color */
+		case 111: /* reset dynamic VT100 text background color */
+		case 112: /* reset dynamic text cursor color */
+			if (narg != 1)
+				break;
+			if ((j = par - 110) < 0 || j >= LEN(osc_table))
+				break; /* shouldn't be possible */
+			if (xsetcolorname(osc_table[j].idx, NULL)) {
+				fprintf(stderr, "erresc: %s color not found\n", osc_table[j].str);
+			} else {
 				tfulldirt();
 			}
 			return;
@@ -3434,7 +3496,7 @@ check_control_code:
 
 	#if REFLOW_PATCH
 	/* selected() takes relative coordinates */
-	if (selected(term.c.x + term.scr, term.c.y + term.scr))
+	if (selected(term.c.x, term.c.y + term.scr))
 		selclear();
 	#else
 	if (selected(term.c.x, term.c.y))

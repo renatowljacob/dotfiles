@@ -76,7 +76,9 @@ return {
 
             for server, _ in vim.fs.dir(vim.env.XDG_CONFIG_HOME .. "/nvim/lsp") do
                 local server_name = vim.fn.fnamemodify(server, ":t:r")
-                table.insert(ensure_installed, server_name)
+                if server_name ~= "clangd" then
+                    table.insert(ensure_installed, server_name)
+                end
             end
 
             -- You can add other tools here that you want Mason to install
@@ -87,7 +89,6 @@ return {
                 "java-debug-adapter",
                 -- Formatters
                 "clang-format",
-                "prettier",
                 "shfmt",
                 "stylua",
                 -- Linters

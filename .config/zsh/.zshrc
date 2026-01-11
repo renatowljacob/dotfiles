@@ -257,5 +257,5 @@ fi
 export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 
 eval "$(zoxide init --cmd cd zsh)"
-eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
+eval "$(starship init zsh)"

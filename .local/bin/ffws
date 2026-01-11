@@ -150,7 +150,7 @@ for file in "$@"; do
 
     # Output file. Only significant if a conversion takes place, otherwise it's
     # just for logging
-    newfile="$stem.$format"
+    newfile="${stem}.${format}"
 
     if [[ ${dryrun} == 0 ]]; then
         [[ ${backup} == 1 ]] && cp "${file}" "${backupdir}"
