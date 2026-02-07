@@ -1,7 +1,5 @@
 ---@module "snacks"
 
--- TODO: Create a simple session manager for convenience
-
 ---@class MyApi Functions that I use throughout my config
 ---@field buf table Buffer-related functions
 ---@field cli table CLI command wrappers
@@ -14,17 +12,15 @@ MyApi.buf = {}
 MyApi.cli = {}
 MyApi.fs = {}
 MyApi.ft = {}
-MyApi.ft.c = {}
-MyApi.ft.javascript = {}
 MyApi.treesitter = {}
 
 ---@class State
----@field Snacks_terminal table snacks_terminal state
+---@field terminal table snacks_terminal state
 local State = {
     ---@class Snacks_terminal
     ---@field count number The count given for the last normal mode command
     ---@field keys string[] Mapped keys
-    Snacks_terminal = {
+    terminal = {
         count = 1,
         keys = {
             "H",
@@ -35,7 +31,7 @@ local State = {
     },
 }
 
----Document symbols using a language server if present, otherwise use Treesitter
+---Document symbols using a language server (or Treesitter as a fallback)
 ---@param opts? snacks.picker.lsp.symbols.Config
 function MyApi.buf.document_symbols(opts)
     if
@@ -100,21 +96,19 @@ end
 
 ---Toggle different snack terminals
 ---@param count? number
----@param opts? snacks.terminal.Opts
-function MyApi.buf.toggle_nth_terminal(count, opts)
-    State.Snacks_terminal.count = count or State.Snacks_terminal.count
-    opts = opts
-        or {
-            auto_insert = false,
-            win = {
-                wo = {
-                    winbar = "Terminal "
-                        .. State.Snacks_terminal.keys[State.Snacks_terminal.count],
-                },
+function MyApi.buf.toggle_nth_terminal(count)
+    State.terminal.count = count or State.terminal.count
+    local opts = {
+        auto_insert = false,
+        win = {
+            wo = {
+                winbar = "Terminal "
+                    .. State.terminal.keys[State.terminal.count],
             },
-        }
+        },
+    }
 
-    vim.cmd("normal! " .. State.Snacks_terminal.count)
+    vim.cmd("normal! " .. State.terminal.count)
     Snacks.terminal.toggle(nil, opts)
 end
 
@@ -128,11 +122,9 @@ function MyApi.cli.dotbare(args, opts)
     opts.git = opts.git or false
 
     local command = { "dotbare" }
-
     if opts.git then
         table.insert(command, "--git")
     end
-
     command = vim.iter({ command, args }):flatten():totable()
 
     local bufnr = vim.api.nvim_create_buf(false, true)
@@ -141,7 +133,6 @@ function MyApi.cli.dotbare(args, opts)
 
     local height = math.ceil(vim.o.lines * 0.85)
     local width = math.ceil(vim.o.columns * 0.85)
-
     local window = vim.api.nvim_open_win(bufnr, true, {
         relative = "editor",
         height = height,
@@ -150,7 +141,6 @@ function MyApi.cli.dotbare(args, opts)
         col = math.ceil((vim.o.columns - width) / 2),
         row = math.ceil((vim.o.lines - height) / 2),
     })
-
     vim.api.nvim_set_current_win(window)
 
     vim.fn.jobstart(command, {
@@ -166,7 +156,6 @@ function MyApi.cli.dotbare(args, opts)
             end
 
             local buflist = vim.api.nvim_list_bufs()
-
             local lastbuf = buflist[#buflist]
 
             -- Necessary because list_bufs() includes unlisted buffers
@@ -197,91 +186,59 @@ function MyApi.fs.find_root(cwd, bufpath)
     end
 end
 
----Gets a C/C++ header file's source file equivalent or vice versa (e.g file.c returns file.h if it exists, file.h returns file.c)
----@param c_file string C/C++ file
----@return string? header Header file
-function MyApi.ft.c.get_source_or_header(c_file)
-    local basename = vim.fs.basename(c_file)
+---Gets the filetype of a C/C++ header file
+---Useful for ambiguous .h files that are set the wrong filetype
+---@param header_file string C/C++ filepath
+---@return string? filetype C or C++ filetype
+function MyApi.ft.get_header_filetype(header_file)
+    local file_basename = vim.fs.basename(header_file)
+    local file_extension = file_basename:match(".*%.(.*)")
 
-    local extension = basename:match(".*%.(%w+)")
-    if extension ~= "c" and extension ~= "h" then
-        return
+    -- Non-ambiguous header file, just leave
+    if file_extension ~= "h" then
+        return nil
     end
 
-    local stem = basename:match("(.*)%.%w+")
-    local files = vim.fs.find(function(file, _)
-        return stem == file:match("(.*)%.%w+")
+    local file_stem = file_basename:match("(.*)%..*")
+    local same_stem_files = vim.fs.find(function(file, _)
+        return file_stem == file:match("(.*)%..*")
     end, {
         limit = math.huge,
         type = "file",
-        path = vim.fs.dirname(basename),
+        path = vim.fs.dirname(file_basename),
     })
 
-    if vim.tbl_isempty(files) then
-        return
+    if vim.tbl_isempty(same_stem_files) then
+        return nil
     end
 
-    for _, file in ipairs(files) do
-        if file:match(".*%.(%w+)") ~= extension then
-            return file
+    local cpp_extensions = { "cpp", "cxx", "c++", "cc", "cp", "C", "CPP", "H" } -- why
+    for _, file in ipairs(same_stem_files) do
+        for _, extension in ipairs(cpp_extensions) do
+            if file:match(".*%.(%w+)") == extension then
+                return "cpp"
+            end
         end
     end
+
+    return "c"
 end
 
----Gets a C/C++ source file's header file (e.g file.c returns file.h)
----@param source string C/C++ file
----@return string? header Header file
-function MyApi.ft.c.get_header(source)
-    local basename = vim.fs.basename(source)
-    local extension = basename:match(".*%.(%w+)")
-
-    if extension ~= "c" then
-        return
-    end
-
-    return MyApi.ft.c.get_source_or_header(source)
-end
-
----Gets a C/C++ header file's source file (e.g file.h returns file.c)
----@param header string C/C++ file
----@return string? source Source file
-function MyApi.ft.c.get_source(header)
-    local basename = vim.fs.basename(header)
-    local extension = basename:match(".*%.(%w+)")
-
-    if extension ~= "h" then
-        return
-    end
-
-    return MyApi.ft.c.get_source_or_header(header)
-end
-
--- TODO: finish this :P
-function MyApi.ft.c.set_function_declaration()
-    local buffers = vim.api.nvim_list_bufs()
-    local bufnr = vim.api.nvim_get_current_buf()
-    local current_file = vim.api.nvim_buf_get_name(bufnr)
-    local header = MyApi.ft.c.get_header(current_file)
-
-    if not vim.tbl_contains(buffers, header) then
-        vim.cmd(
-            "edit "
-                .. header
-                .. " | setlocal nobuflisted | setlocal bufhidden hide"
-        )
+---Sets the filetype of a C/C++ header buffer accordingly
+---Useful for ambiguous .h files that are set the wrong filetype
+---@param bufnr integer buffer number
+function MyApi.ft.set_header_filetype(bufnr)
+    local filetype =
+        MyApi.ft.get_header_filetype(vim.api.nvim_buf_get_name(bufnr))
+    if filetype ~= nil then
+        vim.bo[bufnr].filetype = filetype
     end
 end
 
 -- NOTE: Taken from https://github.com/JoosepAlviste/dotfiles/blob/master/config/nvim/lua/j/javascript.lua
 
 ---Turns a function into an async one if "await" is typed inside its body
-function MyApi.ft.javascript.set_async()
-    local node_types = {
-        "function_declaration",
-        "function_expression",
-        "arrow_function",
-    }
-
+function MyApi.ft.set_async()
     local success, node =
         pcall(vim.treesitter.get_node, { ignore_injections = false })
     if not success or not node then
@@ -298,6 +255,12 @@ function MyApi.ft.javascript.set_async()
     if text ~= "awai" then
         return
     end
+
+    local node_types = {
+        "function_declaration",
+        "function_expression",
+        "arrow_function",
+    }
 
     local node_ancestor =
         MyApi.treesitter.get_node_ancestor_by_type(node, node_types)

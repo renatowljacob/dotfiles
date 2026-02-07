@@ -20,10 +20,14 @@ sep_right = { open = "", close = "" }
 [filetype]
 rules = [
 	# Special files
-	{ url = "*", is = "orphan", bg = "#f7768e" },
-	{ url = "*", is = "exec"  , fg = "#9ece6a" },
+	{ url = "*",  is = "orphan", fg = "red",     bold = true },
+	{ url = "*",  is = "exec",   fg = "green",   bold = true },
+	{ url = "*",  is = "link",   fg = "cyan",    bold = true },
+	{ url = "*/", is = "link",   fg = "cyan",    bold = true },
+	{ mime = "{image,video}/*",  fg = "magenta", bold = true },
+	{ mime = "{audio}/*",        fg = "cyan" },
 
 	# Fallback
-	{ url = "*/", fg = "#7aa2f7" },
+	{ url = "*/", fg = "#7aa2f7", bold = true },
 	{ url = "*", fg = "#c0caf5" }
 ]

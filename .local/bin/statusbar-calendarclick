@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# 1 = left click
+# 13 = super + left click
+# 15 = super + right click
+
+message="left click -> show calendar
+
+super + left click -> previous month
+
+super + right click -> next month"
+
+case $BLOCK_BUTTON in
+1) calendar curr ;;
+15) calendar next ;;
+13) calendar prev ;;
+*) dunstify -i "${XDG_DATA_HOME}/icons/dunst/circle-exclamation.svg" -a "dusk" "${message}" ;;
+esac

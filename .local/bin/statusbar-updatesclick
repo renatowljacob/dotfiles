@@ -2,6 +2,8 @@
 
 # 1 = left click
 
+message="left click -> show updates"
+
 print_packages()
 {
     dunstrc="${XDG_CONFIG_HOME:-$HOME/.config}/dunst/dunstrc"
@@ -35,6 +37,7 @@ case $BLOCK_BUTTON in
         : > "${cachefile}" && dunstify -a "Updates" "No updates available"
     fi
 
-    duskc --ignore-reply run_command setstatus 4 "$(sb-updates)" &
+    duskc --ignore-reply run_command setstatus 5 "$(statusbar-updates)" &
     ;;
+*) dunstify -i "${XDG_DATA_HOME}/icons/dunst/circle-exclamation.svg" -a "dusk" "${message}" ;;
 esac

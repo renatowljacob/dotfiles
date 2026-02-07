@@ -33,14 +33,12 @@ vim.keymap.set(
     "n",
     "<leader>de",
     vim.diagnostic.open_float,
-    { desc = "Show diagnostic Error messages" }
+    { desc = "Show diagnostic error messages" }
 )
-vim.keymap.set(
-    "n",
-    "<leader>dq",
-    vim.diagnostic.setloclist,
-    { desc = "Open diagnostic Quickfix list" }
-)
+vim.keymap.set("n", "<leader>dq", function()
+    vim.diagnostic.setloclist({ open = false })
+    require("quicker").toggle({ loclist = true })
+end, { desc = "Open diagnostic Quickfix list" })
 
 -- Open/delete operations
 vim.keymap.set("n", "<leader>obd", function()
@@ -161,6 +159,14 @@ vim.keymap.set(
 )
 
 -- Plugins
+
+--   Toggle bracket coloring
+vim.keymap.set(
+    "n",
+    "<leader>dc",
+    function() require("rainbow-delimiters").toggle(0) end,
+    { desc = "Toggle Bracket Coloring" }
+)
 
 --   Toggle highlight color
 vim.keymap.set(

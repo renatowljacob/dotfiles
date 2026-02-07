@@ -249,6 +249,7 @@ return {
                     Snacks.picker.grep_word()
                 end,
                 desc = "Search For Word",
+                mode = { "n", "x", "v" },
             },
             {
                 "gro",

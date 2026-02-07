@@ -8,6 +8,14 @@
 # 14 = super + middle click
 # 15 = super + right click
 
+message="left click -> play toggle
+
+right click -> show duration
+
+scroll up/down -> increase/decrease volume
+
+super + left/right click -> play previous/next song"
+
 get_volume()
 {
     volume="$(
@@ -55,4 +63,5 @@ case $BLOCK_BUTTON in
 5) playerctl -p spotify volume 0.05- && get_volume & ;;
 13) playerctl -p spotify previous ;;
 15) playerctl -p spotify next ;;
+*) dunstify -i "${XDG_DATA_HOME}/icons/dunst/circle-exclamation.svg" -a "dusk" "${message}" ;;
 esac

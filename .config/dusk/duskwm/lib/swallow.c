@@ -221,18 +221,21 @@ winpid(Window w)
 
 	#endif /* __linux__ */
 	#ifdef __OpenBSD__
-	Atom type;
+	Atom actual_type;
 	int format;
-	unsigned long len, bytes;
+	static Atom wmpidatom = XInternAtom(dpy, "_NET_WM_PID", False);
+	unsigned long nitems, after;
 	unsigned char *prop;
 	pid_t ret;
 
-	if (XGetWindowProperty(dpy, w, XInternAtom(dpy, "_NET_WM_PID", False), 0, 1, False, AnyPropertyType, &type, &format, &len, &bytes, &prop) != Success || !prop)
-		return 0;
-
-	ret = *(pid_t*)prop;
-	XFree(prop);
-	result = ret;
+	if (XGetWindowProperty(dpy, w, wmpidatom, 0, 1, False, AnyPropertyType,
+			&actual_type, &format, &nitems, &after, &prop) == Success) {
+		if (nitems > 0 && prop) {
+			ret = *(pid_t*)prop;
+			result = ret;
+		}
+		XFree(prop);
+	}
 	#endif /* __OpenBSD__ */
 
 	return result;
@@ -251,7 +254,7 @@ getparentprocess(pid_t p)
 	if (!(f = fopen(buf, "r")))
 		return (pid_t)0;
 
-	if (fscanf(f, "%*u %*s %*c %u", (unsigned *)&v) != 1)
+	if (fscanf(f, "%*u (%*[^)]) %*c %u", (unsigned *)&v) != 1)
 		v = (pid_t)0;
 	fclose(f);
 #endif /* __linux__ */
@@ -273,10 +276,44 @@ getparentprocess(pid_t p)
 int
 isdescprocess(pid_t p, pid_t c)
 {
-	while (p != c && c != 0)
-		c = getparentprocess(c);
+	pid_t p_tmp;
+	while (p != c && c != 0) {
+		p_tmp = getparentprocess(c);
+		if (istmuxserver(p_tmp))
+			c = gettmuxclientpid(c);
+		else
+			c = p_tmp;
+	}
 
 	return (int)c;
+}
+
+int
+istmuxserver(pid_t p)
+{
+	char path[256];
+	char name[15];
+	FILE* stat;
+
+	snprintf(path, sizeof(path) - 1, "/proc/%u/stat", (unsigned)p);
+	if (!(stat = fopen(path, "r")))
+		return 0;
+	fscanf(stat, "%*u (%12[^)])", name);
+	fclose(stat);
+	return (strcmp(name, "tmux: server") == 0);
+}
+
+long
+gettmuxclientpid(long shellpid)
+{
+	long volatile panepid, clientpid;
+	FILE* list = popen("tmux list-clients -F '#{pane_pid} #{client_pid}'", "r");
+	if (!list)
+		return 0;
+	while (!feof(list) && panepid != shellpid)
+		fscanf(list, "%ld %ld\n", &panepid, &clientpid);
+	pclose(list);
+	return clientpid;
 }
 
 void

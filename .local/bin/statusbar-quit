@@ -1,0 +1,8 @@
+#!/bin/sh
+
+bgcolor='#24283b'
+accentcolor='#F7768E'
+
+icon="^f16^^b${bgcolor}^^c${accentcolor}^ ^c${bgcolor}^"
+
+printf '%s' "${icon}"

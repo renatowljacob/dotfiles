@@ -261,6 +261,7 @@ typedef union {
 typedef struct Monitor Monitor;
 typedef struct Workspace Workspace;
 typedef struct Client Client;
+typedef struct Image Image;
 typedef struct Bar Bar;
 typedef void (*WsFunc)(Workspace *);
 typedef void (*ArgFunc)(const Arg *);
@@ -276,6 +277,7 @@ typedef struct {
 
 typedef struct {
 	char *name;  /* string key */
+	int argc;
 	char **argv; /* pointer to execv argument list */
 } Command;
 
@@ -313,6 +315,13 @@ struct Client {
 	Picture icon;
 	uint64_t flags;
 	uint64_t prevflags;
+};
+
+struct Image {
+	Picture icon;
+	unsigned int icw;
+	unsigned int ich;
+	char *iconpath;
 };
 
 typedef struct {
@@ -527,7 +536,7 @@ static void skipfocusevents(void);
 static void spawn(const Arg *arg);
 static pid_t spawncmd(const Arg *arg, int buttonclick, int orphan);
 static void structurenotify(XEvent *e);
-static char *subst_home_directory(char *str);
+static char *subst_home_directory(const char *str);
 static unsigned int textw_clamp(const char *str, unsigned int n);
 static void togglefloating(const Arg *arg);
 static void unfocus(Client *c, int setfocus, Client *nextfocus);
@@ -636,7 +645,8 @@ applyrules(Client *c)
 
 	if (XGetWindowProperty(dpy, c->win, netatom[NetWMWindowType], 0L, sizeof(Atom), False, XA_ATOM,
 			&da, &di, &nitems, &dl, &p) == Success && p) {
-		win_types = (Atom *) p;
+		if (nitems > 0)
+			win_types = (Atom *) p;
 	}
 
 	/* rule matching */
@@ -689,7 +699,7 @@ applyrules(Client *c)
 				saveclientclass(c);
 
 			if (r->iconpath)
-				load_icon_from_png_image(c, r->iconpath);
+				load_icon_from_file(c, r->iconpath);
 
 			if (r->alttitle)
 				freestrdup(&c->alttitle, r->alttitle);
@@ -705,6 +715,7 @@ applyrules(Client *c)
 					"    flags:     %" PRIu64 "\n"
 					"    floatpos:  %s\n"
 					"    workspace: %s\n"
+					"    iconpath:  %s\n"
 					"    label:     %s\n",
 					NVL(r->class, "NULL"),
 					NVL(r->role, "NULL"),
@@ -714,6 +725,7 @@ applyrules(Client *c)
 					r->flags,
 					NVL(r->floatpos, "NULL"),
 					NVL(r->workspace, "NULL"),
+					NVL(r->iconpath, "NULL"),
 					NVL(r->label, "NULL")
 				);
 			}
@@ -2065,15 +2077,17 @@ Atom
 getatomprop(Client *c, Atom prop, Atom req)
 {
 	int di;
-	unsigned long dl, dm;
+	unsigned long nitems, after;
 	unsigned char *p = NULL;
 	Atom da, atom = None;
 
 	if (XGetWindowProperty(dpy, c->win, prop, 0L, sizeof atom, False, req,
-		&da, &di, &dl, &dm, &p) == Success && p) {
-		atom = *(Atom *)p;
-		if (da == xatom[XembedInfo] && dl == 2)
-			atom = ((Atom *)p)[1];
+		&da, &di, &nitems, &after, &p) == Success && p) {
+		if (nitems > 0) {
+			atom = *(Atom *)p;
+			if (da == xatom[XembedInfo] && nitems == 2)
+				atom = ((Atom *)p)[1];
+		}
 		XFree(p);
 	}
 	return atom;
@@ -2115,15 +2129,16 @@ getstate(Window w)
 	int format;
 	long result = -1;
 	unsigned char *p = NULL;
-	unsigned long n, extra;
+	unsigned long nitems, after;
 	Atom real;
 
 	if (XGetWindowProperty(dpy, w, wmatom[WMState], 0L, 2L, False, wmatom[WMState],
-		&real, &format, &n, &extra, (unsigned char **)&p) != Success)
-		return -1;
-	if (n != 0)
-		result = *p;
-	XFree(p);
+			&real, &format, &nitems, &after, (unsigned char **)&p) == Success && p) {
+		if (nitems > 0)
+			result = *p;
+		XFree(p);
+	}
+
 	return result;
 }
 
@@ -2702,6 +2717,7 @@ motionnotify(XEvent *e)
 	if (!ISSTICKY(selws->sel) && (ws = recttows(ev->x_root, ev->y_root, 1, 1)) && ws != selws) {
 		if (selmon != ws->mon) {
 			entermon(ws->mon, NULL);
+			focus(NULL);
 			return;
 		}
 
@@ -3256,6 +3272,7 @@ setbackground(void)
 	/* Do not set a background if a wallpaper has been set. */
 	if (XGetWindowProperty(dpy, root, XInternAtom(dpy, "_XROOTPMAP_ID", False), 0L, sizeof atom,
 			False, AnyPropertyType, &da, &di, &dl, &dl, &p) == Success && p) {
+		XFree(p);
 		return;
 	}
 
@@ -3725,7 +3742,7 @@ spawncmd(const Arg *arg, int buttonclick, int orphan)
 
 /* Allocates memory for a char array that need to be freed by the caller */
 char *
-subst_home_directory(char *str)
+subst_home_directory(const char *str)
 {
 	int buffer_length = env_homelen + strlen(str);
 	char *buffer = ecalloc(1, buffer_length);
@@ -3791,8 +3808,11 @@ togglefloating(const Arg *arg)
 	Workspace *ws = NULL;
 
 	for (c = nextmarked(NULL, c); c; c = nextmarked(c->next, NULL)) {
-		if (ISTRUEFULLSCREEN(c)) /* no support for fullscreen windows */
+		if (ISTRUEFULLSCREEN(c)) {
+			/* Exit true fullscreen, but do not toggle floating state */
+			setfullscreen(c, 0, 0);
 			continue;
+		}
 		if (ISFIXED(c))
 			continue;
 		if (ISSTICKY(c))

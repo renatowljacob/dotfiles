@@ -1,0 +1,6 @@
+#!/bin/sh
+
+LOG_PATH="$HOME/.config/dusk/duskwm/dusk.log"
+
+printf '%b\n' "$(date) Starting dusk" >> "$LOG_PATH"
+dusk >> "$LOG_PATH" 2>&1

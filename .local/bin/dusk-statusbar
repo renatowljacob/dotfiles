@@ -26,30 +26,32 @@ wait_for_ipc_handler()
 
 SETSTATUS="duskc --ignore-reply run_command setstatus"
 
-$SETSTATUS 0 "$(sb-calendar)"
-$SETSTATUS 1 "$(sb-clock)"
-$SETSTATUS 2 "$(sb-memory)"
-$SETSTATUS 3 "$(sb-volume)"
-$SETSTATUS 4 "$(sb-updates)"
+$SETSTATUS 0 "$(statusbar-quit)"
+$SETSTATUS 1 "$(statusbar-calendar)"
+$SETSTATUS 2 "$(statusbar-clock)"
+$SETSTATUS 3 "$(statusbar-memory)"
+$SETSTATUS 4 "$(statusbar-volume)"
+$SETSTATUS 5 "$(statusbar-updates)"
 
 secs=0
 while true; do
-    $SETSTATUS 2 "$(sb-memory)" &
+    $SETSTATUS 0 "$(statusbar-quit)" &
+    $SETSTATUS 3 "$(statusbar-memory)" &
 
     # TODO: rewrite this script
-    # if ! $SETSTATUS 5 "$(sb-spotify)" & then
-    #     wait_for_ipc_handler 5 &
+    # if ! $SETSTATUS 6 "$(statusbar-spotify)" & then
+    #     wait_for_ipc_handler 6 &
     # fi
 
     if [ $((secs % 60)) = 0 ]; then
-        $SETSTATUS 0 "$(sb-calendar)" &
-        $SETSTATUS 1 "$(sb-clock)" &
+        $SETSTATUS 1 "$(statusbar-calendar)" &
+        $SETSTATUS 2 "$(statusbar-clock)" &
     fi
 
     # Update these once after 1 minute, i.e. hourly
     if [ $secs = 60 ]; then
-        $SETSTATUS 3 "$(sb-volume)" &
-        $SETSTATUS 4 "$(sb-updates)" &
+        $SETSTATUS 4 "$(statusbar-volume)" &
+        $SETSTATUS 5 "$(statusbar-updates)" &
     fi
 
     # Restart script every hour

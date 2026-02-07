@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# 3 = left click
+# 13 = super + left click
+# 15 = super + right click
+
+message="right click -> lock screen
+
+super + left click -> restart
+
+super + right click -> quit"
+
+case $BLOCK_BUTTON in
+3) betterlockscreen --lock ;;
+13) duskc run_command "restart" ;;
+15) duskc run_command "quit" ;;
+*) dunstify -i "${XDG_DATA_HOME}/icons/dunst/circle-exclamation.svg" -a "dusk" "${message}" ;;
+esac

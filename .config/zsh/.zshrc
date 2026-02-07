@@ -42,9 +42,9 @@ plugin-load $repos
 # CONFIG
 
 # Aliases
-which bat > /dev/null 2>&1 \
+command -v bat > /dev/null 2>&1 \
 	&& alias cat='bat '
-which gdu > /dev/null 2>&1 \
+command -v gdu > /dev/null 2>&1 \
 	&& alias du='gdu '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 alias gcc-sanitizer='gcc -std=c11 -Wall -Wextra -Wformat-overflow \
@@ -55,9 +55,9 @@ alias gcc-analyzer='gcc -std=c11 -Wall -Wextra -Wformat-overflow \
 	-Wuse-after-free=1 -Wstrict-prototypes -Wshadow -Wconversion \
 	-Wno-override-init -Werror -fmax-errors=1 -fanalyzer -O0 -g3'
 alias grep='grep --color=auto '
-which eza > /dev/null 2>&1 \
+command -v eza > /dev/null 2>&1 \
 	&& alias ls='eza --icons=auto --hyperlink --no-quotes '
-which trash > /dev/null 2>&1 \
+command -v trash > /dev/null 2>&1 \
 	&& alias rm='trash '
 alias siv='nsxiv-rifle '
 

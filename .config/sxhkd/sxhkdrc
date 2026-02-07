@@ -40,10 +40,10 @@ super + space
 
 # spawn terminals
 super + Return
-	st
+	ghostty
 
 super + alt + Return
-	ghostty
+	st
 
 # Misc
 

@@ -29,7 +29,7 @@ send_notification()
 update()
 {
     if ps -C dusk > /dev/null; then
-        duskc --ignore-reply run_command setstatus 3 "$(sb-volume)"
+        duskc --ignore-reply run_command setstatus 4 "$(statusbar-volume)"
     fi
 }
 

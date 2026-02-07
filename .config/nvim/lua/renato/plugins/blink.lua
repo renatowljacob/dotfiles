@@ -122,6 +122,7 @@ return {
             sources = {
                 default = function()
                     local success, node = pcall(vim.treesitter.get_node)
+                    local sources = { "lsp", "snippets", "path", "buffer" }
 
                     if success and node then
                         if
@@ -130,11 +131,11 @@ return {
                                 node:type()
                             )
                         then
-                            return { "buffer" }
+                            sources = { "buffer" }
                         end
                     end
 
-                    return { "lsp", "snippets", "path", "buffer" }
+                    return sources
                 end,
             },
             signature = {

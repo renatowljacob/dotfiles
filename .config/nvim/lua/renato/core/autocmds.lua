@@ -7,23 +7,6 @@
 
 local MyApi = require("renato.core.myapi")
 
-vim.api.nvim_create_autocmd("BufWritePost", {
-    desc = "Update rainbow delimiters highlighting",
-    group = vim.api.nvim_create_augroup(
-        "update-rainbow-delimiters",
-        { clear = true }
-    ),
-    callback = function()
-        local rainbow_delimiters = require("rainbow-delimiters")
-
-        if rainbow_delimiters.is_enabled(0) then
-            for _ = 1, 2 do
-                rainbow_delimiters.toggle(0)
-            end
-        end
-    end,
-})
-
 vim.api.nvim_create_autocmd("FileType", {
     desc = "Quickfix list navigation keymaps",
     group = vim.api.nvim_create_augroup(
@@ -128,9 +111,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         local client = vim.lsp.get_client_by_id(event.data.client_id)
         if
             client
-            and client:supports_method(
-                vim.lsp.protocol.Methods.textDocument_documentHighlight
-            )
+            and client:supports_method("textDocument/documentHighlight")
         then
             local highlight_augroup = vim.api.nvim_create_augroup(
                 "kickstart-lsp-highlight",
@@ -167,12 +148,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         -- code, if the language server you are using supports them
         --
         -- This may be unwanted, since they displace some of your code
-        if
-            client
-            and client:supports_method(
-                vim.lsp.protocol.Methods.textDocument_inlayHint
-            )
-        then
+        if client and client:supports_method("textDocument/inlayHint") then
             map("grI", function()
                 vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({}))
             end, "Inlay Hints")

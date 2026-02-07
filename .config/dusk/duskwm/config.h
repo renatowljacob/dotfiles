@@ -272,14 +272,14 @@ static Rule clientrules[] = {
 	{ .wintype = WTYPE "SPLASH", .flags = AlwaysOnTop|Centered|Floating },
 	{ .role = "pop-up", .flags = AlwaysOnTop|Floating|Centered },
 	// Terminals
-	{ .class = "org.wezfurlong.wezterm", .flags = Terminal|NoSwallow },
+	// Apparently ghostty spams property notifications
+	// { .class = "com.mitchellh.ghostty", .flags = Terminal|NoSwallow },
 	{ .class = "st-256color", .flags = Terminal|NoSwallow },
 	// General
 	{ .instance = "Navigator", .class = "zen-default", .flags = NoSwallow|SwitchWorkspace, .workspace = "1" },
 	{ .instance = "Navigator", .class = "zen-personal", .flags = NoSwallow|SwitchWorkspace, .workspace = "4" },
 	{ .instance = "steamwebhelper", .class = "steam", .flags = Floating|Centered|SwitchWorkspace, .workspace = "6" },
 	{ .class = "steam_app_", .flags = SteamGame|SwitchWorkspace, .workspace = "6" },
-	{ .instance = "vesktop", .class = "vesktop", .flags = SwitchWorkspace, .workspace = "6" },
 	{ .title = "Event Tester", .flags = NoSwallow },
 };
 
@@ -360,39 +360,21 @@ static BarDef bars[] = {
  */
 #define PWRL PwrlNone
 static BarRule barrules[] = {
-/* monitor bar scheme lpad rpad  value     alignment              sizefunc                drawfunc                clickfunc                hoverfunc         name */
-{ -1,      0,  0,      0,   0,   PWRL, BAR_ALIGN_LEFT,        size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{ -1,      0,  0,      0,   0,   PWRL, BAR_ALIGN_LEFT,        size_workspaces,        draw_workspaces,        click_workspaces,        hover_workspaces, "workspaces" },
-{  0,      0,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT,       size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{  0,      0,  0,      0,   13,   0,        BAR_ALIGN_RIGHT,       size_systray,           draw_systray,           click_systray,           NULL,             "systray" },
-{ -1,      0,  0,      0,   0,   PWRL, BAR_ALIGN_LEFT,        size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{ -1,      0,  7,      0,   0,   0,        BAR_ALIGN_LEFT,        size_ltsymbol,          draw_ltsymbol,          click_ltsymbol,          NULL,             "layout" },
-{ -1,      0,  0,      0,   0,   PWRL, BAR_ALIGN_LEFT,        size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{  0,      0,  0,      8,   8,   0,        BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-calendar" },
-{  0,      0,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT,       size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{  0,      0,  0,      8,   8,   1,        BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-clock" },
-{  0,      0,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT,       size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{  0,      0,  0,      8,   8,   2,        BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-memory" },
-{  0,      0,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT,       size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{  0,      0,  0,      0,   8,   3,        BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-volume" },
-{  0,      0,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT,       size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{  0,      0,  0,      0,   8,   4,        BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-updates" },
-{  0,      0,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT,       size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{  0,      0,  0,      0,   8,   5,        BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-spotify" },
-{  0,      0,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT,       size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{  0,      0,  0,      0,   0,   6,        BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-test" },
-{  0,      0,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT,       size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{  0,      0,  0,      0,   0,   7,        BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status7" },
-{  0,      0,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT,       size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{  0,      0,  0,      0,   0,   8,        BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status8" },
-{  0,      0,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT,       size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{  0,      0,  0,      0,   0,   9,        BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status9" },
-{  0,      0,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT,       size_powerline,         draw_powerline,         NULL,                    NULL,             "powerline join" },
-{ -1,      0,  0,      0,   0,   PWRL, BAR_ALIGN_NONE,        size_wintitle_sticky,   draw_wintitle_sticky,   click_wintitle_sticky,   NULL,             "wintitle_sticky" },
-{ -1,      0,  0,      0,   0,   PWRL, BAR_ALIGN_NONE,        size_flexwintitle,      draw_flexwintitle,      click_flexwintitle,      NULL,             "flexwintitle" },
-{ -1,      1,  0,      0,   0,   PWRL, BAR_ALIGN_CENTER,      size_pwrl_ifhidfloat,   draw_powerline,         NULL,                    NULL,             "powerline join" },
-{ -1,      1,  0,      0,   0,   PWRL, BAR_ALIGN_RIGHT_RIGHT, size_wintitle_hidden,   draw_wintitle_hidden,   click_wintitle_hidden,   NULL,             "wintitle_hidden" },
-{ -1,      1,  0,      0,   0,   PWRL, BAR_ALIGN_LEFT_LEFT,   size_wintitle_floating, draw_wintitle_floating, click_wintitle_floating, NULL,             "wintitle_floating" },
+/* monitor bar scheme lpad rpad value alignment              sizefunc                drawfunc                clickfunc                hoverfunc         name */
+{  0,      0,  0,      0,   8,  0,    BAR_ALIGN_LEFT,        size_status,            draw_status,            click_status,            NULL,             "status-quit" },
+{ -1,      0,  0,      0,   0,  PWRL, BAR_ALIGN_LEFT,        size_workspaces,        draw_workspaces,        click_workspaces,        hover_workspaces, "workspaces" },
+{ -1,      0,  7,      0,   0,  0,    BAR_ALIGN_LEFT,        size_ltsymbol,          draw_ltsymbol,          click_ltsymbol,          NULL,             "layout" },
+{  0,      0,  0,      0,   13, 0,    BAR_ALIGN_RIGHT,       size_systray,           draw_systray,           click_systray,           NULL,             "systray" },
+{  0,      0,  0,      8,   8,  1,    BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-calendar" },
+{  0,      0,  0,      8,   8,  2,    BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-clock" },
+{  0,      0,  0,      8,   8,  3,    BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-memory" },
+{  0,      0,  0,      0,   8,  4,    BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-volume" },
+{  0,      0,  0,      0,   8,  5,    BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-updates" },
+{  0,      0,  0,      0,   8,  6,    BAR_ALIGN_RIGHT,       size_status,            draw_status,            click_status,            NULL,             "status-spotify" },
+{ -1,      0,  0,      0,   0,  PWRL, BAR_ALIGN_NONE,        size_wintitle_sticky,   draw_wintitle_sticky,   click_wintitle_sticky,   NULL,             "wintitle_sticky" },
+{ -1,      0,  0,      0,   0,  PWRL, BAR_ALIGN_NONE,        size_flexwintitle,      draw_flexwintitle,      click_flexwintitle,      NULL,             "flexwintitle" },
+{ -1,      1,  0,      0,   0,  PWRL, BAR_ALIGN_RIGHT_RIGHT, size_wintitle_hidden,   draw_wintitle_hidden,   click_wintitle_hidden,   NULL,             "wintitle_hidden" },
+{ -1,      1,  0,      0,   0,  PWRL, BAR_ALIGN_LEFT_LEFT,   size_wintitle_floating, draw_wintitle_floating, click_wintitle_floating, NULL,             "wintitle_floating" },
 };
 
 /* Workspace rules define what workspaces are available and their properties.

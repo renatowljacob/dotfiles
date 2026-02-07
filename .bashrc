@@ -6,9 +6,9 @@
 [[ $- != *i* ]] && return
 
 # Aliases
-which bat > /dev/null 2>&1 \
+command -v bat > /dev/null 2>&1 \
     && alias cat='bat '
-which gdu > /dev/null 2>&1 \
+command -v gdu > /dev/null 2>&1 \
     && alias du='gdu '
 alias gcc-sanitizer='gcc -std=c11 -Wall -Wextra -Wformat-overflow \
     -Wuse-after-free=1 -Wstrict-prototypes -Wshadow -Wconversion \
@@ -21,9 +21,9 @@ alias grep='grep --color=auto '
 alias gconfig='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME '
 alias grep='grep --color=auto '
 alias locate='plocate '
-which eza > /dev/null 2>&1 \
+command -v eza > /dev/null 2>&1 \
     && alias ls='eza --icons=auto --hyperlink --no-quotes '
-which trash > /dev/null 2>&1 \
+command -v trash > /dev/null 2>&1 \
     && alias rm='trash '
 alias siv='nsxiv-rifle '
 

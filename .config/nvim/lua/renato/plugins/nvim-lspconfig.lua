@@ -18,21 +18,10 @@ return {
             -- used for completion, annotations and signatures of Neovim APIs
             {
                 "folke/lazydev.nvim",
+                ft = "lua",
                 opts = {
                     library = {
                         { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-                        {
-                            path = "/usr/share/awesome/lib",
-                            words = {
-                                "awesome%.",
-                                "awful%.",
-                                "beautiful%.",
-                                "gears%.",
-                                "menubar%.",
-                                "naughty%.",
-                                "wibox%.",
-                            },
-                        },
                     },
                 },
             },
@@ -74,7 +63,9 @@ return {
             --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
             local ensure_installed = {}
 
-            for server, _ in vim.fs.dir(vim.env.XDG_CONFIG_HOME .. "/nvim/lsp") do
+            for server, _ in
+                vim.fs.dir(vim.env.XDG_CONFIG_HOME .. "/nvim/after/lsp")
+            do
                 local server_name = vim.fn.fnamemodify(server, ":t:r")
                 if server_name ~= "clangd" then
                     table.insert(ensure_installed, server_name)
