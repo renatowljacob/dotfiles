@@ -36,7 +36,7 @@ super + control + {h, l, r}
 
 # spawn dmenu
 super + space
-	dmenu_run -fn "JetBrainsMono:weight=100:pixelsize=16:antialias=true" -nb "#24283b" -nf "#C0CAF5" -sb "#364a82" -sf "#C0CAF5"
+	dmenu_run -fn "JetBrainsMono:weight=100:pixelsize=16:antialias=true" -nb "#24283b" -nf "#C0CAF5" -sb "#364a82" -sf "#C0CAF5" "$@"
 
 # spawn terminals
 super + Return
@@ -179,7 +179,3 @@ super + w
 # Pick color in RGB
 super + ctrl + w
 	xcolor --format rgb | xsel -b
-
-# Clipboard manager
-super + shift + apostrophe
-	clipmenu -fn 'JetBrainsMono Nerd Font:style=Medium:pixelsize=14:antialias=true:autohint=true' -nb '#1a1b26' -nf '#c0caf5' -sb '#283457' -sf '#c0caf5'

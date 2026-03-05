@@ -28,6 +28,7 @@ return {
                 "markdown",
                 "markdown_inline",
                 "odin",
+                "sh",
                 "vim",
                 "vimdoc",
             }

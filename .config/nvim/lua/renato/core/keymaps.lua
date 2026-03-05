@@ -75,6 +75,11 @@ vim.keymap.set("n", "<leader>ocd", function()
     vim.notify("Changed to " .. bufpath:sub(#rootdir + 2) .. " directory")
 end, { desc = "Change to current buffer directory" })
 
+-- Buffer navigation
+vim.keymap.set({ "n", "v" }, "H", "^")
+vim.keymap.set({ "n", "v" }, "L", "$")
+vim.keymap.set({ "n", "v" }, "M", "%")
+
 -- Windows and tabs navigation
 vim.keymap.set("n", "[t", "<cmd>tabprevious<CR>", { desc = "Previous Tab" })
 vim.keymap.set("n", "]t", "<cmd>tabNext<CR>", { desc = "Next Tab" })
@@ -161,12 +166,9 @@ vim.keymap.set(
 -- Plugins
 
 --   Toggle bracket coloring
-vim.keymap.set(
-    "n",
-    "<leader>dc",
-    function() require("rainbow-delimiters").toggle(0) end,
-    { desc = "Toggle Bracket Coloring" }
-)
+vim.keymap.set("n", "<leader>dc", function()
+    require("rainbow-delimiters").toggle(0)
+end, { desc = "Toggle Bracket Coloring" })
 
 --   Toggle highlight color
 vim.keymap.set(
