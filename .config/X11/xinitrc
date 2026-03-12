@@ -49,8 +49,7 @@ export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 /usr/lib/polkit-kde-authentication-agent-1 &
 numlockx &
 ~/.fehbg &
-# till nvidia fixes the flickering introduced
-# picom -b &
+picom -b &
 sxhkd -m 1 &
 udiskie -s &
 unclutter -b &
