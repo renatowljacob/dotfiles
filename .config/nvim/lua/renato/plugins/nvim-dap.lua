@@ -224,6 +224,8 @@ return {
                     end,
                 },
             }
+            dap.configurations.cpp = dap.configurations.c
+            dap.configurations.odin = dap.configurations.c
 
             dap.configurations.java = {
                 {
