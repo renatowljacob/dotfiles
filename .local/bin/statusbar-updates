@@ -7,11 +7,14 @@ updates=$(
     } | wc -l
 )
 
-bgcolor='#24283b'
-accentcolor='#9ECE6A'
-
-style="^c${accentcolor}^^r00,00,14,h^^f14^^b${accentcolor}^^c${bgcolor}^ ^c${accentcolor}^^r00,00,6,h^^d^^f22^^c${accentcolor}^"
-
 if [ "${updates}" -ge 10 ]; then
-    printf '%s' "${style}${updates}^f8^"
+    if [ "${1}" = "dusk" ]; then
+        bgcolor='#24283b'
+        accentcolor='#9ECE6A'
+        style="^c${accentcolor}^^r00,00,14,h^^f14^^b${accentcolor}^^c${bgcolor}^ ^c${accentcolor}^^r00,00,6,h^^d^^f22^^c${accentcolor}^"
+
+        printf '%s' "${style}${updates}^f8^"
+    else
+        printf '%s' "${updates}"
+    fi
 fi

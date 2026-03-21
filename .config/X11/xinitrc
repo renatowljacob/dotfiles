@@ -57,4 +57,5 @@ st newsboat &
 xidlehook --not-when-audio --not-when-fullscreen \
     --timer 600 'betterlockscreen --lock' '' &
 qbittorrent &
+sed -i 's/\(  *offset.*\)(.*)/\1(6,42)/' "${HOME}/.config/dunst/dunstrc" &
 exec dusk-start

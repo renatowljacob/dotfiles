@@ -1,0 +1,143 @@
+@define-color bg1 #24283B;
+@define-color bg2 #292E42;
+@define-color bg3 #2E3C64;
+@define-color fg1 #C0CAF5;
+@define-color fg2 #565c7e;
+@define-color black #000000;
+@define-color white #C0CAF5;
+@define-color orange #FF9E64;
+@define-color magenta #BB9AF7;
+@define-color red #F7768E;
+@define-color green #9ECE6A;
+@define-color blue #7AA2F7;
+@define-color cyan #7DCFFF;
+
+* {
+  font-family: JetBrains Mono, "Font Awesome 7 Free";
+  font-size: 14px;
+  font-weight: 600;
+
+  min-height: 0;
+}
+
+window#waybar {
+  background: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+#tray,
+#custom-power,
+#custom-updates,
+#clock,
+#tags,
+#window,
+#tags,
+#cpu,
+#memory,
+#network,
+#wireplumber {
+  background-color: @bg1;
+  border-color: @bg3;
+
+  border-radius: 6px;
+  border-width: 2px;
+  border-style: solid;
+
+  margin-top: 6px;
+
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+#custom-power {
+  color: @red;
+  margin-right: 6px;
+}
+
+#custom-updates,
+#clock,
+#cpu,
+#memory,
+#network,
+#wireplumber {
+  color: @bg1;
+  border: none;
+}
+
+#custom-updates {
+  background-color: @white;
+}
+
+#wireplumber {
+  background-color: @green;
+}
+
+#network {
+  background-color: @cyan;
+}
+
+#cpu {
+  background-color: @blue;
+}
+
+#memory {
+  background-color: @magenta;
+}
+
+#clock {
+  background-color: @red;
+}
+
+#tags {
+  background-color: @bg1;
+  border-color: @bg3;
+
+  border-width: 2px;
+  border-style: solid;
+
+  margin-left: 6px;
+
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+#tags button {
+  color: @fg2;
+
+  border: none;
+  border-radius: 12px;
+  box-shadow: inherit;
+  text-shadow: inherit;
+
+  margin-left: 2px;
+  margin-right: 2px;
+
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+#tags button.occupied {
+  color: @fg1;
+  background-color: @bg3;
+}
+
+#tags button:hover,
+#tags button.focused {
+  color: @orange;
+}
+
+#tags button.urgent {
+  background-color: @red;
+  color: @bg1;
+}
+
+#window {
+  background-color: @bg3;
+  color: @fg1;
+
+  border: none;
+
+  padding-right: 8px;
+  padding-left: 8px;
+}

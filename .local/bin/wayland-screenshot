@@ -1,0 +1,24 @@
+#!/bin/sh
+
+DISPLAY="HDMI-A-1"
+SCREENSHOTS_DIR="${HOME}/Pictures/screenshots"
+BASENAME="$(date +%Y%m%d_%Hh%Mm%Ss)_grim.png"
+FILENAME="${SCREENSHOTS_DIR}/${BASENAME}"
+
+case ${1} in
+select)
+    grim -g "$(slurp)" - | tee "${FILENAME}" | wl-copy
+    # Selection was canceled
+    if [ ! -s "${FILENAME}" ]; then
+        rm "${FILENAME}"
+    fi
+    ;;
+window)
+    grim -g "$(mmsg -g -x | cut -d ' ' -f 3 | paste -sd ', x')" - \
+        | tee "${FILENAME}" \
+        | wl-copy
+    ;;
+*) # Fullscreen
+    grim -o "${DISPLAY}" - | tee "${FILENAME}" | wl-copy
+    ;;
+esac

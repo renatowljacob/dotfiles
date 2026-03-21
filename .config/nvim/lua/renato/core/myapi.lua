@@ -287,7 +287,6 @@ end
 ---@return TSNode? ancestor_node
 function MyApi.treesitter.get_node_ancestor_by_type(node, types)
     local parent_node = node:tree():root():child_with_descendant(node)
-
     while parent_node do
         if vim.tbl_contains(types, parent_node:type()) then
             return parent_node

@@ -28,12 +28,18 @@ return {
                 "markdown",
                 "markdown_inline",
                 "odin",
-                "sh",
+                "python",
                 "vim",
                 "vimdoc",
+                "zsh",
             }
 
             require("nvim-treesitter").install(filetypes)
+
+            -- No parser for these, just start treesitter
+            vim.list_extend(filetypes, {
+                "sh",
+            })
 
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = filetypes,

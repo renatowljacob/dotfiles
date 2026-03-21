@@ -54,7 +54,7 @@ super + {i, u}
 super + b
 	duskc run_command togglebar
 
-# minimized the currently selected client (or show if minimized)
+# minimize the currently selected client (or show if minimized)
 super + shift + m
 	duskc run_command showhideclient
 

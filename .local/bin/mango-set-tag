@@ -1,0 +1,133 @@
+#!/usr/bin/env python
+
+# Toggle between the two most recent tags
+# By selecting the current tag, the previous tag is selected
+# Works with {next,prev} semantics
+
+import io
+import os
+import shlex
+import subprocess
+import sys
+
+PROGRAM_NAME = os.path.basename(sys.argv[0])
+TEMP_DIR = os.getenv("XDG_RUNTIME_DIR", "/tmp")
+CURR_TAG_FILEPATH = f"{TEMP_DIR}/mango-curr-tag"
+PREV_TAG_FILEPATH = f"{TEMP_DIR}/mango-prev-tag"
+MAX_TAGS = 9
+
+class TagMessageEnum:
+    OCCUPIED_MASK = 2
+    ACTIVE_MASK = 3
+
+class Tag:
+    def __init__(self, file: io.TextIOWrapper):
+        self.file = file
+        self.file.seek(0)
+        tmp = self.file.read()
+        # Tags actually start from 1 but are 0-indexed here
+        self.number = int(tmp) if tmp != "" else -1
+
+    def write(self):
+        self.file.truncate(0)
+        self.file.write(str(self.number))
+
+    def commit(self):
+        self.write()
+        subprocess.run(shlex.split("mmsg -s -t {}".format(self.number + 1)), encoding="UTF-8")
+
+def get_tag_message():
+    return subprocess.run(shlex.split("mmsg -g -t"), encoding="UTF-8", capture_output=True)
+
+def set_tag_number(direction: str, prev: Tag, curr: Tag):
+    prev.number = curr.number
+    if direction == "next":
+        curr.number = (curr.number + 1) % (MAX_TAGS)
+    else:
+        curr.number = (curr.number - 1) % (MAX_TAGS)
+
+curr = Tag(open(CURR_TAG_FILEPATH, "a+"))
+prev = Tag(open(PREV_TAG_FILEPATH, "a+"))
+
+if curr.number == -1:
+    output = get_tag_message()
+    tag_message = output.stdout.split("\n")[11].split()
+    active_mask = tag_message[TagMessageEnum.ACTIVE_MASK]
+
+    if sys.byteorder == "little":
+        curr.number = MAX_TAGS - active_mask.index("1") - 1
+    else:
+        curr.number = active_mask.index("1")
+
+    curr.file.write(str(curr.number))
+    prev.number = curr.number
+    prev.file.write(str(prev.number))
+
+if len(sys.argv) < 2:
+    print(f"{PROGRAM_NAME}: must specify action", file=sys.stderr)
+    exit(1)
+
+arg = sys.argv[1]
+if arg.isdigit():
+    selected_tag = int(arg)
+    if selected_tag > MAX_TAGS - 1 or selected_tag < 0:
+        print(f"{PROGRAM_NAME}: tag must be between 0 and 8", file=sys.stderr)
+        exit(2)
+
+    if selected_tag == curr.number:
+        curr.number, prev.number = prev.number, curr.number
+    else:
+        prev.number = curr.number
+        curr.number = selected_tag
+
+    prev.write()
+    curr.commit()
+elif arg == "next" or arg == "prev":
+    set_tag_number(arg, prev, curr)
+
+    prev.write()
+    curr.commit()
+elif arg == "next-move-client" or arg == "prev-move-client":
+    direction = arg[:4]
+    set_tag_number(direction, prev, curr)
+
+    prev.write()
+    curr.write()
+
+    subprocess.run(shlex.split("mmsg -d tagto{}".format("right" if direction == "next" else "else")), encoding="UTF-8")
+elif arg == "next-has-client" or arg == "prev-has-client":
+    direction = arg[:4]
+    output = get_tag_message()
+
+    # Check for occupied tags
+    occupied_mask = output.stdout.split("\n")[11].split()[TagMessageEnum.OCCUPIED_MASK]
+
+    if sys.byteorder == "little":
+        occupied_mask = occupied_mask[::-1]
+
+    occupied_tags = [i for i, x in enumerate(occupied_mask) if x == "1"]
+
+    # Reverse the mask (the nearest tag can be overwritten and the direction
+    # will still be correct)
+    if direction == "prev":
+        occupied_tags.reverse()
+
+    occupied_tags_from_curr = occupied_tags[occupied_tags.index(curr.number) + 1:]
+
+    if len(occupied_tags_from_curr) > 0:
+        prev_distance = MAX_TAGS
+        nearest_tag = 0
+        for tag in occupied_tags_from_curr:
+            distance = abs(curr.number - tag)
+            if distance < prev_distance:
+                prev_distance = distance
+                nearest_tag = tag
+            print(nearest_tag, distance, prev_distance)
+
+        prev.number = curr.number
+        curr.number = nearest_tag
+        prev.write()
+        curr.commit()
+
+curr.file.close()
+prev.file.close()

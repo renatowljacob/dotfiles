@@ -20,6 +20,7 @@ return {
                         "--binary-next-line",
                         "--func-next-line",
                         "--indent",
+                        "--keep-padding",
                         "4",
                         "--space-redirects",
                     },

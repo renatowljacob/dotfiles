@@ -110,7 +110,7 @@ return {
                     auto_show_delay_ms = 300,
                     window = {
                         border = "single",
-                        scrollbar = false, -- Until crashes are fixed
+                        scrollbar = true,
                     },
                 },
                 ghost_text = { show_with_menu = false },

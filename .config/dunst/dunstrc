@@ -5,7 +5,11 @@
     width = 400
     height = (0, 800)
     origin = top-right
-    offset = (6,42)
+
+    # This value changes according to the environment in use. Refer to the following files:
+    #    xinitrc(60:1)
+    #    mango/config.conf(11:1)
+    offset = (6,6)
     scale = 0
 
     notification_limit = 6

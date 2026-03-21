@@ -12,7 +12,7 @@ theme = "TokyoNight Storm"
 
 cursor-style-blink = false
 
-window-decoration = false
+window-decoration = none
 window-padding-x = 10
 window-padding-y = 10,4
 

@@ -235,6 +235,41 @@ return {
                     vmArgs = "" .. "-Xmx2g ",
                 },
             }
+
+            dap.configurations.python = {
+                {
+                    name = "Launch file",
+                    type = "python",
+                    request = "launch",
+                    program = function()
+                        return vim.fn.input(
+                            "Path to script: ",
+                            vim.fn.getcwd() .. "/",
+                            "file"
+                        )
+                    end,
+                },
+                {
+                    name = "Launch file with arguments",
+                    type = "python",
+                    request = "launch",
+                    program = function()
+                        return vim.fn.input(
+                            "Path to script: ",
+                            vim.fn.getcwd() .. "/",
+                            "file"
+                        )
+                    end,
+                    cwd = "${workspaceFolder}",
+                    args = function()
+                        return vim.fn.split(
+                            vim.fn.input("Arguments: "),
+                            " ",
+                            true
+                        )
+                    end,
+                },
+            }
         end,
     },
 }

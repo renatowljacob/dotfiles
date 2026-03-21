@@ -4,7 +4,7 @@
 
 message="left click -> show updates"
 
-print_packages()
+get_packages()
 {
     dunstrc="${XDG_CONFIG_HOME:-$HOME/.config}/dunst/dunstrc"
     lines="$(wc -l "${cachefile}")"
@@ -16,15 +16,16 @@ print_packages()
     packages=
 
     # Truncate if there are more packages than dunst's maximum height
-    [ "${lines%% *}" -gt $((max_height / 30)) ] \
+    max_lines=30
+    [ "${lines%% *}" -gt $((max_height / max_lines)) ] \
         && packages="$(printf '%s\n%s' "$(sed -n '1,25p' "${cachefile}")" \
             '...')"
 
     printf '%b' "${packages:-$(cat "${cachefile}")}"
 }
 
-case $BLOCK_BUTTON in
-1)
+print_packages()
+{
     cachefile="${XDG_RUNTIME_DIR:-/tmp}/dusk-updatesclick"
 
     if updates="$(checkupdates -c --nocolor)" || [ ! -e "${cachefile}" ]; then
@@ -32,12 +33,23 @@ case $BLOCK_BUTTON in
             && printf '%s' "${updates:-$(checkupdates --nocolor)}" \
             | sed 's/\([[:alnum:]]*\) .*/\1/' > "${cachefile}"
 
-        dunstify -a "Updates" "$(print_packages)"
+        dunstify -a "Updates" "$(get_packages)"
     else
-        : > "${cachefile}" && dunstify -a "Updates" "No updates available"
+        : > "${cachefile}" && dunstify -a "${1}" "No updates available"
     fi
 
-    duskc --ignore-reply run_command setstatus 5 "$(statusbar-updates)" &
-    ;;
-*) dunstify -i "${XDG_DATA_HOME}/icons/dunst/circle-exclamation.svg" -a "dusk" "${message}" ;;
-esac
+}
+
+if ps -C dusk; then
+    case $BLOCK_BUTTON in
+    1)
+        print_packages dusk
+        duskc --ignore-reply run_command setstatus 5 "$(statusbar-updates)" &
+        ;;
+    *)
+        dunstify -i "${XDG_DATA_HOME}/icons/dunst/circle-exclamation.svg" -a "Updates" "${message}"
+        ;;
+    esac
+elif ps -C mango; then
+    print_packages mango
+fi

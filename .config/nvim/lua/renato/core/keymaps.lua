@@ -76,9 +76,9 @@ vim.keymap.set("n", "<leader>ocd", function()
 end, { desc = "Change to current buffer directory" })
 
 -- Buffer navigation
-vim.keymap.set({ "n", "v" }, "H", "^")
-vim.keymap.set({ "n", "v" }, "L", "$")
-vim.keymap.set({ "n", "v" }, "M", "%")
+vim.keymap.set({ "n", "v", "o" }, "H", "^")
+vim.keymap.set({ "n", "v", "o" }, "L", "$")
+vim.keymap.set({ "n", "v", "o" }, "M", "%")
 
 -- Windows and tabs navigation
 vim.keymap.set("n", "[t", "<cmd>tabprevious<CR>", { desc = "Previous Tab" })

@@ -31,7 +31,7 @@ $SETSTATUS 1 "$(statusbar-calendar)"
 $SETSTATUS 2 "$(statusbar-clock)"
 $SETSTATUS 3 "$(statusbar-memory)"
 $SETSTATUS 4 "$(statusbar-volume)"
-$SETSTATUS 5 "$(statusbar-updates)"
+$SETSTATUS 5 "$(statusbar-updates dusk)"
 
 secs=0
 while true; do
@@ -51,7 +51,7 @@ while true; do
     # Update these once after 1 minute, i.e. hourly
     if [ $secs = 60 ]; then
         $SETSTATUS 4 "$(statusbar-volume)" &
-        $SETSTATUS 5 "$(statusbar-updates)" &
+        $SETSTATUS 5 "$(statusbar-updates dusk)" &
     fi
 
     # Restart script every hour

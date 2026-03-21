@@ -1,0 +1,41 @@
+#!/bin/sh
+
+cachefile="${XDG_RUNTIME_DIR:-/tmp}/mango-set-layout"
+curr_layout=
+prev_layout=
+
+get_current_layout()
+{
+    printf '%b\n' "$(mmsg -g -l | cut -d ' ' -f 3)"
+}
+
+case "${1}" in
+cycle)
+    printf '%s' "$(get_current_layout)" > "${cachefile}"
+    mmsg -d switch_layout
+    ;;
+toggle)
+    if [ ! -e "${cachefile}" ]; then
+        printf '%s' "T" > "${cachefile}"
+        mmsg -s -l "M"
+        exit 0
+    fi
+    prev_layout="$(cat "${cachefile}")"
+
+    # If layouts are equal (which shouldn't happen but it does :P), retry
+    if [ "${prev_layout}" = "$(get_current_layout)" ]; then
+        rm "${cachefile}"
+        mango-set-layout "${1}"
+    fi
+
+    printf '%s' "$(get_current_layout)" > "${cachefile}"
+    mmsg -s -l "${prev_layout}"
+    ;;
+*)
+    curr_layout="$(get_current_layout)"
+    if [ "${1}" != "${curr_layout}" ]; then
+        printf '%s' "${curr_layout}" > "${cachefile}"
+    fi
+    mmsg -s -l "${1}"
+    ;;
+esac

@@ -4,15 +4,32 @@
 # 13 = super + left click
 # 15 = super + right click
 
-message="right click -> lock screen
+arg="${BLOCK_BUTTON:-${1}}"
 
-super + left click -> restart
+if ps -C dusk-start; then
+    message="right click -> lock screen
 
-super + right click -> quit"
+    super + left click -> restart
 
-case $BLOCK_BUTTON in
-3) betterlockscreen --lock ;;
-13) duskc run_command "restart" ;;
-15) duskc run_command "quit" ;;
-*) dunstify -i "${XDG_DATA_HOME}/icons/dunst/circle-exclamation.svg" -a "dusk" "${message}" ;;
-esac
+    super + right click -> quit"
+
+    case ${arg} in
+    3) betterlockscreen --lock ;;
+    13) duskc run_command "restart" ;;
+    15) duskc run_command "quit" ;;
+    *) dunstify -i "${XDG_DATA_HOME}/icons/dunst/circle-exclamation.svg" -a "dusk" "${message}" ;;
+    esac
+elif ps -C mango; then
+    message="left click -> lock screen
+
+    middle click -> quit
+
+    right click -> reload config"
+
+    case ${arg} in
+    left) pkill --signal 10 swayidle ;;
+    middle) mmsg -q ;;
+    right) mmsg -d reload_config ;;
+    *) dunstify -i "${XDG_DATA_HOME}/icons/dunst/circle-exclamation.svg" -a "mango" "${message}" ;;
+    esac
+fi

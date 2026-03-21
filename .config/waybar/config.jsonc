@@ -1,0 +1,76 @@
+{
+    "height": 30, // Waybar height (to be removed for auto height)
+    "spacing": 8, // Gaps between modules (4px)
+    // Choose the order of the modules
+    "modules-left": [
+        "dwl/tags",
+        "dwl/window"
+    ],
+    "modules-right": [
+        "custom/updates",
+        "wireplumber",
+        "network",
+        "cpu",
+        "memory",
+        "clock",
+        "tray",
+        "custom/power"
+    ], // Modules configuration
+    "dwl/tags": {
+        "num-tags": 9,
+        "tag-labels": ["", "", "", "", "", "", "", "", ""]
+    },
+    "dwl/window": {
+        "format": "[{layout}] {title}"
+        // Work well if mouse warp is disabled
+        // "on-scroll-down": "mmsg -d focusstack,next",
+        // "on-scroll-up": "mmsg -d focusstack,prev"
+    },
+    "custom/power": {
+        "format" : "<span size='large'>⏻</span>",
+        "tooltip": false,
+        "on-click": "statusbar-quitclick left",
+        "on-click-middle": "statusbar-quitclick middle",
+        "on-click-right": "statusbar-quitclick right"
+    },
+    "custom/updates": {
+        "exec" : "statusbar-updates",
+        "format" : "<span size='large'></span> {}",
+        "tooltip": false,
+        "on-click": "statusbar-updatesclick",
+        "interval": 3600
+    },
+    "clock": {
+        "format": "<span size='large'></span> {:%a %d %B %R}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format-alt": "{:%Y-%m-%d}"
+    },
+    "cpu": {
+        "format": "<span size='large'></span> {usage}%",
+        "tooltip": false
+    },
+    "memory": {
+        "format": "<span size='large'></span> {used}GiB"
+    },
+    "network": {
+        "format-wifi": "<span size='large'></span> {signalStrength}%",
+        "format-ethernet": "<span size='large'></span>",
+        "tooltip-format": "{essid}",
+        "format-disconnected": "<span size='large'></span> "
+    },
+    "wireplumber": {
+        "format": "<span size='large'>{icon}</span> {volume}%",
+        "format-muted": "<span size='large'></span> {volume}%",
+        "format-icons": {
+            "default": ["", "", ""]
+        },
+        "scroll-step": 5.0,
+        "max-volume": 150.0,
+        "on-click": "volume mute",
+        "on-scroll-up": "volume up",
+        "on-scroll-down": "volume down"
+    },
+    "tray": {
+        "spacing": 8
+    }
+}

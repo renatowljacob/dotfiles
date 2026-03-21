@@ -1,0 +1,18 @@
+#!/bin/sh
+
+field=
+case ${1} in
+rgb) field=2 ;;
+hex) field=3 ;;
+*)
+    printf '%b\n' "Output format needs to be specified"
+    exit 1
+    ;;
+esac
+
+grim -g "$(slurp -p)" -t ppm - \
+    | magick - -format '%[pixel:p{0,0}]' txt:- \
+    | sed -n '2p' \
+    | sed 's/  */ /g' \
+    | cut -d ' ' -f "${field}" \
+    | wl-copy

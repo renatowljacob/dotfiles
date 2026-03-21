@@ -1,0 +1,16 @@
+#!/bin/sh
+
+case ${1} in
+sleep)
+    if ! ps -C waylock; then
+        waylock -fork-on-lock -init-color 0x24283B -input-color 0x2E3C64 -fail-color 0xF7768E
+    fi
+    mmsg -d disable_monitor,HDMI-A-1
+    ;;
+wakeup)
+    mmsg -d enable_monitor,HDMI-A-1
+    ;;
+*)
+    printf '%b\n' "Bad option"
+    exit 1
+esac
