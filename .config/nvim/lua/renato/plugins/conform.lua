@@ -20,8 +20,8 @@ return {
                         "--binary-next-line",
                         "--func-next-line",
                         "--indent",
-                        "--keep-padding",
                         "4",
+                        "--keep-padding",
                         "--space-redirects",
                     },
                 },
@@ -33,6 +33,7 @@ return {
                 css = { "biome", "prettier" },
                 html = { "biome", "prettier" },
                 lua = { "stylua" },
+                python = { "ruff" },
                 sh = { "shfmt" },
             },
             format_on_save = function(bufnr)

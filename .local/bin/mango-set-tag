@@ -16,9 +16,11 @@ CURR_TAG_FILEPATH = f"{TEMP_DIR}/mango-curr-tag"
 PREV_TAG_FILEPATH = f"{TEMP_DIR}/mango-prev-tag"
 MAX_TAGS = 9
 
+
 class TagMessageEnum:
     OCCUPIED_MASK = 2
     ACTIVE_MASK = 3
+
 
 class Tag:
     def __init__(self, file: io.TextIOWrapper):
@@ -34,10 +36,19 @@ class Tag:
 
     def commit(self):
         self.write()
-        subprocess.run(shlex.split("mmsg -s -t {}".format(self.number + 1)), encoding="UTF-8")
+        subprocess.run(
+            shlex.split("mmsg -s -t {}".format(self.number + 1)), encoding="UTF-8"
+        )
 
-def get_tag_message():
-    return subprocess.run(shlex.split("mmsg -g -t"), encoding="UTF-8", capture_output=True)
+
+# Meant to be used with TagMessageEnum
+def get_mask_from_tag_message(mask):
+    output = subprocess.run(
+        shlex.split("mmsg -g -t"), encoding="UTF-8", capture_output=True
+    )
+    tag_message = output.stdout.split("\n")[11].split()
+    return tag_message[mask]
+
 
 def set_tag_number(direction: str, prev: Tag, curr: Tag):
     prev.number = curr.number
@@ -46,14 +57,12 @@ def set_tag_number(direction: str, prev: Tag, curr: Tag):
     else:
         curr.number = (curr.number - 1) % (MAX_TAGS)
 
+
 curr = Tag(open(CURR_TAG_FILEPATH, "a+"))
 prev = Tag(open(PREV_TAG_FILEPATH, "a+"))
 
 if curr.number == -1:
-    output = get_tag_message()
-    tag_message = output.stdout.split("\n")[11].split()
-    active_mask = tag_message[TagMessageEnum.ACTIVE_MASK]
-
+    active_mask = get_mask_from_tag_message(TagMessageEnum.ACTIVE_MASK)
     if sys.byteorder == "little":
         curr.number = MAX_TAGS - active_mask.index("1") - 1
     else:
@@ -94,25 +103,32 @@ elif arg == "next-move-client" or arg == "prev-move-client":
     prev.write()
     curr.write()
 
-    subprocess.run(shlex.split("mmsg -d tagto{}".format("right" if direction == "next" else "else")), encoding="UTF-8")
+    subprocess.run(
+        shlex.split(
+            "mmsg -d tagto{}".format("right" if direction == "next" else "else")
+        ),
+        encoding="UTF-8",
+    )
 elif arg == "next-has-client" or arg == "prev-has-client":
     direction = arg[:4]
-    output = get_tag_message()
 
     # Check for occupied tags
-    occupied_mask = output.stdout.split("\n")[11].split()[TagMessageEnum.OCCUPIED_MASK]
+    occupied_mask = get_mask_from_tag_message(TagMessageEnum.OCCUPIED_MASK)
 
     if sys.byteorder == "little":
         occupied_mask = occupied_mask[::-1]
 
-    occupied_tags = [i for i, x in enumerate(occupied_mask) if x == "1"]
+    occupied_tags = [
+        i for i, x in enumerate(occupied_mask) if x == "1" or i == curr.number
+    ]
 
     # Reverse the mask (the nearest tag can be overwritten and the direction
     # will still be correct)
     if direction == "prev":
         occupied_tags.reverse()
 
-    occupied_tags_from_curr = occupied_tags[occupied_tags.index(curr.number) + 1:]
+    offset = occupied_tags.index(curr.number) + 1
+    occupied_tags_from_curr = occupied_tags[offset:]
 
     if len(occupied_tags_from_curr) > 0:
         prev_distance = MAX_TAGS
@@ -122,7 +138,6 @@ elif arg == "next-has-client" or arg == "prev-has-client":
             if distance < prev_distance:
                 prev_distance = distance
                 nearest_tag = tag
-            print(nearest_tag, distance, prev_distance)
 
         prev.number = curr.number
         curr.number = nearest_tag
