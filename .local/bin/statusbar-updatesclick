@@ -17,9 +17,9 @@ get_packages()
 
     # Truncate if there are more packages than dunst's maximum height
     max_lines=30
-    [ "${lines%% *}" -gt $((max_height / max_lines)) ] \
-        && packages="$(printf '%s\n%s' "$(sed -n '1,25p' "${cachefile}")" \
-            '...')"
+    if [ "${lines%% *}" -gt $((max_height / max_lines)) ]; then
+        packages="$(printf '%s\n%s' "$(sed -n '1,25p' "${cachefile}")" '...')"
+    fi
 
     printf '%b' "${packages:-$(cat "${cachefile}")}"
 }
@@ -28,10 +28,11 @@ print_packages()
 {
     cachefile="${XDG_RUNTIME_DIR:-/tmp}/dusk-updatesclick"
 
-    if updates="$(checkupdates -c --nocolor)" || [ ! -e "${cachefile}" ]; then
-        [ -n "${updates}" ] \
-            && printf '%s' "${updates:-$(checkupdates --nocolor)}" \
-            | sed 's/\([[:alnum:]]*\) .*/\1/' > "${cachefile}"
+    if updates="$(checkupdates -c --nocolor)" || [ ! -s "${cachefile}" ]; then
+        if [ -n "${updates}" ]; then
+            printf '%s' "${updates:-$(checkupdates --nocolor)}" \
+                | sed 's/\([[:alnum:]]*\) .*/\1/' > "${cachefile}"
+        fi
 
         dunstify -a "Updates" "$(get_packages)"
     else

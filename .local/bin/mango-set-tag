@@ -105,7 +105,7 @@ elif arg == "next-move-client" or arg == "prev-move-client":
 
     subprocess.run(
         shlex.split(
-            "mmsg -d tagto{}".format("right" if direction == "next" else "else")
+            "mmsg -d tagto{}".format("right" if direction == "next" else "left")
         ),
         encoding="UTF-8",
     )

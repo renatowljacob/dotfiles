@@ -4,7 +4,10 @@
 
 declare -a flags=() files=()
 
-[[ -z ${NVIM} ]] && nvim "$@" && exit 0
+if [[ -z ${NVIM} ]]; then
+    nvim "$@"
+    exit 0
+fi
 
 # TODO: Open a new, unnamed buffer
 if [[ $# == 0 ]]; then
@@ -40,7 +43,9 @@ while true; do
     -*) flags+=("$1") ;;
     +*) flags+=("\"$1\"") ;;
     *)
-        [[ $# == 0 ]] && break
+        if [[ $# == 0 ]]; then
+            break
+        fi
 
         if [[ -e $1 ]]; then
             files+=("$(realpath "$1")")

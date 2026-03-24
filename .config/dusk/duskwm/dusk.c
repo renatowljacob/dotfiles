@@ -48,7 +48,6 @@
 #include "util.h"
 
 #include <assert.h>
-#include <libgen.h>
 #include <sys/stat.h>
 #define SPAWN_CWD_DELIM " []{}()<>\"':"
 
@@ -636,7 +635,7 @@ applyrules(Client *c)
 	const char *class, *instance;
 	Atom game_id = None, da = None, *win_types = NULL;
 	char *role = NULL;
-	int i, di;
+	int i, format;
 	unsigned long dl, nitems;
 	unsigned char *p = NULL;
 	unsigned int transient;
@@ -644,9 +643,9 @@ applyrules(Client *c)
 	XClassHint ch = { NULL, NULL };
 
 	if (XGetWindowProperty(dpy, c->win, netatom[NetWMWindowType], 0L, sizeof(Atom), False, XA_ATOM,
-			&da, &di, &nitems, &dl, &p) == Success && p) {
-		if (nitems > 0)
-			win_types = (Atom *) p;
+			&da, &format, &nitems, &dl, &p) == Success && p) {
+		if (nitems > 0 && format == 32)
+			win_types = (Atom *)p;
 	}
 
 	/* rule matching */
@@ -1173,7 +1172,7 @@ clientmessage(XEvent *e)
 {
 	XClientMessageEvent *cme = &e->xclient;
 	Workspace *ws;
-	Client *c;
+	Client *c, *s;
 	unsigned int maximize_vert, maximize_horz;
 	int setfakefullscreen = 0;
 
@@ -1320,6 +1319,13 @@ clientmessage(XEvent *e)
 		}
 	} else if (cme->message_type == netatom[NetActiveWindow]) {
 		if (enabled(FocusOnNetActive) && !NOFOCUSONNETACTIVE(c)) {
+			/* If a swallowed window get a _NET_ACTIVE_WINDOW then allow
+			 * the client to be unswallowed and the window to receive focus */
+			if (SWALLOWED(c)) {
+				s = swallowingparent(c->win);
+				unswallow(&((Arg) { .v = s }));
+				setclientnetstate(s, 0);
+			}
 			if (ISINVISIBLE(c) && c->scratchkey) {
 				togglescratch(&((Arg) {.v = (const char*[]){ &c->scratchkey, NULL } }));
 			}
@@ -2076,17 +2082,17 @@ focusstack(const Arg *arg)
 Atom
 getatomprop(Client *c, Atom prop, Atom req)
 {
-	int di;
+	int format;
 	unsigned long nitems, after;
 	unsigned char *p = NULL;
 	Atom da, atom = None;
 
 	if (XGetWindowProperty(dpy, c->win, prop, 0L, sizeof atom, False, req,
-		&da, &di, &nitems, &after, &p) == Success && p) {
-		if (nitems > 0) {
-			atom = *(Atom *)p;
+		&da, &format, &nitems, &after, &p) == Success && p) {
+		if (nitems > 0 && format == 32) {
+			atom = *(long *)p;
 			if (da == xatom[XembedInfo] && nitems == 2)
-				atom = ((Atom *)p)[1];
+				atom = ((long *)p)[1];
 		}
 		XFree(p);
 	}
@@ -2133,9 +2139,9 @@ getstate(Window w)
 	Atom real;
 
 	if (XGetWindowProperty(dpy, w, wmatom[WMState], 0L, 2L, False, wmatom[WMState],
-			&real, &format, &nitems, &after, (unsigned char **)&p) == Success && p) {
-		if (nitems > 0)
-			result = *p;
+			&real, &format, &nitems, &after, &p) == Success && p) {
+		if (nitems > 0 && format == 32)
+			result = *(long *)p;
 		XFree(p);
 	}
 
@@ -2652,7 +2658,7 @@ maprequest(XEvent *e)
 
 	Client *i;
 	if (systray && (i = wintosystrayicon(ev->window))) {
-		sendevent(i->win, netatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_WINDOW_ACTIVATE, 0, systray->win, XEMBED_EMBEDDED_VERSION);
+		sendevent(i->win, xatom[Xembed], StructureNotifyMask, CurrentTime, XEMBED_WINDOW_ACTIVATE, 0, systray->win, XEMBED_EMBEDDED_VERSION);
 		drawbarwin(systray->bar);
 	}
 
@@ -3320,12 +3326,10 @@ sendevent(Window w, Atom proto, int mask, long d0, long d1, long d2, long d3, lo
 void
 setfocus(Client *c)
 {
-	if (!NEVERFOCUS(c)) {
+	if (!NEVERFOCUS(c))
 		XSetInputFocus(dpy, c->win, RevertToPointerRoot, CurrentTime);
-		XChangeProperty(dpy, root, netatom[NetActiveWindow],
-			XA_WINDOW, 32, PropModeReplace,
-			(unsigned char *) &(c->win), 1);
-	}
+	XChangeProperty(dpy, root, netatom[NetActiveWindow], XA_WINDOW, 32,
+		PropModeReplace, (unsigned char *) &(c->win), 1);
 	selws->sel = c;
 	if (selws != c->ws)
 		c->ws->sel = c;
@@ -3682,7 +3686,7 @@ spawncmd(const Arg *arg, int buttonclick, int orphan)
 
 			cwd = strtok(selws->sel->name, SPAWN_CWD_DELIM);
 
-			if (strncmp(cwd, "~/", 2) == 0) {
+			if (cwd && strncmp(cwd, "~/", 2) == 0) {
 				/* Replace ~/ with HOME environment variable */
 				pathbuf = subst_home_directory(cwd);
 				cwd = pathbuf;
@@ -3692,12 +3696,25 @@ spawncmd(const Arg *arg, int buttonclick, int orphan)
 			 * but that does not matter because we are going to
 			 * exec() below anyway; nothing else will use it */
 			while (cwd) {
-				if (strchr(cwd, '/') && !stat(cwd, &statbuf)) {
-					if (!S_ISDIR(statbuf.st_mode))
-						cwd = dirname(cwd);
+				if (strchr(cwd, '/') && stat(cwd, &statbuf) == 0) {
 
-					if (strlen(cwd) > 1 && !chdir(cwd))
+					char *dir = NULL;
+
+					if (!S_ISDIR(statbuf.st_mode)) {
+						dir = path_dirname(cwd);
+					} else {
+						dir = strdup(cwd);
+					}
+
+					if (!dir)
+						break; /* OOM */
+
+					if (strlen(dir) > 1 && chdir(dir) == 0) {
+						free(dir);
 						break;
+					}
+
+					free(dir);
 				}
 
 				cwd = strtok(NULL, SPAWN_CWD_DELIM);

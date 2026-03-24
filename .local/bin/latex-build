@@ -5,12 +5,15 @@ has_biblatex()
 {
     queryall=$(grep -e "^\\\\usepackage.*{biblatex}" -e "^\\\\addbibresource.*{.\+}" "$1")
 
-    [ -z "${queryall}" ] && return 1
+    if [ -z "${queryall}" ]; then
+        return 1
+    fi
 
     # If commented out entries are equal to total count
-    [ "$(printf '%s' "${queryall}" | grep -c %)" -eq \
-        "$(printf '%s' "${queryall}" | wc -l)" ] \
-        && return 1
+    if [ "$(printf '%s' "${queryall}" | grep -c %)" -eq \
+        "$(printf '%s' "${queryall}" | wc -l)" ]; then
+        return 1
+    fi
 
     # Use biber to generate references
     biber "$1"
@@ -23,12 +26,15 @@ has_ref_or_label()
 {
     queryall=$(grep -e "\\\\ref" -e "\\\\label" "$1")
 
-    [ -z "${queryall}" ] && return 1
+    if [ -z "${queryall}" ]; then
+        return 1
+    fi
 
     # If commented out entries are equal to total count
-    [ "$(printf "%s" "${queryall}" | grep -c %)" -eq \
-        "$(printf "%s" "${queryall}" | wc -l)" ] \
-        && return 1
+    if [ "$(printf "%s" "${queryall}" | grep -c %)" -eq \
+        "$(printf "%s" "${queryall}" | wc -l)" ]; then
+        return 1
+    fi
 
     return 0
 }

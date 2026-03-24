@@ -153,7 +153,9 @@ for file in "$@"; do
     newfile="${stem}.${format}"
 
     if [[ ${dryrun} == 0 ]]; then
-        [[ ${backup} == 1 ]] && cp "${file}" "${backupdir}"
+        if [[ ${backup} == 1 ]]; then
+            cp "${file}" "${backupdir}"
+        fi
 
         if [[ "${extension}" == "${format}" ]]; then
             tmp="tmp.${RANDOM}.${extension}"
