@@ -68,9 +68,9 @@ if curr.number == -1:
     else:
         curr.number = active_mask.index("1")
 
-    curr.file.write(str(curr.number))
+    curr.write()
     prev.number = curr.number
-    prev.file.write(str(prev.number))
+    prev.write()
 
 if len(sys.argv) < 2:
     print(f"{PROGRAM_NAME}: must specify action", file=sys.stderr)

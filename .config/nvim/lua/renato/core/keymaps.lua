@@ -38,7 +38,11 @@ vim.keymap.set(
 vim.keymap.set("n", "<leader>dq", function()
     vim.diagnostic.setloclist({ open = false })
     require("quicker").toggle({ loclist = true })
-end, { desc = "Open diagnostic Quickfix list" })
+end, { desc = "Open buffer-local diagnostic quickfix list" })
+vim.keymap.set("n", "<leader>dw", function()
+    vim.diagnostic.setqflist({ open = false })
+    require("quicker").toggle()
+end, { desc = "Open global diagnostic quickfix list" })
 
 -- Open/delete operations
 vim.keymap.set("n", "<leader>obd", function()

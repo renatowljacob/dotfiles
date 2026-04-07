@@ -1,6 +1,6 @@
 return {
     {
-        "utilyre/sentiment.nvim",
+        "renatowljacob/sentiment.nvim",
         event = "VeryLazy",
         opts = {
             delay = 30,
