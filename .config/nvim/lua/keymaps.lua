@@ -85,7 +85,9 @@ end, { desc = "Change to current buffer directory" })
 -- Buffer navigation
 vim.keymap.set({ "n", "v", "o" }, "H", "^")
 vim.keymap.set({ "n", "v", "o" }, "L", "$")
-vim.keymap.set({ "n", "v", "o" }, "M", "%")
+vim.keymap.set("n", "M", "<Plug>(MatchitNormalForward)")
+vim.keymap.set("v", "M", "<Plug>(MatchitVisualForward)")
+vim.keymap.set("o", "M", "<Plug>(MatchitOperationForward)")
 
 -- Windows and tabs navigation
 vim.keymap.set("n", "[t", "<cmd>tabprevious<CR>", { desc = "Previous Tab" })

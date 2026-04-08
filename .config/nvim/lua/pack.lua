@@ -7,7 +7,7 @@ vim.pack.add({
     -- Completion
     {
         src = gh("saghen/blink.cmp"),
-        version = vim.version.range("1"),
+        version = vim.version.range("1.x"),
     },
 
     -- Theming

@@ -7,7 +7,21 @@
 
 local MyApi = require("myapi")
 
+vim.api.nvim_create_autocmd("PackChanged", {
+    desc = "Update treesitter and parsers",
+    callback = function(event)
+        local name, kind = event.data.spec.name, event.data.kind
+        if name == "nvim-treesitter" and kind == "update" then
+            if not event.data.active then
+                vim.cmd.packadd("nvim-treesitter")
+            end
+            vim.cmd("TSUpdate")
+        end
+    end,
+})
+
 vim.api.nvim_create_autocmd("FileType", {
+    desc = "Activate autotag functionality in HTML files",
     pattern = {
         "html",
         "javascript",
