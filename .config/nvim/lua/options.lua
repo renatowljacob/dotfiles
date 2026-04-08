@@ -72,6 +72,9 @@ vim.wo.signcolumn = "yes"
 vim.wo.wrap = true
 vim.wo.linebreak = true
 vim.wo.breakindent = true
+--Indent
+vim.o.smartindent = true
+vim.o.smarttab = true
 --       Misc
 vim.wo.colorcolumn = "81"
 

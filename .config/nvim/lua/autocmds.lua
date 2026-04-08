@@ -5,7 +5,24 @@
 --  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
 
-local MyApi = require("renato.core.myapi")
+local MyApi = require("myapi")
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = {
+        "html",
+        "javascript",
+        "javascriptreact",
+        "markdown",
+        "php",
+        "typescript",
+        "typescriptreact",
+        "vue",
+        "xml",
+    },
+    callback = function()
+        require("nvim-ts-autotag").setup()
+    end,
+})
 
 vim.api.nvim_create_autocmd("FileType", {
     desc = "Quickfix list navigation keymaps",
@@ -78,6 +95,57 @@ vim.api.nvim_create_autocmd("LspAttach", {
             "Type Definition"
         )
 
+        map("gro", function()
+            local kinds = {
+                -- "Array",
+                -- "Boolean",
+                "Class",
+                "Constant",
+                "Constructor",
+                "Enum",
+                "EnumMember",
+                "Event",
+                "Field",
+                -- "File",
+                "Function",
+                "Interface",
+                "Key",
+                "Method",
+                "Module",
+                "Namespace",
+                "Null",
+                -- "Number",
+                "Object",
+                "Operator",
+                "Package",
+                "Property",
+                "Struct",
+                "TypeParameter",
+                "Variable",
+            }
+            require("myapi").buf.document_symbols({
+                filter = {
+                    default = kinds,
+                    lua = {
+                        "Class",
+                        "Constructor",
+                        "Enum",
+                        "Field",
+                        "Function",
+                        "Interface",
+                        "Method",
+                        "Module",
+                        "Namespace",
+                        -- "Package", -- remove package since luals uses it for control flow structures
+                        "Property",
+                        "Struct",
+                        "Trait",
+                        "Variable",
+                    },
+                },
+            })
+        end, "Document Symbols")
+
         -- Fuzzy find all the symbols in your current workspace.
         --  Similar to document symbols, except searches over your entire project.
         map(
@@ -85,14 +153,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
             require("snacks.picker").lsp_workspace_symbols,
             "Workspace Symbols"
         )
-
-        -- Rename the variable under your cursor.
-        --  Most Language Servers support renaming across files, etc.
-        map("grn", vim.lsp.buf.rename, "Rename")
-
-        -- Execute a code action, usually your cursor needs to be on top of an error
-        -- or a suggestion from your LSP for this to activate.
-        map("gra", vim.lsp.buf.code_action, "Code Action")
 
         -- Opens a popup that displays documentation about the word under your cursor
         --  See `:help K` for why this keymap.

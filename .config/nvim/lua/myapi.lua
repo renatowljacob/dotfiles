@@ -192,9 +192,9 @@ end
 ---@return string? filetype C or C++ filetype
 function MyApi.ft.get_header_filetype(header_file)
     local file_basename = vim.fs.basename(header_file)
-    local file_extension = file_basename:match(".*%.(.*)")
+    local file_extension = vim.fs.ext(file_basename)
 
-    -- Non-ambiguous header file, just leave
+    -- Header file, no need to disambiguate
     if file_extension ~= "h" then
         return nil
     end
@@ -215,7 +215,7 @@ function MyApi.ft.get_header_filetype(header_file)
     local cpp_extensions = { "cpp", "cxx", "c++", "cc", "cp", "C", "CPP", "H" } -- why
     for _, file in ipairs(same_stem_files) do
         for _, extension in ipairs(cpp_extensions) do
-            if file:match(".*%.(%w+)") == extension then
+            if vim.fs.ext(file) == extension then
                 return "cpp"
             end
         end

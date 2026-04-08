@@ -10,7 +10,7 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
-local MyApi = require("renato.core.myapi")
+local MyApi = require("myapi")
 local dotbare = MyApi.cli.dotbare
 local toggle_nth_terminal = MyApi.buf.toggle_nth_terminal
 
@@ -29,16 +29,19 @@ vim.keymap.set(
 vim.keymap.set("n", "<leader>dd", function()
     vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "Toggle Diagnostics" })
+
 vim.keymap.set(
     "n",
     "<leader>de",
     vim.diagnostic.open_float,
     { desc = "Show diagnostic error messages" }
 )
+
 vim.keymap.set("n", "<leader>dq", function()
     vim.diagnostic.setloclist({ open = false })
     require("quicker").toggle({ loclist = true })
 end, { desc = "Open buffer-local diagnostic quickfix list" })
+
 vim.keymap.set("n", "<leader>dw", function()
     vim.diagnostic.setqflist({ open = false })
     require("quicker").toggle()
