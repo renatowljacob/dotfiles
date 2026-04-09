@@ -1,4 +1,4 @@
-local myapi = require("renato.core.myapi")
+local myapi = require("myapi")
 local bufnr = vim.api.nvim_get_current_buf()
 
 vim.bo.tabstop = 8

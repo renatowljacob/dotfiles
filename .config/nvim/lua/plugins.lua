@@ -364,6 +364,7 @@ end
 
 -- Treesitter
 do
+    local treesitter = require("nvim-treesitter")
     local filetypes = {
         "bash",
         "c",
@@ -382,8 +383,7 @@ do
         "vimdoc",
         "zsh",
     }
-
-    require("nvim-treesitter").install(filetypes)
+    treesitter.install(filetypes)
 
     -- No parser for these, just start treesitter
     vim.list_extend(filetypes, {
@@ -392,8 +392,8 @@ do
 
     vim.api.nvim_create_autocmd("FileType", {
         pattern = filetypes,
-        callback = function()
-            vim.treesitter.start()
+        callback = function(event)
+            vim.treesitter.start(event.buf)
         end,
     })
 

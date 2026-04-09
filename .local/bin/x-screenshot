@@ -1,0 +1,28 @@
+#!/bin/sh
+
+SCREENSHOTS_DIR="${HOME}/Pictures/screenshots"
+BASENAME="$(date +%Y%m%d_%Hh%Mm%Ss)_shotgun.png"
+FILENAME="${SCREENSHOTS_DIR}/${BASENAME}"
+
+case ${1} in
+select)
+    shotgun -g "$(hacksaw)" - | tee "${FILENAME}" | xclip -t 'image/png' -selection clipboard
+    # Selection was canceled
+    if [ ! -s "${FILENAME}" ]; then
+        rm "${FILENAME}"
+    fi
+    ;;
+window)
+    window_geometry="$(xdotool getactivewindow getwindowgeometry)"
+    window_coordinates="$(printf '%s' "${window_geometry}" | sed -n '2p' | cut -d ' ' -f 4)"
+    window_size="$(printf '%s' "${window_geometry}" | sed -n '3p' | cut -d ' ' -f 4)"
+    geometry="${window_size}+$(printf '%s' "${window_coordinates}" | sed 's/,/+/')"
+
+    shotgun -g "${geometry}" - \
+        | tee "${FILENAME}" \
+        | xclip -t 'image/png' -selection clipboard
+    ;;
+*) # Fullscreen
+    shotgun -s - | tee "${FILENAME}" | xclip -t 'image/png' -selection clipboard
+    ;;
+esac
