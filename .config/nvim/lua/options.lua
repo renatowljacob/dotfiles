@@ -55,6 +55,7 @@ vim.opt.sessionoptions = {
 }
 --      Misc
 vim.o.switchbuf = "useopen"
+vim.o.splitkeep = "screen"
 
 --  WINDOW OPTIONS
 --      Virtual chars

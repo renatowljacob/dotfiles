@@ -1,42 +1,42 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static unsigned int borderpx       = 3;   /* border pixel of windows */
-static unsigned int snap           = 32;  /* snap pixel */
-static unsigned int gappih         = 6;   /* horiz inner gap between windows */
-static unsigned int gappiv         = 6;   /* vert inner gap between windows */
-static unsigned int gappoh         = 6;   /* horiz outer gap between windows and screen edge */
-static unsigned int gappov         = 6;   /* vert outer gap between windows and screen edge */
-static unsigned int gappfl         = 6;   /* gap between floating windows (when relevant) */
-static unsigned int smartgaps_fact = 0;   /* smartgaps factor when there is only one client; 0 = no gaps, 3 = 3x outer gaps */
+static unsigned int borderpx        = 3;   /* border pixel of windows */
+static unsigned int snap            = 32;  /* snap pixel */
+static unsigned int gappih          = 6;   /* horiz inner gap between windows */
+static unsigned int gappiv          = 6;   /* vert inner gap between windows */
+static unsigned int gappoh          = 6;   /* horiz outer gap between windows and screen edge */
+static unsigned int gappov          = 6;   /* vert outer gap between windows and screen edge */
+static unsigned int gappfl          = 6;   /* gap between floating windows (when relevant) */
+static unsigned int smartgaps_fact  = 0;   /* smartgaps factor when there is only one client; 0 = no gaps, 3 = 3x outer gaps */
 
-static unsigned int attachdefault        = AttachMaster; // AttachMaster, AttachAbove, AttachAside, AttachBelow, AttachBottom
+static unsigned int attachdefault   = AttachMaster; // AttachMaster, AttachAbove, AttachAside, AttachBelow, AttachBottom
 
-static int initshowbar             = 1;   /* 0 means no bar */
+static int initshowbar              = 1;   /* 0 means no bar */
 
-static int bar_height              = 0;   /* 0 means derive from font, >= 1 explicit height */
-static int vertpad                 = 6;  /* vertical (outer) padding of bar */
-static int sidepad                 = 6;  /* horizontal (outer) padding of bar */
+static int bar_height               = 0;   /* 0 means derive from font, >= 1 explicit height */
+static int vertpad                  = 6;  /* vertical (outer) padding of bar */
+static int sidepad                  = 6;  /* horizontal (outer) padding of bar */
 
-static int iconsize                = 16;  /* icon size */
-static int iconspacing             = 5;   /* space between icon and title */
+static int iconsize                 = 16;  /* icon size */
+static int iconspacing              = 5;   /* space between icon and title */
 
-static float pfact                 = 0.25; /* size of workspace previews relative to monitor size */
+static float pfact                  = 0.25; /* size of workspace previews relative to monitor size */
 
-static int floatposgrid_x                = 5;   /* float grid columns */
-static int floatposgrid_y                = 5;   /* float grid rows */
+static int floatposgrid_x           = 5;   /* float grid columns */
+static int floatposgrid_y           = 5;   /* float grid rows */
 
-static int horizpadbar             = 6;   /* horizontal (inner) padding for statusbar (increases lrpad) */
-static int vertpadbar              = 10;   /* vertical (inner) padding for statusbar (increases bh, overridden by bar_height) */
+static int horizpadbar              = 6;   /* horizontal (inner) padding for statusbar (increases lrpad) */
+static int vertpadbar               = 10;   /* vertical (inner) padding for statusbar (increases bh, overridden by bar_height) */
 
-static const char slopspawnstyle[]       = "-t 0 -c 0.92,0.85,0.69,0.3 -o"; /* do NOT define -f (format) here */
-static const char slopresizestyle[]      = "-t 0 -c 0.92,0.85,0.69,0.3"; /* do NOT define -f (format) here */
-static unsigned int systrayspacing = 10;   /* systray spacing */
-static const char *toggle_float_pos      = "50% 50% 80% 80%"; // default floating position when triggering togglefloating
-static double defaultopacity       = 0;   /* client default opacity, e.g. 0.75. 0 means don't apply opacity */
-static double moveopacity          = 0;   /* client opacity when being moved, 0 means don't apply opacity */
-static double resizeopacity        = 0;   /* client opacity when being resized, 0 means don't apply opacity */
-static double placeopacity         = 0;   /* client opacity when being placed, 0 means don't apply opacity */
+static const char slopspawnstyle[]  = "-t 0 -c 0.92,0.85,0.69,0.3 -o"; /* do NOT define -f (format) here */
+static const char slopresizestyle[] = "-t 0 -c 0.92,0.85,0.69,0.3"; /* do NOT define -f (format) here */
+static unsigned int systrayspacing  = 10;   /* systray spacing */
+static const char *toggle_float_pos = "50% 50% 80% 80%"; // default floating position when triggering togglefloating
+static double defaultopacity        = 0;   /* client default opacity, e.g. 0.75. 0 means don't apply opacity */
+static double moveopacity           = 0;   /* client opacity when being moved, 0 means don't apply opacity */
+static double resizeopacity         = 0;   /* client opacity when being resized, 0 means don't apply opacity */
+static double placeopacity          = 0;   /* client opacity when being placed, 0 means don't apply opacity */
 
 /* Indicators: see lib/bar_indicators.h for options */
 static int indicators[IndicatorLast] = {
@@ -50,13 +50,13 @@ static int indicators[IndicatorLast] = {
 	[IndicatorFloating] = INDICATOR_TOP_LEFT_LARGER_SQUARE,
 };
 
-/* Custom indicators using status2d markup, e.g. enabled via INDICATOR_CUSTOM_3 */
-static char *custom_2d_indicator_1 = "^c#00A523^^r0,h,w,2^"; // green underline
-static char *custom_2d_indicator_2 = "^c#55cdfc^^r3,3,4,4^^c#E72608^^r4,4,2,2^"; // blue rectangle
-static char *custom_2d_indicator_3 = "^f-10^^c#E72608^𐄛"; // example using a character as an indicator
-static char *custom_2d_indicator_4 = "^c#E26F0B^^r0,h,w,1^^r0,0,1,h^^r0,0,w,1^^rw,0,1,h^"; // orange box
-static char *custom_2d_indicator_5 = "^c#CB9700^^r0,h,w,1^^r0,0,w,1^"; // top and bottom lines
-static char *custom_2d_indicator_6 = "^c#F0A523^^r6,2,1,-4^^r-6,2,1,-4^"; // orange vertical bars
+// Never delete this
+static char *custom_2d_indicator_1 = ""; // green underline
+static char *custom_2d_indicator_2 = ""; // blue rectangle
+static char *custom_2d_indicator_3 = ""; // example using a character as an indicator
+static char *custom_2d_indicator_4 = ""; // orange box
+static char *custom_2d_indicator_5 = ""; // top and bottom lines
+static char *custom_2d_indicator_6 = ""; // orange vertical bars
 
 /* The below are only used if the WorkspaceLabels functionality is enabled */
 static char *occupied_workspace_label_format = "%s: %s";     /* format of a workspace label */
@@ -133,7 +133,7 @@ static int flexwintitle_floatweight      = 0;  // floating window title weight, 
 static int flexwintitle_separator        = 0;  // width of client separator
 
 static const char *fonts[] = {
-	"JetBrainsMono:weight=100:pixelsize=14:antialias=true:autohint=true",
+	"JetBrainsMono:weight=150:pixelsize=15:antialias=true:autohint=true",
 	"Font Awesome 7 Free:style=Solid:pixelsize=16"
 };
 

@@ -176,8 +176,6 @@ do
     })
     vim.cmd.colorscheme("tokyonight")
 
-    -- You can configure highlights by doing something like:
-    vim.cmd.hi("DapStoppedLine guibg=#1D202F")
     vim.cmd.hi("DebugPC guibg=bg")
     vim.cmd.hi("BlinkCmpMenu guibg=bg")
     vim.cmd.hi("LineNr gui=bold")
@@ -326,7 +324,6 @@ do
             css = { "biome", "prettier" },
             html = { "biome", "prettier" },
             lua = { "stylua" },
-            python = { "ruff" },
             sh = { "shfmt" },
         },
         format_on_save = function(bufnr)
@@ -387,6 +384,8 @@ do
 
     -- No parser for these, just start treesitter
     vim.list_extend(filetypes, {
+        "javascriptreact",
+        "typescriptreact",
         "sh",
     })
 
@@ -408,7 +407,6 @@ do
     local dap = require("dap")
     local dapui = require("dapui")
     local dapvirt = require("nvim-dap-virtual-text")
-    local colors = require("tokyonight.colors").setup()
 
     require("mason-nvim-dap").setup({
         -- Makes a best effort to setup the various debuggers with
@@ -433,7 +431,7 @@ do
             {
                 elements = {
                     {
-                        id = "scopes",
+                        id = "stacks",
                         size = 0.1,
                     },
                     {
@@ -445,7 +443,7 @@ do
                         size = 0.1,
                     },
                     {
-                        id = "stacks",
+                        id = "scopes",
                         size = 0.7,
                     },
                 },
@@ -470,8 +468,12 @@ do
     })
 
     -- Change breakpoint icons
-    vim.api.nvim_set_hl(0, "DapBreak", { fg = colors.red })
-    vim.api.nvim_set_hl(0, "DapStop", { fg = colors.yellow })
+    vim.api.nvim_set_hl(0, "DapBreak", {
+        link = "@module.builtin",
+    })
+    vim.api.nvim_set_hl(0, "DapStop", {
+        link = "@comment.warning",
+    })
     local breakpoint_icons = vim.g.have_nerd_font
             and {
                 Breakpoint = "",
@@ -512,10 +514,10 @@ do
         dapvirt.refresh()
     end
 
-    -- GDB setup
     dap.configurations.c = {
+        -- GDB setup
         {
-            name = "Launch file",
+            name = "GDB: Launch file",
             type = "cppdbg",
             request = "launch",
             program = function()
@@ -529,8 +531,38 @@ do
             stopAtEntry = true,
         },
         {
-            name = "Launch file with arguments",
+            name = "GDB: Launch file with arguments",
             type = "cppdbg",
+            request = "launch",
+            program = function()
+                return vim.fn.input(
+                    "Path to executable: ",
+                    vim.fn.getcwd() .. "/",
+                    "file"
+                )
+            end,
+            cwd = "${workspaceFolder}",
+            args = function()
+                return vim.fn.split(vim.fn.input("Arguments: "), " ", true)
+            end,
+        },
+        {
+            name = "LLDB: Launch file",
+            type = "codelldb",
+            request = "launch",
+            program = function()
+                return vim.fn.input(
+                    "Path to executable: ",
+                    vim.fn.getcwd() .. "/",
+                    "file"
+                )
+            end,
+            cwd = "${workspaceFolder}",
+            stopAtEntry = true,
+        },
+        {
+            name = "LLDB: Launch file with arguments",
+            type = "codelldb",
             request = "launch",
             program = function()
                 return vim.fn.input(
@@ -605,7 +637,7 @@ do
     end, { desc = "Debug: Restart" })
 
     vim.keymap.set("n", "<F5>", function()
-        dap.step_into()
+        dap.continue()
     end, { desc = "Debug: Step into" })
 
     vim.keymap.set("n", "<F6>", function()
@@ -632,7 +664,7 @@ do
         dap.clear_breakpoints()
     end, { desc = "Debug: Clear breakpoints" })
 
-    vim.keymap.set("n", "<leader>te", function()
+    vim.keymap.set({ "n", "v" }, "<leader>te", function()
         dapui.eval()
     end, { desc = "Debug: Eval expression" })
 
