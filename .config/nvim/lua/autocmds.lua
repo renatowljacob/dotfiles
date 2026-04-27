@@ -46,36 +46,70 @@ vim.api.nvim_create_autocmd("FileType", {
     ),
     pattern = "qf",
     callback = function()
-        local opts = { silent = true }
-        local buffer = MyApi.buf
+        local function highlight_line(bufnr, lnum)
+            local higroup = "IncSearch"
+            local namespace =
+                vim.api.nvim_create_namespace("highlight_quickfix")
+            local timeout = 150
+            local winid = vim.fn.bufwinid(
+                bufnr and bufnr or vim.api.nvim_get_current_buf()
+            )
 
-        vim.keymap.set("n", "]q", function()
-            vim.cmd("silent! lnext | silent! cnext | silent! foldopen!")
-            buffer.highlight_line(buffer.get_qfline())
-        end, opts)
-        vim.keymap.set("n", "[q", function()
-            vim.cmd("silent! lprev | silent! cprev | silent! foldopen!")
-            buffer.highlight_line(buffer.get_qfline())
-        end, opts)
+            vim.api.nvim_win_set_hl_ns(winid, namespace)
+            vim.hl.range(
+                bufnr,
+                namespace,
+                higroup,
+                { lnum, 0 },
+                { lnum, -1 },
+                { timeout = timeout }
+            )
+        end
+
+        local function get_qfline()
+            ---@type table
+            local qflist = vim.fn.getqflist()
+            local index = vim.fn.getqflist({ idx = 0 }).idx
+
+            if vim.tbl_isempty(qflist) then
+                qflist = vim.fn.getloclist(0)
+                index = vim.fn.getloclist(0, { idx = 0 }).idx
+            end
+
+            if vim.tbl_isempty(qflist) then
+                return nil
+            end
+
+            local line = qflist[index]
+            local bufnr, lnum = line.bufnr, line.lnum - 1
+
+            return bufnr, lnum
+        end
+
+        local function map_qf(lhs, direction)
+            vim.keymap.set({ "n", "v" }, lhs, function()
+                vim.cmd(
+                    "silent! l"
+                        .. direction
+                        .. " | silent! c"
+                        .. direction
+                        .. " | silent! foldopen!"
+                )
+                highlight_line(get_qfline())
+            end, { silent = true })
+        end
+        map_qf("]q", "next")
+        map_qf("[q", "prev")
     end,
 })
 
---  This function gets run when an LSP attaches to a particular buffer.
---    That is to say, every time a new file is opened that is associated with
---    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
---    function will be executed to configure the current buffer
 vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup(
         "kickstart-lsp-attach",
         { clear = true }
     ),
     callback = function(event)
-        -- NOTE: Remember that Lua is a real programming language, and as such it is possible
-        -- to define small helper and utility functions so you don't have to repeat yourself.
-        --
-        -- In this case, we create a function that lets us more easily define mappings specific
-        -- for LSP related items. It sets the mode, buffer and description for us each time.
-        local map = function(keys, func, desc)
+        local function map_lsp(keys, func, desc)
             vim.keymap.set(
                 "n",
                 keys,
@@ -84,32 +118,30 @@ vim.api.nvim_create_autocmd("LspAttach", {
             )
         end
 
-        -- Jump to the definition of the word under your cursor.
-        --  This is where a variable was first declared, or where a function is defined, etc.
-        --  To jump back, press <C-t>.
-        map("grd", require("snacks.picker").lsp_definitions, "Goto Definition")
+        map_lsp(
+            "grd",
+            require("snacks.picker").lsp_definitions,
+            "Goto Definition"
+        )
+        map_lsp(
+            "grr",
+            require("snacks.picker").lsp_references,
+            "Goto References"
+        )
 
-        -- Find references for the word under your cursor.
-        map("grr", require("snacks.picker").lsp_references, "Goto References")
-
-        -- Jump to the implementation of the word under your cursor.
         --  Useful when your language has ways of declaring types without an actual implementation.
-        map(
+        map_lsp(
             "gri",
             require("snacks.picker").lsp_implementations,
             "Goto Implementation"
         )
-
-        -- Jump to the type of the word under your cursor.
-        --  Useful when you're not sure what type a variable is and you want to see
-        --  the definition of its *type*, not where it was *defined*.
-        map(
+        map_lsp(
             "grt",
             require("snacks.picker").lsp_type_definitions,
             "Type Definition"
         )
 
-        map("gro", function()
+        map_lsp("grs", function()
             local kinds = {
                 -- "Array",
                 -- "Boolean",
@@ -159,28 +191,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
                 },
             })
         end, "Document Symbols")
-
-        -- Fuzzy find all the symbols in your current workspace.
-        --  Similar to document symbols, except searches over your entire project.
-        map(
-            "grO",
+        map_lsp(
+            "grw",
             require("snacks.picker").lsp_workspace_symbols,
             "Workspace Symbols"
         )
 
-        -- Opens a popup that displays documentation about the word under your cursor
-        --  See `:help K` for why this keymap.
-        -- map("K", vim.lsp.buf.hover, "Hover Documentation")
-
-        -- WARN: This is not Goto Definition, this is Goto Declaration.
-        --  For example, in C this would take you to the header.
-        map("grD", vim.lsp.buf.declaration, "Goto Declaration")
-
-        -- The following two autocommands are used to highlight references of the
-        -- word under your cursor when your cursor rests there for a little while.
-        --    See `:help CursorHold` for information about when this is executed
-        --
-        -- When you move your cursor, the highlights will be cleared (the second autocommand).
+        map_lsp("grD", vim.lsp.buf.declaration, "Goto Declaration")
 
         local client = vim.lsp.get_client_by_id(event.data.client_id)
         if
@@ -196,13 +213,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
                 group = highlight_augroup,
                 callback = vim.lsp.buf.document_highlight,
             })
-
             vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
                 buffer = event.buf,
                 group = highlight_augroup,
                 callback = vim.lsp.buf.clear_references,
             })
-
             vim.api.nvim_create_autocmd("LspDetach", {
                 group = vim.api.nvim_create_augroup(
                     "kickstart-lsp-detach",
@@ -218,12 +233,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
             })
         end
 
-        -- The following autocommand is used to enable inlay hints in your
-        -- code, if the language server you are using supports them
-        --
-        -- This may be unwanted, since they displace some of your code
         if client and client:supports_method("textDocument/inlayHint") then
-            map("grI", function()
+            map_lsp("grI", function()
                 vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({}))
             end, "Inlay Hints")
         end
@@ -233,7 +244,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 ---@type table<number, {token:lsp.ProgressToken, msg:string, done:boolean}[]>
 local progress = vim.defaulttable()
 vim.api.nvim_create_autocmd("LspProgress", {
-    desc = "Lsp Progress Notification",
+    desc = "Lsp progress Notification",
     group = vim.api.nvim_create_augroup("lsp-notification", { clear = true }),
     ---@param event {data: {client_id: integer, params: lsp.ProgressParams}}
     callback = function(event)

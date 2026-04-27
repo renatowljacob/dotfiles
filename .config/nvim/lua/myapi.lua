@@ -1,39 +1,16 @@
 ---@module "snacks"
 
----@class MyApi Functions that I use throughout my config
+---@class MyApi Stuffed used in some places
 ---@field buf table Buffer-related functions
----@field cli table CLI command wrappers
----@field fs table Filesystem-related functions
 ---@field ft table Filetype-related functions
----@field treesitter table Treesitter-related functions
-local MyApi = {}
+local M = {}
 
-MyApi.buf = {}
-MyApi.cli = {}
-MyApi.fs = {}
-MyApi.ft = {}
-MyApi.treesitter = {}
-
----@class State
----@field terminal table snacks_terminal state
-local State = {
-    ---@class Snacks_terminal
-    ---@field count number The count given for the last normal mode command
-    ---@field keys string[] Mapped keys
-    terminal = {
-        count = 1,
-        keys = {
-            "H",
-            "J",
-            "K",
-            "L",
-        },
-    },
-}
+M.buf = {}
+M.ft = {}
 
 ---Document symbols using a language server (or Treesitter as a fallback)
 ---@param opts? snacks.picker.lsp.symbols.Config
-function MyApi.buf.document_symbols(opts)
+function M.buf.document_symbols(opts)
     if
         not vim.tbl_isempty(
             vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf() })
@@ -45,152 +22,11 @@ function MyApi.buf.document_symbols(opts)
     return Snacks.picker.treesitter()
 end
 
----Get line and buffer number from a quickfix list item
----@return integer? bufnr, integer? lnum Buffer and line number
----If no quickfix list is found, nil is returned instead
-function MyApi.buf.get_qfline()
-    ---@type table
-    local qflist = vim.fn.getqflist()
-    local index = vim.fn.getqflist({ idx = 0 }).idx
-
-    if vim.tbl_isempty(qflist) then
-        qflist = vim.fn.getloclist(0)
-        index = vim.fn.getloclist(0, { idx = 0 }).idx
-    end
-
-    if vim.tbl_isempty(qflist) then
-        return nil
-    end
-
-    local line = qflist[index]
-    local bufnr, lnum = line.bufnr, line.lnum - 1
-
-    return bufnr, lnum
-end
-
----Apply highlight group to a line
----@param bufnr number Buffer that contains the line
----@param lnum number Line number to be highlighted
----@param opts? table Optional parameters
----                - higroup  highlight group (default "IncSearch")
----                - timeout in ms  (default 150)
-function MyApi.buf.highlight_line(bufnr, lnum, opts)
-    opts = opts or {}
-
-    local higroup = opts.higroup or "IncSearch"
-    local namespace = vim.api.nvim_create_namespace("highlight_quickfix")
-    local timeout = opts.timeout or 150
-    local winid =
-        vim.fn.bufwinid(bufnr and bufnr or vim.api.nvim_get_current_buf())
-
-    vim.api.nvim_win_set_hl_ns(winid, namespace)
-    vim.hl.range(
-        bufnr,
-        namespace,
-        higroup,
-        { lnum, 0 },
-        { lnum, -1 },
-        { timeout = timeout }
-    )
-end
-
----Toggle different snack terminals
----@param count? number
-function MyApi.buf.toggle_nth_terminal(count)
-    State.terminal.count = count or State.terminal.count
-    local opts = {
-        auto_insert = false,
-        win = {
-            wo = {
-                winbar = "Terminal "
-                    .. State.terminal.keys[State.terminal.count],
-            },
-        },
-    }
-
-    vim.cmd("normal! " .. State.terminal.count)
-    Snacks.terminal.toggle(nil, opts)
-end
-
----Use dotbare as dotfiles/git fuzzy client
----@param args? string|string[] Command arguments
----@param opts? table  Optional parameters:
----                - git  Use dotbare as a generic git client (default false)
-function MyApi.cli.dotbare(args, opts)
-    args = args or {}
-    opts = opts or {}
-    opts.git = opts.git or false
-
-    local command = { "dotbare" }
-    if opts.git then
-        table.insert(command, "--git")
-    end
-    command = vim.iter({ command, args }):flatten():totable()
-
-    local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.bo[bufnr].bufhidden = "wipe"
-    vim.bo[bufnr].modifiable = false
-
-    local height = math.ceil(vim.o.lines * 0.85)
-    local width = math.ceil(vim.o.columns * 0.85)
-    local window = vim.api.nvim_open_win(bufnr, true, {
-        relative = "editor",
-        height = height,
-        width = width,
-        border = "solid",
-        col = math.ceil((vim.o.columns - width) / 2),
-        row = math.ceil((vim.o.lines - height) / 2),
-    })
-    vim.api.nvim_set_current_win(window)
-
-    vim.fn.jobstart(command, {
-        cwd = opts.git and vim.fn.getcwd() or vim.env.HOME,
-        on_exit = function(_, status, _)
-            if vim.api.nvim_win_is_valid(window) then
-                vim.api.nvim_win_close(window, true)
-            end
-
-            -- If no files were selected or any other error
-            if args == "fstat" or status ~= 0 then
-                return nil
-            end
-
-            local buflist = vim.api.nvim_list_bufs()
-            local lastbuf = buflist[#buflist]
-
-            -- Necessary because list_bufs() includes unlisted buffers
-            if vim.api.nvim_buf_is_valid(lastbuf) then
-                vim.api.nvim_set_current_buf(lastbuf)
-            end
-        end,
-        term = true,
-    })
-
-    -- Delete "leave terminal mode" buffer keymap since it's not modifiable anyway
-    vim.keymap.del("t", "<Esc><Esc>", {
-        buffer = bufnr,
-    })
-
-    vim.cmd.startinsert()
-end
-
----Find root directory between two directories
----@param cwd string Cwd path
----@param bufpath string Buffer directory path
----@return string? root_dir Root directory shared between two paths
-function MyApi.fs.find_root(cwd, bufpath)
-    for dir in vim.fs.parents(bufpath) do
-        if cwd:match(dir) then
-            return dir
-        end
-    end
-end
-
 ---Gets the filetype of a C/C++ header file
 ---Useful for ambiguous .h files that are set the wrong filetype
 ---@param header_file string C/C++ filepath
 ---@return string? filetype C or C++ filetype
-function MyApi.ft.get_header_filetype(header_file)
+function M.ft.get_header_filetype(header_file)
     local file_basename = vim.fs.basename(header_file)
     local file_extension = vim.fs.ext(file_basename)
 
@@ -227,75 +63,11 @@ end
 ---Sets the filetype of a C/C++ header buffer accordingly
 ---Useful for ambiguous .h files that are set the wrong filetype
 ---@param bufnr integer buffer number
-function MyApi.ft.set_header_filetype(bufnr)
-    local filetype =
-        MyApi.ft.get_header_filetype(vim.api.nvim_buf_get_name(bufnr))
+function M.ft.set_header_filetype(bufnr)
+    local filetype = M.ft.get_header_filetype(vim.api.nvim_buf_get_name(bufnr))
     if filetype ~= nil then
         vim.bo[bufnr].filetype = filetype
     end
 end
 
--- NOTE: Taken from https://github.com/JoosepAlviste/dotfiles/blob/master/config/nvim/lua/j/javascript.lua
-
----Turns a function into an async one if "await" is typed inside its body
-function MyApi.ft.set_async()
-    local success, node =
-        pcall(vim.treesitter.get_node, { ignore_injections = false })
-    if not success or not node then
-        return
-    end
-
-    local node_type = node:type()
-    if node_type == "comment" then
-        return
-    end
-
-    local cursor_col = vim.fn.col(".")
-    local text = vim.fn.getline("."):sub(cursor_col - 4, cursor_col - 1)
-    if text ~= "awai" then
-        return
-    end
-
-    local node_types = {
-        "function_declaration",
-        "function_expression",
-        "arrow_function",
-    }
-
-    local node_ancestor =
-        MyApi.treesitter.get_node_ancestor_by_type(node, node_types)
-    if not node_ancestor then
-        return
-    end
-
-    local bufnr = vim.api.nvim_get_current_buf()
-    if
-        vim.startswith(
-            vim.treesitter.get_node_text(node_ancestor, bufnr),
-            "async"
-        )
-    then
-        return
-    end
-
-    local row, col = node_ancestor:start()
-    vim.api.nvim_buf_set_text(bufnr, row, col, row, col, { "async " })
-end
-
----@param node TSNode
----@param types string[]
----@return TSNode? ancestor_node
-function MyApi.treesitter.get_node_ancestor_by_type(node, types)
-    local parent_node = node:tree():root():child_with_descendant(node)
-    while parent_node do
-        if vim.tbl_contains(types, parent_node:type()) then
-            return parent_node
-        end
-
-        parent_node = parent_node:child_with_descendant(node)
-    end
-
-    return nil
-end
-
-return MyApi
+return M
