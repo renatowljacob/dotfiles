@@ -388,6 +388,7 @@ do
 
     require("mason-nvim-dap").setup({
         automatic_installation = true,
+        handlers = {},
         ensure_installed = {},
     })
 
