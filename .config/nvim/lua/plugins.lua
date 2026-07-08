@@ -41,6 +41,8 @@ do
             ["<S-Tab>"] = {},
             ["<C-j>"] = { "snippet_forward" },
             ["<C-k>"] = { "snippet_backward" },
+            ["<C-d>"] = { "scroll_documentation_down" },
+            ["<C-u>"] = { "scroll_documentation_up" },
             ["<C-s>"] = { "show_signature", "hide_signature" },
         },
         cmdline = {
@@ -55,6 +57,7 @@ do
         },
         completion = {
             menu = {
+                auto_show = false,
                 border = "single",
                 draw = {
                     components = {
@@ -85,8 +88,7 @@ do
                 },
             },
             documentation = {
-                auto_show = true,
-                auto_show_delay_ms = 300,
+                auto_show = false,
                 window = {
                     border = "single",
                     scrollbar = true,
@@ -123,6 +125,9 @@ do
         },
         signature = {
             enabled = true,
+            trigger = {
+                enabled = false,
+            },
             window = { border = "single" },
         },
         fuzzy = {
@@ -492,8 +497,10 @@ do
         end
 
         local win = DAP_State.last_win
-        vim.api.nvim_win_set_buf(win, bufnr)
-        vim.api.nvim_win_set_cursor(win, { line, column })
+        if win then
+            vim.api.nvim_win_set_buf(win, bufnr)
+            vim.api.nvim_win_set_cursor(win, { line, column })
+        end
     end
 
     dap.repl.commands.custom_commands = {
@@ -556,17 +563,14 @@ do
         vim.keymap.set(modes or "n", lhs, rhs, { desc = "Inspect: " .. desc })
     end
 
-    map_dap("<F1>", dap.continue, "Continue")
-    map_dap("<F2>", dap.step_into, "Step into")
-    map_dap("<F3>", dap.step_over, "Step over")
-    map_dap("<F4>", dap.step_out, "Step out")
-    map_dap("<F5>", dap.run_to_cursor, "Continue to cursor")
-    map_dap("<F6>", dap.up, "Go up stackframe")
-    map_dap("<F7>", dap.down, "Go down stackframe")
-    map_dap("<F8>", dapui.toggle, "Toggle UI")
-    map_dap("<F9>", dap.continue, "Start session")
-    map_dap("<F10>", dap.restart, "Restart session")
-    map_dap("<F11>", dap.run_last, "Restore last session")
+    map_dap("<F4>", dap.continue, "Continue")
+    map_dap("<F5>", dap.step_into, "Step into")
+    map_dap("<F6>", dap.step_over, "Step over")
+    map_dap("<F7>", dap.step_out, "Step out")
+    map_dap("<F8>", dap.up, "Go up stackframe")
+    map_dap("<F9>", dap.down, "Go down stackframe")
+    map_dap("<F10>", dapui.toggle, "Toggle UI")
+    map_dap("<F11>", dap.restart, "Restart session")
     map_dap("<F12>", dap.terminate, "Terminate session")
     map_dap("<leader>it", dap.toggle_breakpoint, "Toggle breakpoint")
     map_dap("<leader>ib", function()

@@ -53,6 +53,8 @@ vim.opt.sessionoptions = {
     "terminal",
     "winsize",
 }
+--      Project stuff
+vim.o.exrc = true
 --      Misc
 vim.o.switchbuf = "useopen"
 vim.o.splitkeep = "screen"

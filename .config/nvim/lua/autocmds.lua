@@ -349,7 +349,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
     end,
 })
 
-vim.api.nvim_create_autocmd("VimResized", {
+vim.api.nvim_create_autocmd({ "VimResized", "WinClosed" }, {
     desc = "Resize splits in window resize",
     group = vim.api.nvim_create_augroup("resize-splits", { clear = true }),
     callback = function()

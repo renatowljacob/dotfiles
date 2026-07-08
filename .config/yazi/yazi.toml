@@ -13,7 +13,7 @@ open_browser = [
 	{ run = 'chromium "$@"', desc = "Open in browser" },
 ]
 edit = [
-	{ run = 'nvim "$@"', block = true, desc = "Edit" },
+	{ run = 'nvim-remote "$@"', block = true, desc = "Edit" },
 ]
 edit_image = [
 	{ run = 'krita "$@"', desc = "Edit image" },
@@ -21,8 +21,8 @@ edit_image = [
 
 [open]
 prepend_rules = [
-	{ name = "*.html", use = [ "edit", "open_browser" ] },
-	{ name = "*.pdf", use = [ "open", "open_browser" ] },
+	{ url = "*.html", use = [ "edit", "open_browser" ] },
+	{ url = "*.pdf", use = [ "open", "open_browser" ] },
 	{ mime = "image/*", use = [ "open", "edit_image", "open_browser" ] },
 ]
 

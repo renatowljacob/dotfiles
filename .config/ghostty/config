@@ -1,5 +1,7 @@
 # vim: set filetype=config
 
+background-opacity = 0.97
+
 font-family = "JetBrainsMono Nerd Font"
 font-style = "Medium"
 font-feature = zero

@@ -11,16 +11,20 @@ prepend_keymap = [
 	{ on = [ "8" ], run = "plugin relative-motions 8", desc = "Move in relative steps" },
 	{ on = [ "9" ], run = "plugin relative-motions 9", desc = "Move in relative steps" },
 	{ on = [ "b", "g" ], run = [ '''
-		shell 'case $(file --mime-type -Lb $0) in
-					image/*) feh --bg-fill $0 ;;
-					*) false ;;
-				esac' --confirm
-	''' ], desc = "Set desktop background" },
-	{ on = [ "b", "l" ], run = [ '''
-		shell 'case $(file --mime-type -Lb $0) in
-				image/*) betterlockscreen -u $0 ;;
+			shell --
+			img="%h"
+			case $(file --mime-type -Lb "${img}") in
+				image/*) feh --bg-fill "${img}" ;;
 				*) false ;;
-				esac' --confirm
+			esac
+		''' ], desc = "Set desktop background" },
+	{ on = [ "b", "l" ], run = [ '''
+			shell --
+			img="%h"
+			case $(file --mime-type -Lb "${img}") in
+				image/*) betterlockscreen -u "${img}" ;;
+				*) false ;;
+			esac
 		''' ], desc = "Set lockscreen background" },
 	{ on = [ "s", "d" ], run = "plugin fzf", desc = "Jump to a file/directory via fzf" },
 	{ on = [ "s", "s" ], run = "plugin zoxide", desc = "Jump to a directory via zoxide" },

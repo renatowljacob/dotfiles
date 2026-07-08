@@ -2,7 +2,7 @@
 # Swaps Foreground for Background to get a light version if the user prefers
 #
 # Tokyonight color theme
-#
+
 set notification-error-bg "#F7768E"
 set notification-error-fg "#C0CAF5"
 set notification-warning-bg "#E0AF68"
@@ -36,3 +36,6 @@ set render-loading-bg "#C0CAF5"
 #
 set recolor-lightcolor "#24283B"
 set recolor-darkcolor "#C0CAF5"
+
+# clipboard
+set selection-clipboard clipboard
