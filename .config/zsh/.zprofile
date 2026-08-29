@@ -2,21 +2,26 @@ if pgrep dusk >/dev/null; then
     exit
 fi
 
+if [ -n "${WSL_DISTRO_NAME}" ]; then
+    cd ~
+    return
+fi
+
 PS3='Please enter your choice: '
 list=("dusk" "mango" "shell")
 select item in "${list[@]}"
 do
     item=${item:-"dusk"}
     case $item in
-    "dusk")
-        startx "$XDG_CONFIG_HOME/X11/xinitrc" "dusk"
-        break
-        ;;
-    "mango")
-        mango
-        break
-        ;;
-    "shell") break ;;
-    *) echo "invalid option $REPLY" ;;
+	"dusk")
+	    startx "$XDG_CONFIG_HOME/X11/xinitrc" "dusk"
+	    break
+	    ;;
+	"mango")
+	    mango
+	    break
+	    ;;
+	"shell") break ;;
+	*) echo "invalid option $REPLY" ;;
     esac
 done

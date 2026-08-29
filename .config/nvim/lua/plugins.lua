@@ -245,7 +245,7 @@ do
     })
 
     local ensure_installed = {}
-    for server, _ in vim.fs.dir(vim.env.XDG_CONFIG_HOME .. "/nvim/after/lsp") do
+    for server, _ in vim.fs.dir(vim.fn.stdpath("config") .. "/nvim/after/lsp") do
         local server_name = vim.fn.fnamemodify(server, ":t:r")
         if server_name ~= "clangd" then
             table.insert(ensure_installed, server_name)
