@@ -1,12 +1,36 @@
 [include]
 	path = user
+
 [core]
 	pager = delta
+
 [interactive]
 	diffFilter = delta --color-only
+
 [delta]
 	navigate = true
 	dark = true
 	syntax-theme = tokyonight_storm
-	minus-style = syntax auto
-	plus-style = syntax auto
+	minus-style                   = syntax "#3f2d3d"
+	minus-non-emph-style          = syntax "#3f2d3d"
+	minus-emph-style              = syntax "#763842"
+	minus-empty-line-marker-style = syntax "#3f2d3d"
+	line-numbers-minus-style      = "#914c54"
+	plus-style                    = syntax "#283b4d"
+	plus-non-emph-style           = syntax "#283b4d"
+	plus-emph-style               = syntax "#316172"
+	plus-empty-line-marker-style  = syntax "#283b4d"
+	line-numbers-plus-style       = "#449dab"
+	line-numbers-zero-style       = "#3b4261"
+
+[merge]
+	conflictstyle = diff3
+
+[diff]
+	colorMoved = default
+
+[init]
+	defaultBranch = main
+
+[alias]
+	ld = log --color --graph --pretty=format:'%Cred%h %C(magenta)(%as) %C(bold blue)<%an — %ae> %Creset:%C(yellow)%d %Creset%s %Creset' --abbrev-commit\
