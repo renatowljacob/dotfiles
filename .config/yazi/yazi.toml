@@ -7,16 +7,16 @@ scrolloff = 10
 
 [opener]
 open = [
-	{ run = 'xdg-open "$@"', desc = "Open" },
+	{ run = 'xdg-open %s', desc = "Open" },
 ]
 open_browser = [
-	{ run = 'chromium "$@"', desc = "Open in browser" },
+	{ run = 'chromium %s', desc = "Open in browser" },
 ]
 edit = [
-	{ run = 'nvim-remote "$@"', block = true, desc = "Edit" },
+	{ run = 'nvim-remote %s', block = true, desc = "Edit" },
 ]
 edit_image = [
-	{ run = 'krita "$@"', desc = "Edit image" },
+	{ run = 'krita %s', desc = "Edit image" },
 ]
 
 [open]

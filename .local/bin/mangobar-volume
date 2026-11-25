@@ -1,0 +1,22 @@
+#!/bin/sh
+
+volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | tr -dc '0-9' | sed 's/^0\{1,2\}//')
+
+# Icons
+iconhigh=" "
+iconmedium=""
+iconlow=""
+iconmuted=""
+
+case "$(wpctl get-volume @DEFAULT_AUDIO_SINK@)" in
+*MUTED*) icon=${iconmuted} ;;
+*)
+    case 1 in
+    $((volume >= 66))) icon=${iconhigh} ;;
+    $((volume >= 33))) icon=${iconmedium} ;;
+    $((volume >= 0))) icon=${iconlow} ;;
+    esac
+    ;;
+esac
+
+printf '%s' "${icon} ${volume}%"

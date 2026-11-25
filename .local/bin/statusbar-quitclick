@@ -9,9 +9,9 @@ arg="${BLOCK_BUTTON:-${1}}"
 if ps -C dusk-start; then
     message="right click -> lock screen
 
-    super + left click -> restart
+super + left click -> restart
 
-    super + right click -> quit"
+super + right click -> quit"
 
     case ${arg} in
     3) betterlockscreen --lock ;;

@@ -1,6 +1,5 @@
 [flavor]
 dark = "tokyo-night-storm"
-light = "tokyo-night-day"
 
 [mgr]
 find_keyword  = { fg = "#24283b", bg = "#ff9e64", bold = true }
@@ -30,4 +29,9 @@ rules = [
 	# Fallback
 	{ url = "*/", fg = "#7aa2f7", bold = true },
 	{ url = "*", fg = "#c0caf5" }
+]
+
+[icon]
+prepend_conds = [
+	{ if = "!(dir | link)", text = "" },
 ]

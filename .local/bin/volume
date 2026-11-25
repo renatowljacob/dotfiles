@@ -30,6 +30,8 @@ update()
 {
     if ps -C dusk > /dev/null; then
         duskc --ignore-reply run_command setstatus 4 "$(statusbar-volume)"
+    elif ps -C mango > /dev/null; then
+        pkill -RTMIN+8 mangobar
     fi
 }
 

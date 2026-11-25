@@ -20,19 +20,12 @@
   min-height: 0;
 }
 
-window#waybar {
-  background: none;
-  margin: 0px;
-  padding: 0px;
-}
-
 #tray,
 #custom-power,
 #custom-updates,
 #clock,
-#tags,
+#workspaces,
 #window,
-#tags,
 #cpu,
 #memory,
 #network,
@@ -89,7 +82,7 @@ window#waybar {
   background-color: @red;
 }
 
-#tags {
+#workspaces {
   background-color: @bg1;
   border-color: @bg3;
 
@@ -102,7 +95,7 @@ window#waybar {
   padding-right: 3px;
 }
 
-#tags button {
+#workspaces button {
   color: @fg2;
 
   border: none;
@@ -117,17 +110,17 @@ window#waybar {
   padding-right: 6px;
 }
 
-#tags button.occupied {
+#workspaces button.visible {
   color: @fg1;
   background-color: @bg3;
 }
 
-#tags button:hover,
-#tags button.focused {
+#workspaces button:hover,
+#workspaces button.active {
   color: @orange;
 }
 
-#tags button.urgent {
+#workspaces button.urgent {
   background-color: @red;
   color: @bg1;
 }
@@ -140,4 +133,21 @@ window#waybar {
 
   padding-right: 8px;
   padding-left: 8px;
+}
+
+window#waybar {
+  background: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+window#waybar.empty #window {
+  background: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+#layout {
+  background-color: #ca9297;
+  color: #282828;
 }

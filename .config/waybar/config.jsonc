@@ -3,8 +3,9 @@
     "spacing": 8, // Gaps between modules (4px)
     // Choose the order of the modules
     "modules-left": [
-        "dwl/tags",
-        "dwl/window"
+        "mango/workspaces",
+        "mango/layout",
+        "mango/window"
     ],
     "modules-right": [
         "custom/updates",
@@ -16,16 +17,25 @@
         "tray",
         "custom/power"
     ], // Modules configuration
-    "dwl/tags": {
-        "num-tags": 9,
-        "tag-labels": ["", "", "", "", "", "", "", "", ""]
+    "mango/workspaces": {
+        "format": "{icon}",
+        "hide-empty": true,
+        "on-click": "activate",
+        "on-click-right": "toggle",
+        "overview-label": "OVERVIEW"
+        // "num-tags": 9,
+        // "tag-labels": ["", "", "", "", "", "", "", "", ""]
     },
-    "dwl/window": {
-        "format": "[{layout}] {title}",
-        "disable-click": false
+    "mango/window": {
+        // "format": "[{layout}] {title}",
+        "icon-size": 20
+        // "disable-click": false
         // Work well if mouse warp is disabled
         // "on-scroll-down": "mmsg -d focusstack,next",
         // "on-scroll-up": "mmsg -d focusstack,prev"
+    },
+    "mango/layout": {
+        "format": "{}"
     },
     "custom/power": {
         "format" : "<span size='large'>⏻</span>",

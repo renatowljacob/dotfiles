@@ -805,6 +805,8 @@ do
         Terminal_State.idx = idx or Terminal_State.idx
         local opts = {
             auto_insert = false,
+            auto_close = false,
+            interactive = false,
             count = Terminal_State.idx,
             win = {
                 wo = {

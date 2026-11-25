@@ -1,0 +1,13 @@
+#!/bin/sh
+
+updates=$(
+    {
+        checkupdates
+        paru -Qu
+    } | wc -l
+)
+
+if [ "${updates}" -ge 10 ]; then
+    icon=""
+    printf '%s' "${icon} ${updates}"
+fi

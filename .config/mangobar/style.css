@@ -1,0 +1,154 @@
+/* =========================================================
+ * mangobar style (only modules/properties this bar supports)
+ *
+ * Modules: bar / tags / layout / title / overview /
+ *          clock / cpu / mem / brightness / volume /
+ *          network / keymode / keyboardlayout / tray / custom-<name>
+ * Tag states: tags.active / tags.occupied / tags.urgent / tags.empty
+ * Network states: network.connected / network.disconnected /
+ *                 network.wifi / network.ethernet
+ * Properties: color / background / padding / margin / border-radius /
+ *             min-width / font-family / font-size / font-weight
+ * ========================================================= */
+
+/* ==================== Font ==================== */
+/* font-family / font-size / font-weight.
+ * The config.jsonc "font" value is the fallback when CSS sets no font. */
+* {
+  font-family: "JetBrains Mono";
+  font-size: 14px;
+  font-weight: bold;
+}
+
+* {
+  color: #C0CAF5;
+  background-color: #24283B;
+  padding: 0px 10px;
+  margin: 5px 1px;
+  border-radius: 64px;
+}
+
+#bar {
+  background: none;
+  margin: 5px 10px;
+}
+
+#bar.sel {
+  background: none;
+}
+
+#tags {
+  padding: 0px 13px;
+  margin: 0px 2px;
+}
+
+#tags:hover {
+  background-color: #2E3C64;
+}
+
+#tags.active {
+  background-color: #2E3C64;
+  color: #FF9E64;
+}
+
+#tags.occupied {
+  color: #C0CAF5;
+}
+
+#tags.urgent {
+  background-color: #24283B;
+  color: #F7768E;
+}
+
+#tags.empty {
+  color: #565C7E;
+}
+
+/* Overview mode */
+#overview {
+  background-color: #FF9E64;
+  color: #24283B;
+}
+
+/* Layout symbol */
+#layout {
+  min-width: 34px;
+  margin: 5px 5px;
+}
+
+/* Window title */
+#title {
+  background-color: #2E3C64;
+}
+
+/* Custom modules use #custom-<name> (e.g. custom/power -> #custom-power) */
+#custom-updates {
+  margin-right: 5px;
+  background-color: #9ECE6A;
+  color: #24283B;
+}
+
+#custom-volume {
+  margin-right: 5px;
+  background-color: #7DCFFF;
+  color: #24283B;
+}
+
+#cpu {
+  margin-right: 5px;
+  background-color: #7AA2F7;
+  color: #24283B;
+}
+
+#mem {
+  margin-right: 5px;
+  background-color: #7AA2F7;
+  color: #24283B;
+}
+
+#network {
+  margin-right: 5px;
+  background-color: #BB9AF7;
+  color: #24283B;
+}
+
+/* Network link states: swap the icon/colors per connection type. */
+#network.wifi {
+  color: #24283B;
+}
+
+#network.ethernet {
+  color: #24283B;
+}
+
+#network.disconnected {
+  background-color: #F7768E;
+  color: #24283B;
+}
+
+/* Right-side system modules */
+#clock {
+  margin-right: 5px;
+  background-color: #F7768E;
+  color: #24283B;
+}
+
+#tray {
+  padding: 0px 15px;
+}
+
+menu {
+  background-color: #201B14;
+  border-color: #ebdbb2;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+menuitem {
+  color: #ebdbb2;
+}
+
+menuitem:hover {
+  color: #1b1a1a;
+  background-color: #b8bb26;
+}

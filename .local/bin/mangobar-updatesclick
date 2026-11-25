@@ -1,0 +1,43 @@
+#!/bin/sh
+
+get_packages()
+{
+    dunstrc="${XDG_CONFIG_HOME:-$HOME/.config}/dunst/dunstrc"
+    lines="$(wc -l "${cachefile}")"
+    max_height="$(
+        sed -n 's/^ *height.* \([[:digit:]]\+\).*/\1/p' "${dunstrc}" \
+            | tr '\n' ' ' \
+            | cut -d ' ' -f 1
+    )"
+    packages=
+
+    # Truncate if there are more packages than dunst's maximum height
+    max_lines=30
+    if [ "${lines%% *}" -gt $((max_height / max_lines)) ]; then
+        packages="$(printf '%s\n%s' "$(sed -n '1,25p' "${cachefile}")" '...')"
+    fi
+
+    printf '%b' "${packages:-$(cat "${cachefile}")}"
+}
+
+print_packages()
+{
+    cachefile="${XDG_RUNTIME_DIR:-/tmp}/dusk-updatesclick"
+
+    if updates="$(checkupdates -c --nocolor)" || [ ! -s "${cachefile}" ]; then
+        if [ -n "${updates}" ]; then
+            printf '%s' "${updates:-$(checkupdates --nocolor)}" \
+                | sed 's/\([[:alnum:]]*\) .*/\1/' > "${cachefile}"
+        fi
+
+        dunstify -a "Updates" "$(get_packages)"
+    else
+        : > "${cachefile}" && dunstify -a "${1}" "No updates available"
+    fi
+
+}
+
+if ps -C mango; then
+    print_packages mango
+    pkill -RTMIN+9 mangobar
+fi
